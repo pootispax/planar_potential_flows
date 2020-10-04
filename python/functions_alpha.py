@@ -27,7 +27,8 @@ for i in range(0, 12):
             M[i, j] = indent
             indent += 1
 M = M.astype(int) # Convert each cell of the matrix to an int
-
+N_fluid = np.max(M)
+A = np.zeros((N_fluid, N_fluid))
 X = np.linspace(0, 12, 13)
 Y = np.linspace(0, 12, 13)
 XX, YY = np.meshgrid(X, Y)

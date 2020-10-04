@@ -3,5 +3,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-geometry = 1
+geometry = 2
 
