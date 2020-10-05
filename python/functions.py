@@ -7,24 +7,24 @@ import matplotlib.pyplot as plt
 
 # This function builds a squared matrix of size x * y
 # h represents the size of a cell
-def buildBox(x=12, y=12, h=1, geometry='straight'):
+def build_box(x=12, y=12, h=1, geometry='straight'):
     G = np.zeros((x * h, y * h))
     xquarter = x // 4
     yquarter = y // 4
 
     if geometry == 'straight':
-        return buildBoxStraight(x, y, h, G, xquarter, yquarter)
+        return build_box_straight(x, y, h, G, xquarter, yquarter)
 
     elif geometry == 'widening':
-        return buildBoxWidening(x, y, h, G, xquarter, yquarter)
+        return build_box_widening(x, y, h, G, xquarter, yquarter)
 
     elif geometry == 'shrinkage':
-        return buildBoxShrinkage(x, y, h, G, xquarter, yquarter)
+        return build_box_shrinkage(x, y, h, G, xquarter, yquarter)
 
 
 # -----------------------------------------------------------------------------
 # Build a matrix according to the straight geometry
-def buildBoxStraight(x, y, h, G, xquarter, yquarter):
+def build_box_straight(x, y, h, G, xquarter, yquarter):
     for i in range(0, y * h):
         if i == 0:
             for j in range(xquarter * h, 3 * xquarter * h):
@@ -41,7 +41,7 @@ def buildBoxStraight(x, y, h, G, xquarter, yquarter):
 
 # -----------------------------------------------------------------------------
 # Build a matrix according to the widening geometry
-def buildBoxWidening(x, y, h, G, xquarter, yquarter):
+def build_box_widening(x, y, h, G, xquarter, yquarter):
     xoffset = 0
     for i in range(0, y * h):
         if i < h:
@@ -67,7 +67,7 @@ def buildBoxWidening(x, y, h, G, xquarter, yquarter):
 
 # -----------------------------------------------------------------------------
 # Build a matrix according to the shrinkage geometry
-def buildBoxShrinkage(x, y, h, G, xquarter, yquarter):
+def build_box_shrinkage(x, y, h, G, xquarter, yquarter):
     xoffset = 0
     for i in range(0, y * h):
         if i < h:
@@ -94,7 +94,7 @@ def buildBoxShrinkage(x, y, h, G, xquarter, yquarter):
 
 # -----------------------------------------------------------------------------
 #   This part builds a grid the size of the matrix and plots it
-def buildGrid(x=12, y=12, h=1):
+def build_grid(x=12, y=12, h=1):
     X = np.linspace(0, x, x + 1) * h 
     Y = np.linspace(0, y, y + 1) * h
     XX, YY = np.meshgrid(X, Y)
@@ -102,12 +102,10 @@ def buildGrid(x=12, y=12, h=1):
     return (XX, YY)
 
 
-def buildWalls(x, y, h, G, ax):
+def build_walls(x, y, h, G, ax):
     X = np.linspace(0, x * h - 1, x * h)
     Y = np.linspace(0, y * h - 1, y * h)
-
     XX, YY = np.meshgrid(X, Y)
-
     for i in range(0, y * h):
         for j in range(0, x * h):
             if G[i, j] == 0:
@@ -140,21 +138,29 @@ def buildWalls(x, y, h, G, ax):
                
                 # Builds a wall on the left of the wall cells
                 if G[i, j - 1] != 0:
-                    if i == y * h - 1:
+#                    print(i)
+#                    if i == y * h - 1:
+#                        ax.plot(YY[j][j - 2:j] - .5,
+#                                XX[i][i - 2:i] - .5,
+#                                ls='-', color='black')
+#                        print(i, "no", j)
+
+                    if j == x * h - 1:
                         ax.plot(YY[j][j - 2:j] - .5,
                                 XX[i][i - 2:i] - .5,
                                 ls='-', color='black')
-                        print("oui")
+                        print(i, "maybe", j)
 
                     else:
                         ax.plot(YY[j][j:j + 2] - .5,
                                 XX[i][i:i + 2] - .5,
                                 ls='-', color='black')
+                        print(i, "yes", j)
 
 
 # -----------------------------------------------------------------------------
     # The following builds the matrix M containing each cell number
-def buildCellNumbers(boxMatrix, x=12, y=12, h=1):
+def build_cell_numbers(boxMatrix, x=12, y=12, h=1):
     xsized = x * h
     ysized = y * h
     M = np.zeros((xsized, ysized))
@@ -173,15 +179,15 @@ def buildCellNumbers(boxMatrix, x=12, y=12, h=1):
 
 # -----------------------------------------------------------------------------
 # The following plots the matrix G and saves it
-def plotMatrices(x=12, y=12, h=1, geometry='straight'):
+def plot_matrices(x=12, y=12, h=1, geometry='straight'):
     fig = plt.figure()
 
     ax = fig.add_subplot(1, 1, 1)
     
-    G = buildBox(x, y, h, geometry)
-    M = buildCellNumbers(G, x, y)
-    XX = buildGrid(x, y, h)[0]
-    YY = buildGrid(x, y, h)[1]
+    G = build_box(x, y, h, geometry)
+    M = build_cell_numbers(G, x, y)
+    XX = build_grid(x, y, h)[0]
+    YY = build_grid(x, y, h)[1]
 
     # Plots the box
     ax.imshow(G, cmap='coolwarm')
@@ -191,7 +197,7 @@ def plotMatrices(x=12, y=12, h=1, geometry='straight'):
     #plt.plot(YY - .5, XX - .5, ls='-', color='black')
     
     # Plots the walls
-    buildWalls(x, y, h, G, ax)
+    build_walls(x, y, h, G, ax)
     # Prints the number of each cell containing fluid
 #    for i in range(0, x):
 #        for j in range(0, y):

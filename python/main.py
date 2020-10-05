@@ -10,7 +10,7 @@ import functions as fc
 # The matrix must be square
 x = 12
 y = 12
-h = 1
+h = 1 
 geometry = 'straight'
 # Possible values are :
 #                       'straight'
@@ -18,6 +18,6 @@ geometry = 'straight'
 #                       'shinkage'
 
 
-#fc.plotMatrices(x, y, h, geometry)
-fc.plotMatrices(x, y, h, 'widening')
+#fc.plot_matrices(x, y, h, geometry)
+fc.plot_matrices(x, y, h, 'widening')
 
