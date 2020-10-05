@@ -19,7 +19,7 @@ def buildBox(x=12, y=12, h=1, geometry='straight'):
         return buildBoxWidening(x, y, h, G, xquarter, yquarter)
 
     elif geometry == 'shrinkage':
-        return buildBoxShrinkade(x, y, h, G, xquarter, yquarter)
+        return buildBoxShrinkage(x, y, h, G, xquarter, yquarter)
 
 
 # -----------------------------------------------------------------------------
@@ -30,12 +30,12 @@ def buildBoxStraight(x, y, h, G, xquarter, yquarter):
             for j in range(xquarter * h, 3 * xquarter * h):
                 G[i, j] = 2
             
-        elif i == xsized - 1:
+        elif i == x * h - 1:
             for j in range(xquarter * h, 3 * xquarter * h):
                 G[i, j] = 3
     
         else:
-            for j in range(xquarted * h, 3 * xquarter * h):
+            for j in range(xquarter * h, 3 * xquarter * h):
                 G[i, j] = 1
     return G
 
@@ -102,23 +102,54 @@ def buildGrid(x=12, y=12, h=1):
     return (XX, YY)
 
 
-# -----------------------------------------------------------------------------
-# This part builds the walls
-def trump(x, y, h, G, ax):
+def buildWalls(x, y, h, G, ax):
+    X = np.linspace(0, x * h - 1, x * h)
+    Y = np.linspace(0, y * h - 1, y * h)
 
-    res = 100
-    for i in range(0, (y - 1) * h):
-        for j in range(0, (x - 1) * h):
+    XX, YY = np.meshgrid(X, Y)
+
+    for i in range(0, y * h):
+        for j in range(0, x * h):
             if G[i, j] == 0:
-                if G[i, j + 1] !=0:
-                    XX, YY = np.meshgrid(np.linspace(j, j + h / res,
-                                                     res) + h / 2,
-                                         np.linspace(i - h, i, res) + h / 2)
-                    #build a vertical wall
-                    ax.plot(XX, YY, ls='-', color='black')
-                #if G[i + 1, j] != 0:
-                    #build a horizontal wall
+                # Builds a wall on the bottom of the wall cells
+                if i == y * h - 1 or j == x * h - 1:
+                    pass
 
+                elif G[i + 1, j] != 0:
+                    ax.plot(XX[i][j:j + 2] - .5,
+                            YY[i][i:i + 2] + .5,
+                            ls='-', color='black')
+                
+                # Builds a wall on the top of the wall cells
+                if i == y * h - 1 or j == x * h - 1:
+                    pass
+                
+                elif G[i - 1, j] != 0: 
+                    ax.plot(XX[i][j:j + 2] - .5,
+                            YY[i][i:i + 2] - .5,
+                            ls='-', color='black')
+                
+                # Builds a wall on the right of the wall cells
+                if i == y * h - 1 or j == x * h - 1:
+                    pass
+
+                elif G[i, j + 1] != 0:
+                    ax.plot(YY[j][j:j + 2] + .5,
+                            XX[i][i:i + 2] - .5 ,
+                            ls='-', color='black')
+               
+                # Builds a wall on the left of the wall cells
+                if G[i, j - 1] != 0:
+                    if i == y * h - 1:
+                        ax.plot(YY[j][j - 2:j] - .5,
+                                XX[i][i - 2:i] - .5,
+                                ls='-', color='black')
+                        print("oui")
+
+                    else:
+                        ax.plot(YY[j][j:j + 2] - .5,
+                                XX[i][i:i + 2] - .5,
+                                ls='-', color='black')
 
 
 # -----------------------------------------------------------------------------
@@ -160,7 +191,7 @@ def plotMatrices(x=12, y=12, h=1, geometry='straight'):
     #plt.plot(YY - .5, XX - .5, ls='-', color='black')
     
     # Plots the walls
-    trump(x, y, h, G, ax)
+    buildWalls(x, y, h, G, ax)
     # Prints the number of each cell containing fluid
 #    for i in range(0, x):
 #        for j in range(0, y):
