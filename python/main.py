@@ -9,8 +9,8 @@ import functions as fc
 # x and y must be above 7 and divisible by 4
 # The matrix must be square
 x = 12 
-y = 12 
-h = 4
+y = 12
+h = 1
 geometry = 'straight'
 # Possible values are :
 #                       'straight'
@@ -18,7 +18,7 @@ geometry = 'straight'
 #                       'shinkage'
 
 
-fc.plotMatrices(x, y, h, geometry)
+#fc.plotMatrices(x, y, h, geometry)
 fc.plotMatrices(x, y, h, 'widening')
-fc.plotMatrices(x, y, h, 'shrinkage')
+#fc.plotMatrices(x, y, h, 'shrinkage')
 
