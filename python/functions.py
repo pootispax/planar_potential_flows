@@ -185,27 +185,38 @@ def build_matrix_a(M, G, cell):
     A = np.zeros((M.max(), M.max()))
 
     for i in range(0, M.max()):
-        x_coords = cell[i][1][1]
-        y_coords = cell[i][1][0]
+        x_coords = cell[i][1][0]
+        y_coords = cell[i][1][1]
         m = i + 1
 
-        if G[x_coords, y_coords] == 1:
+        if G[x_coords, y_coords] == 1 or G[x_coords, y_coords] == 2:
             # Checks the walls around the cell
-            if G[cell[i - 1][1][1], y_coords] != 0:
+            # Cell above
+            if G[cell[i - 1][1][0], y_coords] != 0:
+                print('----------')
+                print(G[cell[i - 1][1][0], y_coords])
                 A[i, i] -= 1
-                A[i, M[cell[i - 1][1][1], y_coords]] = 1
+                print(i, M[cell[i - 1][1][0], y_coords] - 1)
+                A[i, M[cell[i - 1][1][0], y_coords] - 1] = 1
 
-            if G[cell[i + 1][1][1], y_coords] != 0:
+            # Cell under
+            if G[cell[i + 1][1][0], y_coords] != 0:
                 A[i, i] -= 1
-                A[i, M[cell[i + 1][1][1], y_coords]] = 1
+                A[i, M[cell[i + 1][1][0], y_coords] - 1] = 1
         
-            if G[x_coords, cell[i - 1][1][0]] != 0:
+            # Cell on the left
+            if G[x_coords, cell[i - 1][1][1]] != 0:
                 A[i, i] -= 1
-                A[i, M[x_coords, cell[i - 1][1][0]]] = 1
+                A[i, M[x_coords, cell[i - 1][1][1]] - 1] = 1
 
-            if G[x_coords, cell[i + 1][1][0]] != 0:
+            # Cell on the right
+            if G[x_coords, cell[i + 1][1][1]] != 0:
                 A[i, i] -= 1
-                A[i, M[x_coords, cell[i + 1][1][0]]] = 1
+                A[i, M[x_coords, cell[i + 1][1][1]] - 1] = 1
+
+        elif G[x_coords, y_coords] == 3:
+            A[i, i] = 1
+    print('----------')
     print(A) 
 
 
@@ -223,9 +234,11 @@ def plot_matrices(x=12, y=12, h=1, geometry='straight'):
     G = build_box(x, y, h, geometry)
     M = build_cell_numbers(G, x, y, h)
     print(M)
-    print("-----------")
+    print("----------")
+    print(G)
+    print("----------")
     print(cell_coords(G, x, y, h))
-    print('-----------')
+    print('----------')
     build_matrix_a(M, G, cell_coords(G, x, y, h))
     # Plots the box
     ax.imshow(G, cmap='coolwarm')
