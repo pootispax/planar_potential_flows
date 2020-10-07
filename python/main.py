@@ -28,6 +28,8 @@ method = 'forward'
 
 
 #fc.plot_matrices(x, y, h, geometry)
-fc.plot_matrices(x, y, h, 'straight')
-fc.plot_matrices(x, y, h, 'shrinkage')
-fc.plot_matrices(x, y, h, 'widening')
+#fc.plot_matrices(x, y, h, 'straight')
+#fc.plot_matrices(x, y, h, 'shrinkage')
+#fc.plot_matrices(x, y, h, 'widening')
+
+fc.plot_matrices(12, 12, 1, 'straight')

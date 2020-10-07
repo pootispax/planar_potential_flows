@@ -149,14 +149,14 @@ def build_walls(x, y, h, G, ax):
 
 # -----------------------------------------------------------------------------
 # Builds the matrix M containing each cell number
-def build_cell_numbers(boxMatrix, x=12, y=12, h=1):
+def build_cell_numbers(boxMatrix, x, y, h):
     xsized = x * h
     ysized = y * h
     M = np.zeros((xsized, ysized))
     indent = 1
 
-    for i in range(0, xsized):
-        for j in range(0, ysized):
+    for j in range(0, xsized):
+        for i in range(0, ysized):
             if boxMatrix[i, j] != 0:
                 M[i, j] = indent
                 indent += 1
@@ -167,8 +167,32 @@ def build_cell_numbers(boxMatrix, x=12, y=12, h=1):
 
 
 # -----------------------------------------------------------------------------
-# Builds the matrix A
+# Builds array cell 
+def cell_coords(G, x, y, h):
+    coords_matrix = []
+    indent = 1
+    for j in range(0, y * h):
+        for i in range(0, x * h):
+            if G[i, j] != 0:
+                coords_matrix.append((indent, (i, j)))
+                indent += 1
 
+    return coords_matrix
+
+# -----------------------------------------------------------------------------
+# Builds the matrix A
+def build_matrix_a(x, y, M, G):
+    A = np.zeros((M.max(), M.max()))
+
+    for j in range(0, M.max()):
+        for i in range(0, M.max()):
+            if G[i + 1, j] == 0  or G[i - 1, j] == 0 \
+            or G[i, j + 1] == 0  or G[i, j - 1] == 0:
+                pass
+            
+            else:
+                A[i, j]
+    print(A)
 
 
 # -----------------------------------------------------------------------------
@@ -183,7 +207,8 @@ def plot_matrices(x=12, y=12, h=1, geometry='straight'):
     ax = fig.add_subplot(1, 1, 1)
     
     G = build_box(x, y, h, geometry)
-    M = build_cell_numbers(G, x, y)
+    M = build_cell_numbers(G, x, y, h)
+    build_matrix_a(M)
     # Plots the box
     ax.imshow(G, cmap='coolwarm')
     
@@ -249,5 +274,12 @@ def neumann(f, x, y, h, axis):
 
     elif axis == 'y':
         condition = f[x, y + 1] + h * y_derivative(f, x, y, h, 'backward')
+
+
+# -----------------------------------------------------------------------------
+# Dirichlet's boundary condition
+def dirichlet(ref):
+    return ref
+
 
 
