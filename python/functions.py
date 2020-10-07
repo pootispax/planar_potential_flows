@@ -13,13 +13,13 @@ def build_box(x=12, y=12, h=1, geometry='straight'):
     yquarter = y // 4
 
     if geometry == 'straight':
-        return build_box_straight(x, y, h, G, xquarter, yquarter)
+        return build_box_straight(x, y, h, G, xquarter, yquarter).astype(int)
 
     elif geometry == 'widening':
-        return build_box_widening(x, y, h, G, xquarter, yquarter)
+        return build_box_widening(x, y, h, G, xquarter, yquarter).astype(int)
 
     elif geometry == 'shrinkage':
-        return build_box_shrinkage(x, y, h, G, xquarter, yquarter)
+        return build_box_shrinkage(x, y, h, G, xquarter, yquarter).astype(int)
 
 
 # -----------------------------------------------------------------------------
@@ -185,39 +185,41 @@ def build_matrix_a(M, G, cell):
     A = np.zeros((M.max(), M.max()))
 
     for i in range(0, M.max()):
-        x_coords = cell[i][1][0]
-        y_coords = cell[i][1][1]
-        m = i + 1
+        row = cell[i][1][0]
+        column = cell[i][1][1]
 
-        if G[x_coords, y_coords] == 1 or G[x_coords, y_coords] == 2:
+        if G[row, column] == 1 or G[row, column] == 2:
+            cell_up = cell[i][1][0] - 1
+            cell_down = cell[i][1][0] + 1
+            cell_left = cell[i][1][1] - 1
+            cell_right = cell[i][1][1] + 1
+
             # Checks the walls around the cell
             # Cell above
-            if G[cell[i - 1][1][0], y_coords] != 0:
-                print('----------')
-                print(G[cell[i - 1][1][0], y_coords])
+            if G[cell_up, column] != 0 and cell_up >= 0:
                 A[i, i] -= 1
-                print(i, M[cell[i - 1][1][0], y_coords] - 1)
-                A[i, M[cell[i - 1][1][0], y_coords] - 1] = 1
+                A[i, M[cell_up, column] - 1] = 1
 
             # Cell under
-            if G[cell[i + 1][1][0], y_coords] != 0:
+            if G[cell_down, column] != 0 and cell_down <= M.max():
                 A[i, i] -= 1
-                A[i, M[cell[i + 1][1][0], y_coords] - 1] = 1
+                A[i, M[cell_down, column] - 1] = 1
         
             # Cell on the left
-            if G[x_coords, cell[i - 1][1][1]] != 0:
+            if G[row, cell_left] != 0 and cell_left >= 0:
                 A[i, i] -= 1
-                A[i, M[x_coords, cell[i - 1][1][1]] - 1] = 1
+                A[i, M[row, cell_left] - 1] = 1
 
             # Cell on the right
-            if G[x_coords, cell[i + 1][1][1]] != 0:
+            if G[row, cell_right] != 0 and cell_right <= M.max():
                 A[i, i] -= 1
-                A[i, M[x_coords, cell[i + 1][1][1]] - 1] = 1
+                A[i, M[row, cell_right] - 1] = 1
 
-        elif G[x_coords, y_coords] == 3:
+        elif G[row, column] == 3:
             A[i, i] = 1
-    print('----------')
-    print(A) 
+
+    print(A)
+
 
 
 # -----------------------------------------------------------------------------
