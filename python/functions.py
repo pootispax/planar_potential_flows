@@ -181,18 +181,32 @@ def cell_coords(G, x, y, h):
 
 # -----------------------------------------------------------------------------
 # Builds the matrix A
-def build_matrix_a(x, y, M, G):
+def build_matrix_a(M, G, cell):
     A = np.zeros((M.max(), M.max()))
 
-    for j in range(0, M.max()):
-        for i in range(0, M.max()):
-            if G[i + 1, j] == 0  or G[i - 1, j] == 0 \
-            or G[i, j + 1] == 0  or G[i, j - 1] == 0:
-                pass
-            
-            else:
-                A[i, j]
-    print(A)
+    for i in range(0, M.max()):
+        x_coords = cell[i][1][1]
+        y_coords = cell[i][1][0]
+        m = i + 1
+
+        if G[x_coords, y_coords] == 1:
+            # Checks the walls around the cell
+            if G[cell[i - 1][1][1], y_coords] != 0:
+                A[i, i] -= 1
+                A[i, M[cell[i - 1][1][1], y_coords]] = 1
+
+            if G[cell[i + 1][1][1], y_coords] != 0:
+                A[i, i] -= 1
+                A[i, M[cell[i + 1][1][1], y_coords]] = 1
+        
+            if G[x_coords, cell[i - 1][1][0]] != 0:
+                A[i, i] -= 1
+                A[i, M[x_coords, cell[i - 1][1][0]]] = 1
+
+            if G[x_coords, cell[i + 1][1][0]] != 0:
+                A[i, i] -= 1
+                A[i, M[x_coords, cell[i + 1][1][0]]] = 1
+    print(A) 
 
 
 # -----------------------------------------------------------------------------
@@ -208,10 +222,13 @@ def plot_matrices(x=12, y=12, h=1, geometry='straight'):
     
     G = build_box(x, y, h, geometry)
     M = build_cell_numbers(G, x, y, h)
-    build_matrix_a(M)
+    print(M)
+    print("-----------")
+    print(cell_coords(G, x, y, h))
+    print('-----------')
+    build_matrix_a(M, G, cell_coords(G, x, y, h))
     # Plots the box
     ax.imshow(G, cmap='coolwarm')
-    
     # Plots the walls
     build_walls(x, y, h, G, ax)
 

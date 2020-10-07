@@ -32,4 +32,4 @@ method = 'forward'
 #fc.plot_matrices(x, y, h, 'shrinkage')
 #fc.plot_matrices(x, y, h, 'widening')
 
-fc.plot_matrices(12, 12, 1, 'straight')
+fc.plot_matrices(8, 8, 1, 'straight')
