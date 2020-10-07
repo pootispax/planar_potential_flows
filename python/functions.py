@@ -25,43 +25,43 @@ def build_box(x=12, y=12, h=1, geometry='straight'):
 # -----------------------------------------------------------------------------
 # Build a matrix according to the straight geometry
 def build_box_straight(x, y, h, G, xquarter, yquarter):
-    for i in range(0, y * h):
-        if i < h:
-            for j in range(xquarter * h + 1, 3 * xquarter * h - 1):
-                G[j, i] = 2
+    for j in range(0, y * h):
+        if j < h:
+            for i in range(xquarter * h + 1, 3 * xquarter * h - 1):
+                G[i, j] = 2
 
-        elif i >=(x - 1) * h:
-            for j in range(xquarter * h + 1, 3 * xquarter * h  - 1):
-                G[j, i] = 3
+        elif j >=(x - 1) * h:
+            for i in range(xquarter * h + 1, 3 * xquarter * h  - 1):
+                G[i, j] = 3
     
         else:
-            for j in range(xquarter * h + 1, 3 * xquarter * h - 1):
-                G[j, i] = 1
+            for i in range(xquarter * h + 1, 3 * xquarter * h - 1):
+                G[i, j] = 1
     return G
 
 # -----------------------------------------------------------------------------
 # Build a matrix according to the widening geometry
 def build_box_widening(x, y, h, G, xquarter, yquarter):
     xoffset = 0
-    for i in range(0, y * h):
-        if i < h:
-            for j in range(x * h // 4 + 1, 3 * x * h // 4 - 1):
-                G[j, i] = 2
-        elif i >= (y - 1) * h:
-            for j in range(h + 1, (x - 1) * h - 1):
-                G[j, i] = 3
+    for j in range(0, y * h):
+        if j < h:
+            for i in range(x * h // 4 + 1, 3 * x * h // 4 - 1):
+                G[i, j] = 2
+        elif j >= (y - 1) * h:
+            for i in range(h + 1, (x - 1) * h - 1):
+                G[i, j] = 3
         else:
-            if i <= yquarter * h  - 1:
-                for j in range(xquarter * h + 1, 3 * xquarter * h - 1):
-                    G[j, i] = 1 
-            elif i > 2 * yquarter * h - 1:
-                for j in range(h + 1, (x - 1) * h - 1):
-                    G[j, i] = 1
-            elif i >= yquarter * h and i < 2 * yquarter * h:
-                for j in range(xquarter * h - xoffset + 1,
+            if j <= yquarter * h  - 1:
+                for i in range(xquarter * h + 1, 3 * xquarter * h - 1):
+                    G[i, j] = 1 
+            elif j > 2 * yquarter * h - 1:
+                for i in range(h + 1, (x - 1) * h - 1):
+                    G[i, j] = 1
+            elif j >= yquarter * h and j < 2 * yquarter * h:
+                for i in range(xquarter * h - xoffset + 1,
                                3 * xquarter * h + xoffset - 1):
-                    G[j, i] = 1
-                if (i + 1) % h == 0:
+                    G[i, j] = 1
+                if (j + 1) % h == 0:
                     xoffset += h 
     return G
 
@@ -69,24 +69,24 @@ def build_box_widening(x, y, h, G, xquarter, yquarter):
 # Build a matrix according to the shrinkage geometry
 def build_box_shrinkage(x, y, h, G, xquarter, yquarter):
     xoffset = 0
-    for i in range(0, y * h):
-        if i < h:
-            for j in range(h + 1, (x - 1) * h - 1):
-                G[j, i] = 2
-        elif i >= (y - 1) * h:
-            for j in range(xquarter * h + 1, 3 * xquarter * h - 1):
-                G[j, i] = 3
+    for j in range(0, y * h):
+        if j < h:
+            for i in range(h + 1, (x - 1) * h - 1):
+                G[i, j] = 2
+        elif j >= (y - 1) * h:
+            for i in range(xquarter * h + 1, 3 * xquarter * h - 1):
+                G[i, j] = 3
         else:
-            if i <= yquarter * h - 1:
-                for j in range(h + 1, (x - 1) * h - 1):
-                    G[j, i] = 1 
-            elif i > 2 * yquarter * h - 1:
-                for j in range(xquarter * h + 1, 3 * xquarter * h - 1):
-                    G[j, i] = 1
-            elif i >= yquarter * h  and i < 2 * yquarter * h:
-                for j in range(h + xoffset + 1, (x - 1) * h - xoffset - 1):
-                    G[j, i] = 1
-                if (i + 1) % h == 0:
+            if j <= yquarter * h - 1:
+                for i in range(h + 1, (x - 1) * h - 1):
+                    G[i, j] = 1 
+            elif j > 2 * yquarter * h - 1:
+                for i in range(xquarter * h + 1, 3 * xquarter * h - 1):
+                    G[i, j] = 1
+            elif j >= yquarter * h  and j < 2 * yquarter * h:
+                for i in range(h + xoffset + 1, (x - 1) * h - xoffset - 1):
+                    G[i, j] = 1
+                if (j + 1) % h == 0:
                     xoffset += h 
     
     return G
@@ -99,24 +99,34 @@ def build_walls(x, y, h, G, ax):
     Y = np.linspace(0, y * h - 1, y * h)
     XX, YY = np.meshgrid(X, Y)
     
-    for i in range(0, y * h - 1):
-        for j in range(0, x * h - 1):
+    for j in range(0, y * h - 1):
+        for i in range(0, x * h - 1):
             if G[i, j] == 0:
                 # Builds a wall under the wall cells
                 if G[i + 1, j] != 0:
+                    if j == y * h - 2:
+                        ax.plot(XX[j][j:j + 2] + .5,
+                                YY[i][i:i + 2] + .5,
+                                ls='-', color='black')
+
                     ax.plot(XX[i][j:j + 2] - .5,
                             YY[i][i:i + 2] + .5,
                             ls='-', color='black')
 
                 # Builds a wall above the wall cells
                 if G[i - 1, j] != 0: 
+                    if j == y * h - 2:
+                        ax.plot(XX[j][j:j + 2] + .5,
+                                YY[i][i:i + 2] - .5,
+                                ls='-', color='black')
+
                     ax.plot(XX[i][j:j + 2] - .5,
                             YY[i][i:i + 2] - .5,
                             ls='-', color='black')
 
                 # Builds a wall to the right of the wall cells
                 if G[i, j + 1] != 0:
-                    if i == y * h - 2:
+                    if j == y * h - 2:
                         ax.plot(YY[j][j:j + 2] + .5,
                                 XX[i][i:i + 2] + .5,
                                 ls='-', color='black')
@@ -127,7 +137,7 @@ def build_walls(x, y, h, G, ax):
                
                 # Builds a wall to the left of the wall cells
                 if G[i, j - 1] != 0:
-                    if i == y * h - 2:
+                    if j == y * h - 2:
                         ax.plot(YY[j][j:j + 2] - .5,
                                 XX[i][i:i + 2] + .5,
                                 ls='-', color='black')
@@ -164,7 +174,6 @@ def build_cell_numbers(boxMatrix, x=12, y=12, h=1):
 # -----------------------------------------------------------------------------
 # Plots the matrix G and saves it
 def plot_matrices(x=12, y=12, h=1, geometry='straight'):
-    # Verification in case the input data is incorrect
     if x <= 0 or y <= 0 or h <= 0 or type(x) != int \
     or type(y) != int or type(h) != int:
         print("x, y and h must be positive integers")
