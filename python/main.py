@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Main program
 
 import numpy as np
@@ -15,7 +17,7 @@ geometry = 'straight'
 # Possible values are :
 #                       'straight'
 #                       'widening'
-#                       'shinkage'
+#                       'shrinkage'
 
 # Derivation method
 method = 'forward'
@@ -30,6 +32,5 @@ method = 'forward'
 # fc.plot_matrices(x, y, h, geometry)
 # fc.plot_matrices(x, y, h, 'straight')
 # fc.plot_matrices(12, 12, h, 'shrinkage')
-# fc.plot_matrices(12, 12, h, 'widening')
+fc.plot_matrices(12, 12, h, 'widening')
 
-fc.plot_matrices(12, 12, 1, 'straight')

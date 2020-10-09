@@ -52,22 +52,27 @@ def build_box_widening(Nx, Ny, h, G, Nx_quarter, Ny_quarter):
         if j < h:
             for i in range(Nx * h // 4 + 1, 3 * Nx * h // 4 - 1):
                 G[i, j] = 2
+
         elif j >= (Ny - 1) * h:
-            for i in range(Nx + 1, (Nx - 1) * h - 1):
+            for i in range(h + 1, (Nx - 1) * h - 1):
                 G[i, j] = 3
+
         else:
             if j <= Ny_quarter * h  - 1:
                 for i in range(Nx_quarter * h + 1, 3 * Nx_quarter * h - 1):
                     G[i, j] = 1 
+            
             elif j > 2 * Ny_quarter * h - 1:
                 for i in range(h + 1, (Nx - 1) * h - 1):
                     G[i, j] = 1
+            
             elif j >= Ny_quarter * h and j < 2 * Ny_quarter * h:
                 for i in range(Nx_quarter * h - Nx_offset + 1,
                                3 * Nx_quarter * h + Nx_offset - 1):
                     G[i, j] = 1
                 if (j + 1) % h == 0:
                     Nx_offset += h 
+
     return G
 
 # -----------------------------------------------------------------------------
@@ -194,7 +199,7 @@ def build_matrix_a(M, G, cell):
         row = cell[i][1][0]
         column = cell[i][1][1]
 
-        if G[row, column] == 1 or G[row, column] == 2:
+        if G[row, column] == 1:
             cell_up = cell[i][1][0] - 1
             cell_down = cell[i][1][0] + 1
             cell_left = cell[i][1][1] - 1
@@ -221,6 +226,8 @@ def build_matrix_a(M, G, cell):
                 A[i, i] -= 1
                 A[i, M[row, cell_right] - 1] = 1
 
+        elif G[row, column] == 2:
+            A[i, i] = -1
         elif G[row, column] == 3:
             A[i, i] = 1
 
@@ -260,19 +267,21 @@ def plot_matrices(Nx=12, Ny=12, h=1, geometry='straight'):
     cell_link = cell_coords(G, Nx, Ny, h)
     A = build_matrix_a(M, G, cell_link)
     b = vector_b(G, M, cell_link)
-    x = solve(A, b)
-
+    x = solve(A, b, 2)
+    phi = matrix_phi(Nx, Ny, h, x, cell_link)
     # Print commands for testing purposes
+    print(G)
     # print(A)
-    print(b)
-    print(x)
+    # print(b)
+    # print(x)
+    print(phi)
     # print(M)
     # print(nx_derivative(x, M, G, cell_link, Nx, Ny, h, 'forward'))
     r = []
     for i in range(M.max()):
         r.append(x[i][0])
     # print(r)
-    print(np.gradient(r))
+    # print(np.gradient(r))
 
     #print(y_derivative(f, Nx, Ny, h, 'forward'))
     # Plots the box
@@ -291,86 +300,106 @@ def plot_matrices(Nx=12, Ny=12, h=1, geometry='straight'):
 # It is now or never !
 # -----------------------------------------------------------------------------
 # Solving the linear system of equation
-def solve(A, b):
-    return np.linalg.solve(A, b)
+def solve(A, b, rounding):
+    x = np.linalg.solve(A, b)
+    for i in range(len(x)):
+        x[i][0] = round(x[i][0], rounding)
+    return x
+
+
+# -----------------------------------------------------------------------------
+# Build matrix phi
+def matrix_phi(Nx, Ny, h, x, cell):
+    phi = np.zeros((Nx * h, Ny * h))
+    for i in range(len(cell)):
+        x_coords = cell[i][1][0]
+        y_coords = cell[i][1][1]
+        phi[x_coords, y_coords] = x[i]
+
+    return phi
 
 
 # -----------------------------------------------------------------------------
 # Gradient
 
+# -----------------------------------------------------------------------------
+# Derivative in x direction v2
+# def nx_derivative():
+
+
 
 # -----------------------------------------------------------------------------
 # Derivative functions in the x direction
-def nx_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
-    phi = np.zeros((len(x), 1))
+# def nx_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
+#     phi = np.zeros((len(x), 1))
     
-    for i in range(M.max()):
-        row = cell[i][1][0]
-        column = cell[i][1][1]
-        cell_up = cell[i][1][0] - 1
-        cell_down = cell[i][1][0] + 1
-        cell_left = cell[i][1][1] - 1
-        cell_right = cell[i][1][1] + 1
+#     for i in range(M.max()):
+#         row = cell[i][1][0]
+#         column = cell[i][1][1]
+#         cell_up = cell[i][1][0] - 1
+#         cell_down = cell[i][1][0] + 1
+#         cell_left = cell[i][1][1] - 1
+#         cell_right = cell[i][1][1] + 1
 
-        if G[row, column] == 1:
-            if G[cell_up, column] != 0 \
-            and G[cell_down, column] != 0 \
-            and G[row, cell_left] != 0 \
-            and G[row, cell_right] != 0:
-                if method == 'forward':
-                    phi[i, 0] = (-1) * (x[M[cell_down, column], 0] - \
-                                        x[M[row, column]]) / h
+#         if G[row, column] == 1:
+#             if G[cell_up, column] != 0 \
+#             and G[cell_down, column] != 0 \
+#             and G[row, cell_left] != 0 \
+#             and G[row, cell_right] != 0:
+#                 if method == 'forward':
+#                     phi[i, 0] = (-1) * (x[M[cell_down, column], 0] - \
+#                                         x[M[row, column]]) / h
 
-                elif method == 'backward':
-                    phi[i, 0] = (-1) * (x[M[row, column], 0] - \
-                                        x[M[cell_up, column]]) / h
+#                 elif method == 'backward':
+#                     phi[i, 0] = (-1) * (x[M[row, column], 0] - \
+#                                         x[M[cell_up, column]]) / h
 
-                elif method == 'centered_2h':
-                    phi[i, 0] = (-1) * (x[M[cell_down, column], 0] - \
-                                        x[M[cell_up, column]]) / (h * 2)
+#                 elif method == 'centered_2h':
+#                     phi[i, 0] = (-1) * (x[M[cell_down, column], 0] - \
+#                                         x[M[cell_up, column]]) / (h * 2)
 
-                # elif method == 'centered_h':
-                #     phi[i, 0] = (-1) * (x[M[cell_down - .5, column], 0] - \
-                #                         x[M[cell_up + .5, column]]) / h
+#                 # elif method == 'centered_h':
+#                 #     phi[i, 0] = (-1) * (x[M[cell_down - .5, column], 0] - \
+#                 #                         x[M[cell_up + .5, column]]) / h
 
-    return phi
+#     return phi
 
 
 # -----------------------------------------------------------------------------
 # Derivative functions in the y direction
-def ny_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
-    phi = np.zeros((len(x), 1))
+# def ny_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
+#     phi = np.zeros((len(x), 1))
     
-    for i in range(M.max()):
-        row = cell[i][1][0]
-        column = cell[i][1][1]
-        cell_up = cell[i][1][0] - 1
-        cell_down = cell[i][1][0] + 1
-        cell_left = cell[i][1][1] - 1
-        cell_right = cell[i][1][1] + 1
+#     for i in range(M.max()):
+#         row = cell[i][1][0]
+#         column = cell[i][1][1]
+#         cell_up = cell[i][1][0] - 1
+#         cell_down = cell[i][1][0] + 1
+#         cell_left = cell[i][1][1] - 1
+#         cell_right = cell[i][1][1] + 1
 
-        if G[row, column] == 1:
-            if G[cell_up, column] != 0 \
-            and G[cell_down, column] != 0 \
-            and G[row, cell_left] != 0 \
-            and G[row, cell_right] != 0:
-                if method == 'forward':
-                    phi[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
-                                        x[M[row, column]]) / h
+#         if G[row, column] == 1:
+#             if G[cell_up, column] != 0 \
+#             and G[cell_down, column] != 0 \
+#             and G[row, cell_left] != 0 \
+#             and G[row, cell_right] != 0:
+#                 if method == 'forward':
+#                     phi[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
+#                                         x[M[row, column]]) / h
 
-                elif method == 'backward':
-                    phi[i, 0] = (-1) * (x[M[row, column], 0] - \
-                                        x[M[row, cell_up]]) / h
+#                 elif method == 'backward':
+#                     phi[i, 0] = (-1) * (x[M[row, column], 0] - \
+#                                         x[M[row, cell_up]]) / h
 
-                elif method == 'centered_2h':
-                    phi[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
-                                        x[M[row, cell_up]]) / (h * 2)
+#                 elif method == 'centered_2h':
+#                     phi[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
+#                                         x[M[row, cell_up]]) / (h * 2)
 
-                # elif method == 'centered_h':
-                #     phi[i, 0] = (-1) * (x[M[row, cell_down - .5], 0] - \
-                #                         x[M[row, cell_up - .5]]) / h
+#                 # elif method == 'centered_h':
+#                 #     phi[i, 0] = (-1) * (x[M[row, cell_down - .5], 0] - \
+#                 #                         x[M[row, cell_up - .5]]) / h
 
-    return phi
+#     return phi
 
 
 # -----------------------------------------------------------------------------
@@ -382,15 +411,12 @@ def laplace(x, y):
 # -----------------------------------------------------------------------------
 # Neumann's boundary condition
 # THIS FUNCTION AND EVERY FUNCTIONS CALLED IN IT CAN BE SOURCE OF ERROR
-def neumann(f, x, y, h, axis):
-    if axis == 'x':
-        condition = f[x + 1, y] + h * x_derivative(f, x, y, h, 'forward')
+# def neumann(Nx, Ny, h, M, axis):
+#     for i in M:
 
-    elif axis == 'y':
-        condition = f[x, y + 1] + h * y_derivative(f, x, y, h, 'backward')
 
 
 # -----------------------------------------------------------------------------
 # Dirichlet's boundary condition
-def dirichlet(ref):
+def dirichlet():
     return ref
