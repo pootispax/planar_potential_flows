@@ -236,7 +236,7 @@ def build_matrix_a(M, G, cell):
 
 # -----------------------------------------------------------------------------
 # Builds vector b
-def vector_b(G, M, cell, inlet=5, outlet=6):
+def vector_b(G, M, cell, inlet=5, outlet=5):
     b = np.zeros((M.max(), 1))
 
     for i in range(M.max()):
@@ -257,7 +257,6 @@ def plot_matrices(Nx=12, Ny=12, h=1, geometry='straight'):
     or type(Ny) != int or type(h) != int:
         print("Nx, Ny and h must be positive integers")
         return 0
-
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     
@@ -266,24 +265,22 @@ def plot_matrices(Nx=12, Ny=12, h=1, geometry='straight'):
     M = build_cell_numbers(G, Nx, Ny, h)
     cell_link = cell_coords(G, Nx, Ny, h)
     A = build_matrix_a(M, G, cell_link)
-    b = vector_b(G, M, cell_link)
-    x = solve(A, b, 2)
-    phi = matrix_phi(Nx, Ny, h, x, cell_link)
+    b = vector_b(G, M, cell_link, 5, 5)
+    x = solve(A, b, 3)
+    grad = matrix_grad(Nx, Ny, h, x, cell_link)
+    contour(Nx, Ny, h, grad, 'green')
+
     # Print commands for testing purposes
-    print(G)
+    # print(G)
     # print(A)
     # print(b)
     # print(x)
-    print(phi)
     # print(M)
-    # print(nx_derivative(x, M, G, cell_link, Nx, Ny, h, 'forward'))
-    r = []
-    for i in range(M.max()):
-        r.append(x[i][0])
-    # print(r)
+    print(grad)
+    print(nx_derivative(x, M, G, cell_link, Nx, Ny, h, 'centered_2h'))
     # print(np.gradient(r))
-
     #print(y_derivative(f, Nx, Ny, h, 'forward'))
+    
     # Plots the box
     ax.imshow(G, cmap='coolwarm')
     
@@ -291,8 +288,18 @@ def plot_matrices(Nx=12, Ny=12, h=1, geometry='straight'):
     build_walls(Nx, Ny, h, G, ax)
     
     # Saving the figure
-    figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry, Nx, Ny, h)
+    # figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry, Nx, Ny, h)
+    figname = "../figures/{}_x={}_y={}.pdf".format(geometry, Nx, Ny)
     plt.savefig(figname)
+
+
+
+# -----------------------------------------------------------------------------
+# Plot potential contour
+def contour(Nx, Ny, h, grad, color):
+    X = np.linspace(0, Nx * h - 1, Nx * h)
+    Y = np.linspace(0, Ny * h - 1, Ny * h)
+    plt.contour(X, Y, grad, colors=color, linewidths=1)
 
 
 # -----------------------------------------------------------------------------
@@ -308,15 +315,15 @@ def solve(A, b, rounding):
 
 
 # -----------------------------------------------------------------------------
-# Build matrix phi
-def matrix_phi(Nx, Ny, h, x, cell):
-    phi = np.zeros((Nx * h, Ny * h))
+# Build matrix grad
+def matrix_grad(Nx, Ny, h, x, cell):
+    grad = np.zeros((Nx * h, Ny * h))
     for i in range(len(cell)):
         x_coords = cell[i][1][0]
         y_coords = cell[i][1][1]
-        phi[x_coords, y_coords] = x[i]
+        grad[x_coords, y_coords] = x[i]
 
-    return phi
+    return grad
 
 
 # -----------------------------------------------------------------------------
@@ -330,76 +337,85 @@ def matrix_phi(Nx, Ny, h, x, cell):
 
 # -----------------------------------------------------------------------------
 # Derivative functions in the x direction
-# def nx_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
-#     phi = np.zeros((len(x), 1))
+def nx_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
+    grad = []
     
-#     for i in range(M.max()):
-#         row = cell[i][1][0]
-#         column = cell[i][1][1]
-#         cell_up = cell[i][1][0] - 1
-#         cell_down = cell[i][1][0] + 1
-#         cell_left = cell[i][1][1] - 1
-#         cell_right = cell[i][1][1] + 1
+    for i in range(M.max()):
+        row = cell[i][1][0]
+        column = cell[i][1][1]
+        cell_up = cell[i][1][0] - 1
+        cell_down = cell[i][1][0] + 1
+        cell_left = cell[i][1][1] - 1
+        cell_right = cell[i][1][1] + 1
 
-#         if G[row, column] == 1:
-#             if G[cell_up, column] != 0 \
-#             and G[cell_down, column] != 0 \
-#             and G[row, cell_left] != 0 \
-#             and G[row, cell_right] != 0:
-#                 if method == 'forward':
-#                     phi[i, 0] = (-1) * (x[M[cell_down, column], 0] - \
-#                                         x[M[row, column]]) / h
+        if G[row, column] == 1:
+            if G[cell_up, column] != 0 \
+            and G[cell_down, column] != 0 \
+            and G[row, cell_left] != 0 \
+            and G[row, cell_right] != 0:
+                if method == 'forward':
+                    temp_x = (-1) * (x[M[cell_down, column], 0] - \
+                                        x[M[row, column]]) / h
+                    temp_y = (-1) * (x[M[row, cell_down], 0] - \
+                                        x[M[row, column]]) / h
+                    grad.append([temp_x[0], temp_y[0]])
 
-#                 elif method == 'backward':
-#                     phi[i, 0] = (-1) * (x[M[row, column], 0] - \
-#                                         x[M[cell_up, column]]) / h
+                elif method == 'backward':
+                    temp_x = (-1) * (x[M[row, column], 0] - \
+                                        x[M[cell_up, column]]) / h
+                    temp_y = (-1) * (x[M[row, column], 0] - \
+                                        x[M[row, cell_up]]) / h
+                    grad.append([temp_x[0], temp_y[0]])
 
-#                 elif method == 'centered_2h':
-#                     phi[i, 0] = (-1) * (x[M[cell_down, column], 0] - \
-#                                         x[M[cell_up, column]]) / (h * 2)
+                elif method == 'centered_2h':
+                    temp_x = (-1) * (x[M[cell_down, column], 0] - \
+                                        x[M[cell_up, column]]) / (h * 2)
+                    temp_y = (-1) * (x[M[row, cell_down], 0] - \
+                                        x[M[row, cell_up]]) / (h * 2)
+                    grad.append([temp_x[0], temp_y[0]])
 
-#                 # elif method == 'centered_h':
-#                 #     phi[i, 0] = (-1) * (x[M[cell_down - .5, column], 0] - \
-#                 #                         x[M[cell_up + .5, column]]) / h
-
-#     return phi
+                # elif method == 'centered_h':
+                #     grad[i, 0] = (-1) * (x[M[cell_down - .5, column], 0] - \
+                #                         x[M[cell_up + .5, column]]) / h
+    return grad
 
 
 # -----------------------------------------------------------------------------
 # Derivative functions in the y direction
-# def ny_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
-#     phi = np.zeros((len(x), 1))
+def ny_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
+    grad = np.zeros((len(x), 1))
     
-#     for i in range(M.max()):
-#         row = cell[i][1][0]
-#         column = cell[i][1][1]
-#         cell_up = cell[i][1][0] - 1
-#         cell_down = cell[i][1][0] + 1
-#         cell_left = cell[i][1][1] - 1
-#         cell_right = cell[i][1][1] + 1
+    for i in range(M.max()):
+        row = cell[i][1][0]
+        column = cell[i][1][1]
+        cell_up = cell[i][1][0] - 1
+        cell_down = cell[i][1][0] + 1
+        cell_left = cell[i][1][1] - 1
+        cell_right = cell[i][1][1] + 1
 
-#         if G[row, column] == 1:
-#             if G[cell_up, column] != 0 \
-#             and G[cell_down, column] != 0 \
-#             and G[row, cell_left] != 0 \
-#             and G[row, cell_right] != 0:
-#                 if method == 'forward':
-#                     phi[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
-#                                         x[M[row, column]]) / h
+        if G[row, column] == 1:
+            if G[cell_up, column] != 0 \
+            and G[cell_down, column] != 0 \
+            and G[row, cell_left] != 0 \
+            and G[row, cell_right] != 0:
+                if method == 'forward':
+                    grad[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
+                                        x[M[row, column]]) / h
 
-#                 elif method == 'backward':
-#                     phi[i, 0] = (-1) * (x[M[row, column], 0] - \
-#                                         x[M[row, cell_up]]) / h
+                elif method == 'backward':
+                    grad[i, 0] = (-1) * (x[M[row, column], 0] - \
+                                        x[M[row, cell_up]]) / h
 
-#                 elif method == 'centered_2h':
-#                     phi[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
-#                                         x[M[row, cell_up]]) / (h * 2)
 
-#                 # elif method == 'centered_h':
-#                 #     phi[i, 0] = (-1) * (x[M[row, cell_down - .5], 0] - \
-#                 #                         x[M[row, cell_up - .5]]) / h
+                elif method == 'centered_2h':
+                    grad[i, 0] = (-1) * (x[M[row, cell_down], 0] - \
+                                        x[M[row, cell_up]]) / (h * 2)
 
-#     return phi
+                # elif method == 'centered_h':
+                #     grad[i, 0] = (-1) * (x[M[row, cell_down - .5], 0] - \
+                #                         x[M[row, cell_up - .5]]) / h
+
+    return grad
 
 
 # -----------------------------------------------------------------------------
