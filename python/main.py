@@ -29,8 +29,8 @@ method = 'forward'
 #                       'second'
 
 
-# fc.plot_matrices(x, y, h, geometry)
-fc.plot_matrices(x, y, h, 'widening')
-# fc.plot_matrices(12, 12, h, 'shrinkage')
-# fc.plot_matrices(12, 12, h, 'widening')
+fc.build_plot(x, y, h, geometry)
+# fc.build_plot(x, y, h, 'widening')
+# fc.build_plot(12, 12, h, 'shrinkage')
+# fc.build_plot(12, 12, h, 'widening')
 

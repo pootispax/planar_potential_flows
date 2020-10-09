@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 ########## FIRST PART ##########
 # The program starts by building all needed objects
 
-# This function builds a squared matrix of size x * y
+# This function builds a squared matrix of size Nx * Ny
 # h represents the size of a cell
 def build_box(Nx=12, Ny=12, h=1, geometry='straight'):
     G = np.zeros((Nx * h, Ny * h))
@@ -38,16 +38,19 @@ def build_box_straight(Nx, Ny, h, G, Nx_quarter, Ny_quarter):
         elif j >=(Nx - 1) * h:
             for i in range(Nx_quarter * h + 1, 3 * Nx_quarter * h  - 1):
                 G[i, j] = 3
-    
+
         else:
             for i in range(Nx_quarter * h + 1, 3 * Nx_quarter * h - 1):
                 G[i, j] = 1
+
     return G
+
 
 # -----------------------------------------------------------------------------
 # Build a matrix according to the widening geometry
 def build_box_widening(Nx, Ny, h, G, Nx_quarter, Ny_quarter):
-    Nx_offset = 0
+    offset = 0
+
     for j in range(0, Ny * h):
         if j < h:
             for i in range(Nx * h // 4 + 1, 3 * Nx * h // 4 - 1):
@@ -61,43 +64,49 @@ def build_box_widening(Nx, Ny, h, G, Nx_quarter, Ny_quarter):
             if j <= Ny_quarter * h  - 1:
                 for i in range(Nx_quarter * h + 1, 3 * Nx_quarter * h - 1):
                     G[i, j] = 1 
-            
+
             elif j > 2 * Ny_quarter * h - 1:
                 for i in range(h + 1, (Nx - 1) * h - 1):
                     G[i, j] = 1
-            
+
             elif j >= Ny_quarter * h and j < 2 * Ny_quarter * h:
-                for i in range(Nx_quarter * h - Nx_offset + 1,
-                               3 * Nx_quarter * h + Nx_offset - 1):
+                for i in range(Nx_quarter * h - offset + 1,
+                               3 * Nx_quarter * h + offset - 1):
                     G[i, j] = 1
                 if (j + 1) % h == 0:
-                    Nx_offset += h 
+                    offset += h 
 
     return G
+
 
 # -----------------------------------------------------------------------------
 # Build a matrix according to the shrinkage geometry
 def build_box_shrinkage(Nx, Ny, h, G, Nx_quarter, Ny_quarter):
-    Nx_offset = 0
+    offset = 0
+
     for j in range(0, Ny * h):
         if j < h:
             for i in range(h + 1, (Nx - 1) * h - 1):
                 G[i, j] = 2
+
         elif j >= (Ny - 1) * h:
             for i in range(Nx_quarter * h + 1, 3 * Nx_quarter * h - 1):
                 G[i, j] = 3
+
         else:
             if j <= Ny_quarter * h - 1:
                 for i in range(h + 1, (Nx - 1) * h - 1):
-                    G[i, j] = 1 
+                    G[i, j] = 1
+
             elif j > 2 * Ny_quarter * h - 1:
                 for i in range(Nx_quarter * h + 1, 3 * Nx_quarter * h - 1):
                     G[i, j] = 1
+
             elif j >= Ny_quarter * h  and j < 2 * Ny_quarter * h:
-                for i in range(h + Nx_offset + 1, (Nx - 1) * h - Nx_offset - 1):
+                for i in range(h + offset + 1, (Nx - 1) * h - offset - 1):
                     G[i, j] = 1
                 if (j + 1) % h == 0:
-                    Nx_offset += h 
+                    offset += h 
     
     return G
 
@@ -159,33 +168,32 @@ def build_walls(Nx, Ny, h, G, ax):
 
 # -----------------------------------------------------------------------------
 # Builds the matrix M containing each cell number
-def build_cell_numbers(boxMatrix, Nx, Ny, h):
-    Nx_sized = Nx * h
-    Ny_sized = Ny * h
-    M = np.zeros((Nx_sized, Ny_sized))
-    indent = 1
+def build_matrix_m(G, Nx, Ny, h):
+    M = np.zeros((Nx * h, Ny * h))
+    count = 1
 
-    for j in range(0, Nx_sized):
-        for i in range(0, Ny_sized):
-            if boxMatrix[i, j] != 0:
-                M[i, j] = indent
-                indent += 1
+    for j in range(0, Nx * h):
+        for i in range(0, Ny * h):
+            if G[i, j] != 0:
+                M[i, j] = count
+                count += 1
 
-    M = M.astype(int) # Convert each cell of the matrix to an int
+    M = M.astype(int)
 
     return M
 
 
 # -----------------------------------------------------------------------------
 # Builds array cell 
-def cell_coords(G, Nx, Ny, h):
+def build_cell_coords(G, Nx, Ny, h):
     coords_matrix = []
-    indent = 1
+    count = 1
+
     for j in range(0, Ny * h):
         for i in range(0, Nx * h):
             if G[i, j] != 0:
-                coords_matrix.append((indent, (i, j)))
-                indent += 1
+                coords_matrix.append((count, (i, j)))
+                count += 1
 
     return coords_matrix
 
@@ -215,7 +223,7 @@ def build_matrix_a(M, G, cell):
             if G[cell_down, column] != 0 and cell_down <= M.max():
                 A[i, i] -= 1
                 A[i, M[cell_down, column] - 1] = 1
-        
+
             # Cell on the left
             if G[row, cell_left] != 0 and cell_left >= 0:
                 A[i, i] -= 1
@@ -236,7 +244,7 @@ def build_matrix_a(M, G, cell):
 
 # -----------------------------------------------------------------------------
 # Builds vector b
-def vector_b(G, M, cell, inlet=5, outlet=5):
+def build_vector_b(G, M, cell, inlet, outlet):
     b = np.zeros((M.max(), 1))
 
     for i in range(M.max()):
@@ -245,30 +253,47 @@ def vector_b(G, M, cell, inlet=5, outlet=5):
 
         elif G[cell[i][1][0], cell[i][1][1]] == 3:
             b[i, 0] = outlet
-    
+
     return b.astype(int)
 
 
 # -----------------------------------------------------------------------------
-# Plots the matrix G and saves it
-def plot_matrices(Nx=12, Ny=12, h=1, geometry='straight'):
+# Plots the different needed matrixes
+def build_plot(Nx=12, Ny=12, h=1, geometry='straight'):
     # Prevents unwanted input for Nx, Ny and h
     if Nx <= 0 or Ny <= 0 or h <= 0 or type(Nx) != int \
     or type(Ny) != int or type(h) != int:
         print("Nx, Ny and h must be positive integers")
         return 0
+
+    # Builds all the needed objects for the base plot
+    G = build_box(Nx, Ny, h, geometry)
+    M = build_matrix_m(G, Nx, Ny, h)
+    cell_coords = build_cell_coords(G, Nx, Ny, h)
+
+    # Starting the plot
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    
-    # Builds all the needed objects
-    G = build_box(Nx, Ny, h, geometry)
-    M = build_cell_numbers(G, Nx, Ny, h)
-    cell_link = cell_coords(G, Nx, Ny, h)
-    A = build_matrix_a(M, G, cell_link)
-    b = vector_b(G, M, cell_link, 5, 5)
-    x = solve(A, b, 3)
-    grad = matrix_grad(Nx, Ny, h, x, cell_link)
-    contour(Nx, Ny, h, grad, 'green')
+
+    # Plots the box
+    ax.imshow(G, cmap='coolwarm')
+
+    # Plots the walls
+    build_walls(Nx, Ny, h, G, ax)
+
+    # Builds the elements for the linear solving
+    A = build_matrix_a(M, G, cell_coords)
+    b = build_vector_b(G, M, cell_coords, 5, 5)
+    x = solve(A, b)
+
+
+    grad = matrix_grad(Nx, Ny, h, x, cell_coords)
+    plot_contour(Nx, Ny, h, grad, 'green')
+
+    # Saving the figure
+    # figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry, Nx, Ny, h)
+    figname = "../figures/{}_x={}_y={}.pdf".format(geometry, Nx, Ny)
+    plt.savefig(figname)
 
     # Print commands for testing purposes
     # print(G)
@@ -276,27 +301,18 @@ def plot_matrices(Nx=12, Ny=12, h=1, geometry='straight'):
     # print(b)
     # print(x)
     # print(M)
-    print(grad)
-    print(nx_derivative(x, M, G, cell_link, Nx, Ny, h, 'centered_2h'))
+    # print(grad)
     # print(np.gradient(r))
-    #print(y_derivative(f, Nx, Ny, h, 'forward'))
+    # print(y_derivative(f, Nx, Ny, h, 'forward'))
+
+
     
-    # Plots the box
-    ax.imshow(G, cmap='coolwarm')
-    
-    # Plots the walls
-    build_walls(Nx, Ny, h, G, ax)
-    
-    # Saving the figure
-    # figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry, Nx, Ny, h)
-    figname = "../figures/{}_x={}_y={}.pdf".format(geometry, Nx, Ny)
-    plt.savefig(figname)
 
 
 
 # -----------------------------------------------------------------------------
 # Plot potential contour
-def contour(Nx, Ny, h, grad, color):
+def plot_contour(Nx, Ny, h, grad, color):
     X = np.linspace(0, Nx * h - 1, Nx * h)
     Y = np.linspace(0, Ny * h - 1, Ny * h)
     plt.contour(X, Y, grad, colors=color, linewidths=1)
@@ -307,10 +323,9 @@ def contour(Nx, Ny, h, grad, color):
 # It is now or never !
 # -----------------------------------------------------------------------------
 # Solving the linear system of equation
-def solve(A, b, rounding):
+def solve(A, b):
     x = np.linalg.solve(A, b)
-    for i in range(len(x)):
-        x[i][0] = round(x[i][0], rounding)
+
     return x
 
 
@@ -337,7 +352,7 @@ def matrix_grad(Nx, Ny, h, x, cell):
 
 # -----------------------------------------------------------------------------
 # Derivative functions in the x direction
-def nx_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
+def gradient(x, M, G, cell, Nx, Ny, h, method='forward'):
     grad = []
     
     for i in range(M.max()):
@@ -421,18 +436,12 @@ def ny_derivative(x, M, G, cell, Nx, Ny, h, method='forward'):
 # -----------------------------------------------------------------------------
 # Laplace equation
 
-def laplace(x, y):
-    return (f[x - 1, y] + f[x + 1, y] + f[x, y - 1] + f[x, y + 1]) / 4
+
 
 # -----------------------------------------------------------------------------
 # Neumann's boundary condition
-# THIS FUNCTION AND EVERY FUNCTIONS CALLED IN IT CAN BE SOURCE OF ERROR
-# def neumann(Nx, Ny, h, M, axis):
-#     for i in M:
 
 
 
 # -----------------------------------------------------------------------------
 # Dirichlet's boundary condition
-def dirichlet():
-    return ref
