@@ -3,7 +3,7 @@ from parameters import *
 
 
 class Matrices:
-    
+
     def __init__(self):
 
         self.Nx_quarter = Nx // 4
@@ -223,7 +223,7 @@ class Matrices:
     # -------------------------------------------------------------------------
     # Build the matrix M
     def build_phi(self, cell):
-        
+
         x = np.linalg.solve(self.A, self.b)
         phi = np.zeros((Nx * h, Ny * h))
 

@@ -15,7 +15,7 @@ data_check()
 # Builds the different objects needed
 matrices = Matrices()
 buildplots = BuildPlots()
-buildplots.plot_things(matrices.G, matrices.phi, 'green')
+buildplots.plot(matrices.G, matrices.phi, 'green')
 
 # print(matrices.G)
 # print(matrices.M)

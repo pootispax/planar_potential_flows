@@ -1,3 +1,5 @@
+# Class used to plot different things
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,7 +9,7 @@ from matrices import *
 class BuildPlots():
 
 
-    def plot_things(self, G, phi, color):
+    def plot(self, G, phi, color):
 
         matrices = Matrices()
         fig = plt.figure()
