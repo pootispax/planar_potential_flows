@@ -258,7 +258,7 @@ def build_vector_b(G, M, cell, inlet, outlet):
 
 
 # -----------------------------------------------------------------------------
-# Plots the different needed matrixes
+# Plots the different needed objects
 def build_plot(Nx=12, Ny=12, h=1, geometry='straight'):
     # Prevents unwanted input for Nx, Ny and h
     if Nx <= 0 or Ny <= 0 or h <= 0 or type(Nx) != int \
