@@ -11,9 +11,8 @@ class Matrices:
         self.G = self.build_g()
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
-        self.A = self.build_a()
-        self.b = self.build_b()
-        self.phi = self.build_phi(self.cell_coords)
+        self.phi = self.build_phi()
+        self.grad = self.build_gradient()
 
 
     def build_g(self):
@@ -222,14 +221,57 @@ class Matrices:
 
     # -------------------------------------------------------------------------
     # Build the matrix M
-    def build_phi(self, cell):
+    def build_phi(self):
 
-        x = np.linalg.solve(self.A, self.b)
+        x = np.linalg.solve(self.build_a(), self.build_b())
         phi = np.zeros((Nx * h, Ny * h))
 
         for i in range(len(self.cell_coords)):
-            x_coords = self.cell_coords[i][1][0]
-            y_coords = self.cell_coords[i][1][1]
-            phi[x_coords, y_coords] = x[i]
+            row = self.cell_coords[i][1][0]
+            column = self.cell_coords[i][1][1]
+            phi[row, column] = x[i]
 
         return phi
+
+    # -------------------------------------------------------------------------
+    # Build the gradient of phi
+    def build_gradient(self):
+
+        grad = np.zeros((Nx * h, Ny * h))
+
+        for i in range(self.M.max()):
+            cell_count = 4
+            row = self.cell_coords[i][1][0]
+            column = self.cell_coords[i][1][1]
+
+            if self.G[row, column] == 1:
+                cell_up = self.cell_coords[i][1][0] - 1
+                cell_down = self.cell_coords[i][1][0] + 1
+                cell_left = self.cell_coords[i][1][1] - 1
+                cell_right = self.cell_coords[i][1][1] + 1
+
+                if self.G[cell_up, column] == 0:
+                    cell_up = 0
+                    cell_count -= 1
+
+                if self.G[cell_down, column] == 0:
+                    cell_down = 0
+                    cell_count -= 1
+
+                if self.G[row, cell_left] == 0:
+                    cell_left = 0
+                    cell_count -= 1
+
+                if self.G[row, cell_right] == 0:
+                    cell_right = 0
+                    cell_count -= 1
+
+                grad[row, column] = (self.phi[cell_up, column]
+                                     + self.phi[cell_down, column]
+                                     + self.phi[row, cell_left]
+                                     + self.[row, cell_right]) // cell_count
+
+            elif self.G[row, column] == 0:
+                grad[row, column] = 0
+
+        return grad

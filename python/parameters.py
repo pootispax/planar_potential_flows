@@ -6,7 +6,7 @@ import sys
 # The matrix must be square
 Nx = 12
 Ny = 12
-h = 4
+h = 1
 
 # Set the geometry of the problem
 # Possible values are :

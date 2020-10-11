@@ -81,7 +81,8 @@ class BuildPlots():
                                 XX[i][i:i + 2] - .5,
                                 ls='-', color='black')
 
-
+    # -------------------------------------------------------------------------
+    # Plots the contour
     def plot_contour(self, phi, color):
         X = np.linspace(0, Nx * h - 1, Nx * h)
         Y = np.linspace(0, Ny * h - 1, Ny * h)
