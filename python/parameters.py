@@ -15,7 +15,7 @@ h = 1
 #                       'shrinkage'
 geometry = 'widening'
 inlet = 10
-outlet = 10
+outlet = 5
 
 
 # Checks the data

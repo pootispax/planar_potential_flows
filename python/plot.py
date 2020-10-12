@@ -9,16 +9,22 @@ from matrices import *
 class BuildPlots():
 
 
-    def plot(self, G, phi, color):
+    def plot(self, G, phi, grad, color):
 
         matrices = Matrices()
         fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        ax.xaxis.tick_top()
+        ax1 = fig.add_subplot(1, 2, 1)
+        ax2 = fig.add_subplot(1, 2, 2)
+        ax1.xaxis.tick_top()
+        ax2.xaxis.tick_top()
 
-        ax.imshow(matrices.G, cmap='coolwarm')
-        self.build_walls(ax, G)
-        self.plot_contour(phi, color)
+        ax1.imshow(matrices.G, cmap='coolwarm')
+        ax2.imshow(matrices.G, cmap='coolwarm')
+        self.build_walls(ax1, G)
+        self.build_walls(ax2, G)
+        self.plot_contour(ax1, phi, color)
+        self.plot_contour(ax2, grad, color)
+
 
         # Saving the figure
         figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry,
@@ -83,7 +89,7 @@ class BuildPlots():
 
     # -------------------------------------------------------------------------
     # Plots the contour
-    def plot_contour(self, phi, color):
+    def plot_contour(self, ax, phi, color):
         X = np.linspace(0, Nx * h - 1, Nx * h)
         Y = np.linspace(0, Ny * h - 1, Ny * h)
-        plt.contour(X, Y, phi, colors=color, linewidths=1)
+        ax.contour(X, Y, phi, colors=color, linewidths=1)

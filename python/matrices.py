@@ -12,7 +12,8 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        self.grad = self.build_gradient()
+        # self.grad = self.build_gradient() # Own function
+        self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
 
 
     def build_g(self):
@@ -223,7 +224,9 @@ class Matrices:
     # Build the matrix M
     def build_phi(self):
 
-        x = np.linalg.solve(self.build_a(), self.build_b())
+        A = self.build_a()
+        b = self.build_b()
+        x = np.linalg.solve(A, b)
         phi = np.zeros((Nx * h, Ny * h))
 
         for i in range(len(self.cell_coords)):
@@ -269,9 +272,12 @@ class Matrices:
                 grad[row, column] = (self.phi[cell_up, column]
                                      + self.phi[cell_down, column]
                                      + self.phi[row, cell_left]
-                                     + self.[row, cell_right]) // cell_count
+                                     + self.phi[row, cell_right]) // cell_count
 
             elif self.G[row, column] == 0:
                 grad[row, column] = 0
 
         return grad
+
+    # def build_numpy_gradient(self):
+
