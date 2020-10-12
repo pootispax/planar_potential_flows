@@ -21,6 +21,6 @@ buildplots.plot(matrices.G, matrices.phi, matrices.grad, 'green')
 # print(matrices.M)
 # print(matrices.cell_coords)
 # print(matrices.A)
-print(matrices.phi)
-print(matrices.grad)
+# print(matrices.phi)
+# print(matrices.grad)
 

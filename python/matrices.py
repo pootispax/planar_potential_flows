@@ -12,7 +12,7 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        self.grad = self.build_gradient() # Own function
+        self.grad = self.normalize() # Own function
         # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
 
 
@@ -167,33 +167,29 @@ class Matrices:
             column = self.cell_coords[i][1][1]
 
             if self.G[row, column] == 1:
-                cell_up = self.cell_coords[i][1][0] - 1
-                cell_down = self.cell_coords[i][1][0] + 1
-                cell_left = self.cell_coords[i][1][1] - 1
-                cell_right = self.cell_coords[i][1][1] + 1
 
                 # Checks the walls around the cell
                 # Cell above
-                if self.G[cell_up, column] != 0 and cell_up >= 0:
+                if self.G[row - 1, column] != 0 and row - 1 >= 0:
                     A[i, i] -= 1
-                    A[i, self.M[cell_up, column] - 1] = 1
+                    A[i, self.M[row - 1, column] - 1] = 1
 
                 # Cell under
-                if self.G[cell_down, column] != 0\
-                and cell_down <= self.M.max():
+                if self.G[row + 1, column] != 0\
+                and row + 1 <= self.M.max():
                     A[i, i] -= 1
-                    A[i, self.M[cell_down, column] - 1] = 1
+                    A[i, self.M[row + 1, column] - 1] = 1
 
                 # Cell on the left
-                if self.G[row, cell_left] != 0 and cell_left >= 0:
+                if self.G[row, column - 1] != 0 and column - 1 >= 0:
                     A[i, i] -= 1
-                    A[i, self.M[row, cell_left] - 1] = 1
+                    A[i, self.M[row, column - 1] - 1] = 1
 
                 # Cell on the right
-                if self.G[row, cell_right] != 0\
-                and cell_right <= self.M.max():
+                if self.G[row, column + 1] != 0\
+                and column + 1 <= self.M.max():
                     A[i, i] -= 1
-                    A[i, self.M[row, cell_right] - 1] = 1
+                    A[i, self.M[row, column + 1] - 1] = 1
 
             elif self.G[row, column] == 2:
                 A[i, i] = -1
@@ -250,15 +246,12 @@ class Matrices:
             column = self.cell_coords[i][1][1]
 
             if self.G[row, column] == 1:
-                cell_up = self.cell_coords[i][1][0] - 1
-                cell_down = self.cell_coords[i][1][0] + 1
-                cell_left = self.cell_coords[i][1][1] - 1
-                cell_right = self.cell_coords[i][1][1] + 1
 
-                grad_x[row, column] = (self.M[row, cell_right]
-                                       - self.M[row, cell_left]) // (2 * h)
-                grad_y[row, column] = (self.M[cell_down, column]
-                                       - self.M[cell_up, column]) // (2 * h)
+                grad_x[row, column] = (self.M[row, column + 1]
+                                       - self.M[row, column - 1]) / (2 * h)
+                grad_y[row, column] = (self.M[row + 1, column]
+                                       - self.M[row - 1, column]) / (2 * h)
+
 
             elif self.G[row, column] == 0:
                 grad_x[row, column] = 0
@@ -269,5 +262,53 @@ class Matrices:
 
         return grad
 
-    # def build_numpy_gradient(self):
+
+    # -------------------------------------------------------------------------
+    # Gradient, numpy version
+    def build_gradient_numpy(self):
+
+        grad = np.gradient(self.phi)
+
+        for j in range(Nx * h):
+            for i in range(Nx * h):
+                if self.G[i, j] == 0:
+                    grad[0][i, j] = 0
+                    grad[1][i, j] = 0
+
+        return grad
+
+
+    # -------------------------------------------------------------------------
+    # Normalization of the vectors
+    def normalize(self):
+
+        grad = self.build_gradient_numpy()
+        grad_norm = (grad[0]**2 + grad[1]**2)**.5
+
+        return grad / grad_norm
+
+    # -------------------------------------------------------------------------
+    # Neumann's condition
+    def neumann(self):
+
+        grad = self.build_gradient()
+
+        for i in range(self.M.max()):
+            row = self.cell_coords[i][1][0]
+            column = self.cell_coords[i][1][1]
+
+            if self.G[row, column] == 1:
+                cell_up = self.cell_coords[i][1][0] - 1
+                cell_down = self.cell_coords[i][1][0] + 1
+                cell_left = self.cell_coords[i][1][1] - 1
+                cell_right = self.cell_coords[i][1][1] + 1
+
+                if self.G[cell_down, column] == 0\
+                or self.G[cell_up, column] == 0\
+                or self.G[row, cell_left] == 0\
+                or self.G[row, cell_right] == 0:
+                    grad[0][row, column] = 0
+                    grad[1][row, column] = 0
+
+        return grad
 

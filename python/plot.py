@@ -13,21 +13,25 @@ class BuildPlots():
 
         matrices = Matrices()
         fig = plt.figure()
-        ax1 = fig.add_subplot(1, 2, 1)
-        ax2 = fig.add_subplot(1, 2, 2)
+        ax1 = fig.add_subplot(2, 2, 1)
+        ax2 = fig.add_subplot(2, 2, 2)
+        ax3 = fig.add_subplot(2, 2, 3)
         ax1.xaxis.tick_top()
         ax2.xaxis.tick_top()
+        ax3.xaxis.tick_top()
 
         ax1.imshow(matrices.G, cmap='coolwarm')
         ax2.imshow(matrices.G, cmap='coolwarm')
+        ax3.imshow(matrices.G, cmap='coolwarm')
         self.build_walls(ax1, G)
         self.build_walls(ax2, G)
-        self.plot_contour(ax1, phi, color)
+        self.build_walls(ax3, G)
 
-        # Normalization of the vectors
-        r = (grad[0]**2 + grad[1]**2)**.5
-        
-        ax2.quiver(grad[0] / r, grad[1] / r)
+        self.plot_contour(ax1, phi, color)
+        ax2.quiver(grad[1], grad[0])
+        ax3.streamplot(np.linspace(0, Nx * h - 1, Nx * h),
+                       np.linspace(0, Ny * h - 1, Ny * h),
+                       grad[1], grad[0], linewidth=.75, arrowsize=.75)
 
 
         # Saving the figure
@@ -96,4 +100,4 @@ class BuildPlots():
     def plot_contour(self, ax, phi, color):
         X = np.linspace(0, Nx * h - 1, Nx * h)
         Y = np.linspace(0, Ny * h - 1, Ny * h)
-        ax.contour(X, Y, phi, colors=color, linewidths=1)
+        ax.contour(X, Y, phi, colors=color, linewidths=.75)

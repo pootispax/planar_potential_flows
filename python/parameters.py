@@ -6,16 +6,16 @@ import sys
 # The matrix must be square
 Nx = 12
 Ny = 12
-h = 1
+h = 5
 
 # Set the geometry of the problem
 # Possible values are :
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
-geometry = 'shrinkage'
+geometry = 'straight'
 inlet = 10
-outlet = 5
+outlet = 10
 
 
 # Checks the data
