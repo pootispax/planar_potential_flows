@@ -13,7 +13,7 @@ h = 1
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
-geometry = 'widening'
+geometry = 'shrinkage'
 inlet = 10
 outlet = 5
 

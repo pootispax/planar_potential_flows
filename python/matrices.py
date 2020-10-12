@@ -12,8 +12,8 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        # self.grad = self.build_gradient() # Own function
-        self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
+        self.grad = self.build_gradient() # Own function
+        # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
 
 
     def build_g(self):
@@ -240,10 +240,12 @@ class Matrices:
     # Build the gradient of phi
     def build_gradient(self):
 
-        grad = np.zeros((Nx * h, Ny * h))
+        grad_x = np.zeros((Nx * h, Ny * h))
+        grad_y = np.zeros((Nx * h, Ny * h))
+        grad = []
 
         for i in range(self.M.max()):
-            cell_count = 4
+            cell_count_x = 2
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
 
@@ -253,29 +255,17 @@ class Matrices:
                 cell_left = self.cell_coords[i][1][1] - 1
                 cell_right = self.cell_coords[i][1][1] + 1
 
-                if self.G[cell_up, column] == 0:
-                    cell_up = 0
-                    cell_count -= 1
-
-                if self.G[cell_down, column] == 0:
-                    cell_down = 0
-                    cell_count -= 1
-
-                if self.G[row, cell_left] == 0:
-                    cell_left = 0
-                    cell_count -= 1
-
-                if self.G[row, cell_right] == 0:
-                    cell_right = 0
-                    cell_count -= 1
-
-                grad[row, column] = (self.phi[cell_up, column]
-                                     + self.phi[cell_down, column]
-                                     + self.phi[row, cell_left]
-                                     + self.phi[row, cell_right]) // cell_count
+                grad_x[row, column] = (self.M[row, cell_right]
+                                       - self.M[row, cell_left]) // (2 * h)
+                grad_y[row, column] = (self.M[cell_down, column]
+                                       - self.M[cell_up, column]) // (2 * h)
 
             elif self.G[row, column] == 0:
-                grad[row, column] = 0
+                grad_x[row, column] = 0
+                grad_y[row, column] = 0
+
+        grad.append(grad_x)
+        grad.append(grad_y)
 
         return grad
 

@@ -23,7 +23,11 @@ class BuildPlots():
         self.build_walls(ax1, G)
         self.build_walls(ax2, G)
         self.plot_contour(ax1, phi, color)
-        self.plot_contour(ax2, grad, color)
+
+        # Normalization of the vectors
+        r = (grad[0]**2 + grad[1]**2)**.5
+        
+        ax2.quiver(grad[0] / r, grad[1] / r)
 
 
         # Saving the figure
