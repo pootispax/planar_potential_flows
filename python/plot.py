@@ -3,15 +3,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from parameters import *
-from matrices import *
+import matrices as m
+from parameters import Nx, Ny, h, geometry
+
 
 class BuildPlots():
 
-
     def plot(self, G, phi, grad, color):
 
-        matrices = Matrices()
+        matrices = m.Matrices()
         fig = plt.figure()
         ax1 = fig.add_subplot(2, 2, 1)
         ax2 = fig.add_subplot(2, 2, 2)
@@ -33,7 +33,6 @@ class BuildPlots():
                        np.linspace(0, Ny * h - 1, Ny * h),
                        grad[1], grad[0], linewidth=.75, arrowsize=.75)
 
-
         # Saving the figure
         figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry,
                                                             Nx, Ny, h)
@@ -47,7 +46,7 @@ class BuildPlots():
         X = np.linspace(0, Nx * h - 1, Nx * h)
         Y = np.linspace(0, Ny * h - 1, Ny * h)
         XX, YY = np.meshgrid(X, Y)
-        
+
         for j in range(0, Ny * h - 1):
             for i in range(0, Nx * h - 1):
                 if G[i, j] == 0:
@@ -63,7 +62,7 @@ class BuildPlots():
                                 ls='-', color='black')
 
                     # Builds a wall above the wall cells
-                    if G[i - 1, j] != 0: 
+                    if G[i - 1, j] != 0:
                         if j == Ny * h - 2:
                             ax.plot(XX[j][j:j + 2] + .5,
                                     YY[i][i:i + 2] - .5,
@@ -81,16 +80,16 @@ class BuildPlots():
                                     ls='-', color='black')
 
                         ax.plot(YY[j][j:j + 2] + .5,
-                                XX[i][i:i + 2] - .5 ,
+                                XX[i][i:i + 2] - .5,
                                 ls='-', color='black')
-                   
+
                     # Builds a wall to the left of the wall cells
                     if G[i, j - 1] != 0:
                         if j == Ny * h - 2:
                             ax.plot(YY[j][j:j + 2] - .5,
                                     XX[i][i:i + 2] + .5,
                                     ls='-', color='black')
-     
+
                         ax.plot(YY[j][j:j + 2] - .5,
                                 XX[i][i:i + 2] - .5,
                                 ls='-', color='black')

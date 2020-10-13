@@ -2,19 +2,15 @@
 
 # Main program
 
-import numpy as np
-import matplotlib.pyplot as plt
+import matrices as m
+import plot as p
+import data_check as dc
 
-from parameters import *
-from matrices import *
-from plot import *
-
-
-data_check()
+dc.data_check()
 
 # Builds the different objects needed
-matrices = Matrices()
-buildplots = BuildPlots()
+matrices = m.Matrices()
+buildplots = p.BuildPlots()
 buildplots.plot(matrices.G, matrices.phi, matrices.grad, 'green')
 
 # print(matrices.G)
@@ -23,4 +19,3 @@ buildplots.plot(matrices.G, matrices.phi, matrices.grad, 'green')
 # print(matrices.A)
 # print(matrices.phi)
 # print(matrices.grad)
-

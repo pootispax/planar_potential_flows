@@ -1,5 +1,5 @@
 import numpy as np
-from parameters import *
+from parameters import Nx, Ny, h, geometry, inlet, outlet
 
 
 class Matrices:
@@ -12,9 +12,8 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        self.grad = self.normalize() # Own function
+        self.grad = self.normalize()  # Own function
         # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
-
 
     def build_g(self):
 
@@ -29,7 +28,6 @@ class Matrices:
         elif geometry == 'shrinkage':
             return self.build_g_shrinkage(G).astype(int)
 
-
     # -------------------------------------------------------------------------
     # Build a matrix according to the straight geometry
     def build_g_straight(self, G):
@@ -40,9 +38,9 @@ class Matrices:
                                3 * self.Nx_quarter * h - 1):
                     G[i, j] = 2
 
-            elif j >=(Nx - 1) * h:
+            elif j >= (Nx - 1) * h:
                 for i in range(self.Nx_quarter * h + 1,
-                               3 * self.Nx_quarter * h  - 1):
+                               3 * self.Nx_quarter * h - 1):
                     G[i, j] = 3
 
             else:
@@ -51,7 +49,6 @@ class Matrices:
                     G[i, j] = 1
 
         return G
-
 
     # -------------------------------------------------------------------------
     # Build a matrix according to the widening geometry
@@ -69,10 +66,10 @@ class Matrices:
                     G[i, j] = 3
 
             else:
-                if j <= self.Ny_quarter * h  - 1:
+                if j <= self.Ny_quarter * h - 1:
                     for i in range(self.Nx_quarter * h + 1,
                                    3 * self.Nx_quarter * h - 1):
-                        G[i, j] = 1 
+                        G[i, j] = 1
 
                 elif j > 2 * self.Ny_quarter * h - 1:
                     for i in range(h + 1, (Nx - 1) * h - 1):
@@ -83,10 +80,9 @@ class Matrices:
                                    3 * self.Nx_quarter * h + offset - 1):
                         G[i, j] = 1
                     if (j + 1) % h == 0:
-                        offset += h 
+                        offset += h
 
         return G
-
 
     # -------------------------------------------------------------------------
     # Build a matrix according to the shrinkage geometry
@@ -114,12 +110,12 @@ class Matrices:
                                    3 * self.Nx_quarter * h - 1):
                         G[i, j] = 1
 
-                elif j >= self.Ny_quarter * h  and j < 2 * self.Ny_quarter * h:
+                elif j >= self.Ny_quarter * h and j < 2 * self.Ny_quarter * h:
                     for i in range(h + offset + 1, (Nx - 1) * h - offset - 1):
                         G[i, j] = 1
                     if (j + 1) % h == 0:
-                        offset += h 
-        
+                        offset += h
+
         return G
 
     # -------------------------------------------------------------------------
@@ -139,7 +135,6 @@ class Matrices:
 
         return M
 
-
     # -------------------------------------------------------------------------
     # Builds the array_cell list to link each cell to its coordinates
     def build_cell_coords(self, G):
@@ -154,7 +149,6 @@ class Matrices:
                     count += 1
 
         return cell_coords
-
 
     # -------------------------------------------------------------------------
     # Builds the matrix A
@@ -175,8 +169,7 @@ class Matrices:
                     A[i, self.M[row - 1, column] - 1] = 1
 
                 # Cell under
-                if self.G[row + 1, column] != 0\
-                and row + 1 <= self.M.max():
+                if self.G[row + 1, column] != 0 and row + 1 <= self.M.max():
                     A[i, i] -= 1
                     A[i, self.M[row + 1, column] - 1] = 1
 
@@ -186,8 +179,7 @@ class Matrices:
                     A[i, self.M[row, column - 1] - 1] = 1
 
                 # Cell on the right
-                if self.G[row, column + 1] != 0\
-                and column + 1 <= self.M.max():
+                if self.G[row, column + 1] != 0 and column + 1 <= self.M.max():
                     A[i, i] -= 1
                     A[i, self.M[row, column + 1] - 1] = 1
 
@@ -197,7 +189,6 @@ class Matrices:
                 A[i, i] = 1
 
         return A.astype(int)
-
 
     # -------------------------------------------------------------------------
     # Builds the vector b
@@ -241,7 +232,6 @@ class Matrices:
         grad = []
 
         for i in range(self.M.max()):
-            cell_count_x = 2
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
 
@@ -252,7 +242,6 @@ class Matrices:
                 grad_y[row, column] = (self.M[row + 1, column]
                                        - self.M[row - 1, column]) / (2 * h)
 
-
             elif self.G[row, column] == 0:
                 grad_x[row, column] = 0
                 grad_y[row, column] = 0
@@ -261,7 +250,6 @@ class Matrices:
         grad.append(grad_y)
 
         return grad
-
 
     # -------------------------------------------------------------------------
     # Gradient, numpy version
@@ -276,7 +264,6 @@ class Matrices:
                     grad[1][i, j] = 0
 
         return grad
-
 
     # -------------------------------------------------------------------------
     # Normalization of the vectors
@@ -303,12 +290,12 @@ class Matrices:
                 cell_left = self.cell_coords[i][1][1] - 1
                 cell_right = self.cell_coords[i][1][1] + 1
 
-                if self.G[cell_down, column] == 0\
-                or self.G[cell_up, column] == 0\
-                or self.G[row, cell_left] == 0\
-                or self.G[row, cell_right] == 0:
+                if \
+                    self.G[cell_down, column] == 0 \
+                    or self.G[cell_up, column] == 0 \
+                    or self.G[row, cell_left] == 0 \
+                        or self.G[row, cell_right] == 0:
                     grad[0][row, column] = 0
                     grad[1][row, column] = 0
 
         return grad
-
