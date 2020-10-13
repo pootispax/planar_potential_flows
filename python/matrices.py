@@ -1,5 +1,5 @@
 import numpy as np
-from parameters import Nx, Ny, h, geometry, inlet, outlet
+from parameters import Nx, Ny, h, geometry, inlet, outlet, neumann
 
 
 class Matrices:
@@ -12,7 +12,7 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        self.grad = self.normalize()  # Own function
+        self.grad = self.neumann()  # Own function
         # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
 
     def build_g(self):
@@ -269,7 +269,7 @@ class Matrices:
     # Normalization of the vectors
     def normalize(self):
 
-        grad = self.build_gradient_numpy()
+        grad = np.gradient(self.phi)
         grad_norm = (grad[0]**2 + grad[1]**2)**.5
 
         return grad / grad_norm
@@ -279,7 +279,6 @@ class Matrices:
     def neumann(self):
 
         grad = self.build_gradient()
-
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
@@ -295,7 +294,13 @@ class Matrices:
                     or self.G[cell_up, column] == 0 \
                     or self.G[row, cell_left] == 0 \
                         or self.G[row, cell_right] == 0:
-                    grad[0][row, column] = 0
-                    grad[1][row, column] = 0
+                    grad[0][row, column] = neumann
+                    grad[1][row, column] = neumann
 
         return grad
+
+    # -------------------------------------------------------------------------
+    # Pressure field
+    #def pressure_field(self):
+
+

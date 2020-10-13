@@ -5,13 +5,17 @@
 # The matrix must be square
 Nx = 12
 Ny = 12
-h = 5
+h = 1
 
 # Set the geometry of the problem
 # Possible values are :
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
-geometry = 'straight'
+geometry = 'shrinkage'
 inlet = 10
 outlet = 10
+
+# Value for neumann condition
+neumann = 0
+dirichlet = 0

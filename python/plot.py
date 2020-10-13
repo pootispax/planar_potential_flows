@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import matrices as m
 from parameters import Nx, Ny, h, geometry
 
+np.seterr(divide='ignore', invalid='ignore')
+
 
 class BuildPlots():
 
