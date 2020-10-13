@@ -1,5 +1,5 @@
 import numpy as np
-from parameters import Nx, Ny, h, geometry, inlet, outlet, neumann
+from parameters import Nx, Ny, h, geometry, inlet, outlet
 
 
 class Matrices:
@@ -12,7 +12,8 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        self.grad = self.neumann()  # Own function
+        self.grad = self.normalize()  # Own function
+        self.neumann = self.neumann()
         # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
 
     def build_g(self):
@@ -278,29 +279,27 @@ class Matrices:
     # Neumann's condition
     def neumann(self):
 
-        grad = self.build_gradient()
+        phi = self.phi
+
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
+            print(i, row, column)
 
-            if self.G[row, column] == 1:
-                cell_up = self.cell_coords[i][1][0] - 1
-                cell_down = self.cell_coords[i][1][0] + 1
-                cell_left = self.cell_coords[i][1][1] - 1
-                cell_right = self.cell_coords[i][1][1] + 1
+            if self.G[row + 1, column] == 0 and row != Nx * h:
+                phi[row, column] = self.grad[0][row, column]
 
-                if \
-                    self.G[cell_down, column] == 0 \
-                    or self.G[cell_up, column] == 0 \
-                    or self.G[row, cell_left] == 0 \
-                        or self.G[row, cell_right] == 0:
-                    grad[0][row, column] = neumann
-                    grad[1][row, column] = neumann
+            if self.G[row - 1, column] == 0 and row != 0:
+                phi[row, column] == self.grad[0][row, column]
 
-        return grad
+            if self.G[row, column + 1] == 0 and column != Ny * h:
+                phi[row, column] = self.grad[0][row, column]
+
+            if self.G[row, column - 1] == 0 and column != 0:
+                phi[row, column] = self.grad[0][row, column]
+
+        return phi
 
     # -------------------------------------------------------------------------
     # Pressure field
-    #def pressure_field(self):
-
-
+    # def pressure_field(self):
