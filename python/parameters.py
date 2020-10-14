@@ -12,10 +12,13 @@ h = 1
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
-geometry = 'shrinkage'
+geometry = 'straight'
 inlet = 10
 outlet = 10
 
 # Value for neumann condition
 neumann = 0
 dirichlet = 0
+
+pressure_init = 1
+rho = 1

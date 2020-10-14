@@ -1,5 +1,5 @@
 import numpy as np
-from parameters import Nx, Ny, h, geometry, inlet, outlet
+from parameters import Nx, Ny, h, geometry, inlet, outlet, pressure_init, rho
 
 
 class Matrices:
@@ -13,8 +13,9 @@ class Matrices:
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
         self.grad = self.normalize()  # Own function
-        self.neumann = self.neumann()
+        self.phi_neumann = self.neumann()
         # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
+        self.pressure = self.pressure_field()
 
     def build_g(self):
 
@@ -279,27 +280,51 @@ class Matrices:
     # Neumann's condition
     def neumann(self):
 
-        phi = self.phi
+        phi_neumann = self.build_phi()
 
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
+            norm_vel = np.sqrt(self.grad[0][row, column]**2
+                               + self.grad[1][row, column])
             print(i, row, column)
+            print(self.cell_coords[i])
+            print(self.G[row, column])
 
-            if self.G[row + 1, column] == 0 and row != Nx * h:
-                phi[row, column] = self.grad[0][row, column]
+            if self.G[row, column] == 1:
+                if self.G[row + 1, column] == 0 and row <= Nx * h:
+                    phi_neumann[row, column] = norm_vel
 
-            if self.G[row - 1, column] == 0 and row != 0:
-                phi[row, column] == self.grad[0][row, column]
+                elif self.G[row - 1, column] == 0 and row >= 0:
+                    phi_neumann[row, column] = norm_vel
 
-            if self.G[row, column + 1] == 0 and column != Ny * h:
-                phi[row, column] = self.grad[0][row, column]
+                elif self.G[row, column + 1] == 0 and column <= Ny * h:
+                    phi_neumann[row, column] = norm_vel
 
-            if self.G[row, column - 1] == 0 and column != 0:
-                phi[row, column] = self.grad[0][row, column]
+                elif self.G[row, column - 1] == 0 and column >= 0:
+                    phi_neumann[row, column] = norm_vel
 
-        return phi
+            elif self.G[row, column] == 0:
+                phi_neumann[row, column] = 0
+
+        return phi_neumann
 
     # -------------------------------------------------------------------------
     # Pressure field
-    # def pressure_field(self):
+    def pressure_field(self):
+
+        pressure = np.zeros((Nx * h, Ny * h))
+        norm_vel_init = np.sqrt(self.grad[0][self.cell_coords[0][1][0],
+                                             self.cell_coords[0][1][1]]**2
+                                + self.grad[1][self.cell_coords[0][1][0],
+                                               self.cell_coords[0][1][1]])
+        pressure_cst = pressure_init + rho * norm_vel_init**2 / 2
+
+        for i in range(self.M.max()):
+            row = self.cell_coords[i][1][0]
+            column = self.cell_coords[i][1][1]
+            norm_vel = np.sqrt(self.grad[0][row, column]**2
+                               + self.grad[1][row, column])
+            pressure[row, column] = pressure_cst - rho * norm_vel**2 / 2
+
+        return pressure

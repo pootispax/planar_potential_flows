@@ -15,25 +15,24 @@ class BuildPlots():
 
         matrices = m.Matrices()
         fig = plt.figure()
+
         ax1 = fig.add_subplot(2, 2, 1)
         ax2 = fig.add_subplot(2, 2, 2)
         ax3 = fig.add_subplot(2, 2, 3)
-        ax1.xaxis.tick_top()
-        ax2.xaxis.tick_top()
-        ax3.xaxis.tick_top()
-
-        ax1.imshow(matrices.G, cmap='coolwarm')
-        ax2.imshow(matrices.G, cmap='coolwarm')
-        ax3.imshow(matrices.G, cmap='coolwarm')
-        self.build_walls(ax1, G)
-        self.build_walls(ax2, G)
-        self.build_walls(ax3, G)
+        ax4 = fig.add_subplot(2, 2, 4)
+        ax_list = [ax1, ax2, ax3, ax4]
+        
+        for i in ax_list:
+            i.xaxis.tick_top()
+            i.imshow(matrices.G, cmap='coolwarm')
+            self.build_walls(i, G)
 
         self.plot_contour(ax1, phi, color)
         ax2.quiver(grad[1], grad[0])
         ax3.streamplot(np.linspace(0, Nx * h - 1, Nx * h),
                        np.linspace(0, Ny * h - 1, Ny * h),
                        grad[1], grad[0], linewidth=.75, arrowsize=.75)
+        self.plot_contour(ax4, matrices.pressure, color)
 
         # Saving the figure
         figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry,
