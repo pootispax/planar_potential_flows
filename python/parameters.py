@@ -5,7 +5,7 @@
 # The matrix must be square
 Nx = 12
 Ny = 12
-h = 1
+h = 5
 
 # Set the geometry of the problem
 # Possible values are :
