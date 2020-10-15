@@ -321,13 +321,10 @@ class Matrices:
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
-            
+
             if self.G[row, column] != 2 and self.G[row, column] != 3:
                 norm_vel = np.sqrt(self.grad[0][row, column]**2
-                                + self.grad[1][row, column])
+                                   + self.grad[1][row, column]**2)
                 pressure[row, column] = pressure_cst - rho * norm_vel**2 / 2
-                # print(pressure[row, column])
-
-        np.savetxt("pressure.dat", pressure, fmt='1%2f')
 
         return pressure

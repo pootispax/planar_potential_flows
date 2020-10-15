@@ -15,6 +15,7 @@ h = 1
 geometry = 'widening'
 inlet = 10
 outlet = 10
+isopotential_number = 30
 
 # Value for neumann condition
 neumann = 0

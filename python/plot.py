@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import matrices as m
-from parameters import Nx, Ny, h, geometry
+from parameters import Nx, Ny, h, geometry, isopotential_number
 
 np.seterr(divide='ignore', invalid='ignore')
 
@@ -35,8 +35,8 @@ class BuildPlots():
         self.plot_contour(ax4, matrices.pressure, color)
 
         # Saving the figure
-        figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry,
-                                                            Nx, Ny, h)
+        # figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry,
+        #                                                     Nx, Ny, h)
         figname = "../figures/{}_x={}_y={}.pdf".format(geometry, Nx, Ny)
         plt.savefig(figname)
 
@@ -98,6 +98,11 @@ class BuildPlots():
     # -------------------------------------------------------------------------
     # Plots the contour
     def plot_contour(self, ax, phi, color):
-        X = np.linspace(0, Nx * h - 1, Nx * h)
-        Y = np.linspace(0, Ny * h - 1, Ny * h)
-        ax.contour(X, Y, phi, colors=color, linewidths=.75)
+
+        for j in range(Ny * h):
+            for i in range(Nx * h):
+                if phi[i, j] == 0:
+                    phi[i, j] = np.nan
+
+        ax.contour(phi, levels=isopotential_number,
+                   colors=color, linewidths=.75)
