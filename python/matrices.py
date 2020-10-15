@@ -272,7 +272,7 @@ class Matrices:
     def normalize(self):
 
         grad = np.gradient(self.phi)
-        grad_norm = (grad[0]**2 + grad[1]**2)**.5
+        grad_norm = np.sqrt(grad[0]**2 + grad[1]**2)
 
         return grad / grad_norm
 
@@ -310,7 +310,8 @@ class Matrices:
     # Pressure field
     def pressure_field(self):
 
-        # Compute isobars
+        # pressure is the norm of the vector at each point
+        # pressure_vec is the pressure vector (x and y coordinates)
         pressure = np.zeros((Nx * h, Ny * h))
         pressure_vec_x = np.zeros((Nx * h, Ny * h))
         pressure_vec_y = np.zeros((Nx * h, Ny * h))
@@ -334,8 +335,10 @@ class Matrices:
 
                 pressure_vec_x[row, column] = pressure_cst - rho * vx**2 / 2
                 pressure_vec_y[row, column] = pressure_cst - rho * vy**2 / 2
-        
+
         pressure_vec.append(pressure_vec_x)
         pressure_vec.append(pressure_vec_y)
+        pressure_vec = pressure_vec / np.sqrt(pressure_vec_x**2
+                                              + pressure_vec_y**2)
 
         return pressure, pressure_vec

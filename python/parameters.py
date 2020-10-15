@@ -3,8 +3,8 @@
 
 # x and y must be above 7 and divisible by 4
 # The matrix must be square
-Nx = 12
-Ny = 12
+Nx = 24
+Ny = 24
 h = 1
 
 # Set the geometry of the problem
@@ -12,7 +12,7 @@ h = 1
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
-geometry = 'widening'
+geometry = 'shrinkage'
 inlet = 10
 outlet = 10
 isopotential_number = 30

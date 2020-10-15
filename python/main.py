@@ -20,5 +20,8 @@ buildplots.plot(matrices.G, matrices.phi_neumann, matrices.grad, 'green')
 # print(matrices.A)
 # print(matrices.phi)
 np.savetxt('phi.dat', matrices.phi, fmt='%1.2f')
+np.savetxt('pressure_x.dat', matrices.pressure[1][0], fmt='%1.1f')
+np.savetxt('pressure_y.dat', matrices.pressure[1][1], fmt='%1.1f')
+
 # print(matrices.grad)
 print(matrices.pressure[1])
