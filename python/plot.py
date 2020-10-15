@@ -21,7 +21,7 @@ class BuildPlots():
         ax3 = fig.add_subplot(2, 2, 3)
         ax4 = fig.add_subplot(2, 2, 4)
         ax_list = [ax1, ax2, ax3, ax4]
-        
+
         for i in ax_list:
             i.xaxis.tick_top()
             i.imshow(matrices.G, cmap='coolwarm')
