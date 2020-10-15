@@ -3,8 +3,8 @@
 
 # x and y must be above 7 and divisible by 4
 # The matrix must be square
-Nx = 60
-Ny = 60
+Nx = 12
+Ny = 12
 h = 1
 
 # Set the geometry of the problem
