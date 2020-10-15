@@ -310,21 +310,32 @@ class Matrices:
     # Pressure field
     def pressure_field(self):
 
+        # Compute isobars
         pressure = np.zeros((Nx * h, Ny * h))
+        pressure_vec_x = np.zeros((Nx * h, Ny * h))
+        pressure_vec_y = np.zeros((Nx * h, Ny * h))
+        pressure_vec = []
+
         norm_vel_init = np.sqrt(self.grad[0][self.cell_coords[0][1][0],
                                              self.cell_coords[0][1][1]]**2
                                 + self.grad[1][self.cell_coords[0][1][0],
                                                self.cell_coords[0][1][1]]**2)
         pressure_cst = pressure_init + rho * norm_vel_init**2 / 2
-        print(pressure_cst)
 
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
-
+            vx = self.grad[0][row, column]
+            vy = self.grad[1][row, column]
             if self.G[row, column] != 2 and self.G[row, column] != 3:
                 norm_vel = np.sqrt(self.grad[0][row, column]**2
                                    + self.grad[1][row, column]**2)
                 pressure[row, column] = pressure_cst - rho * norm_vel**2 / 2
 
-        return pressure
+                pressure_vec_x[row, column] = pressure_cst - rho * vx**2 / 2
+                pressure_vec_y[row, column] = pressure_cst - rho * vy**2 / 2
+        
+        pressure_vec.append(pressure_vec_x)
+        pressure_vec.append(pressure_vec_y)
+
+        return pressure, pressure_vec
