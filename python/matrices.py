@@ -287,9 +287,6 @@ class Matrices:
             column = self.cell_coords[i][1][1]
             norm_vel = np.sqrt(self.grad[0][row, column]**2
                                + self.grad[1][row, column])
-            print(i, row, column)
-            print(self.cell_coords[i])
-            print(self.G[row, column])
 
             if self.G[row, column] == 1:
                 if self.G[row + 1, column] == 0 and row <= Nx * h:
@@ -319,6 +316,7 @@ class Matrices:
                                 + self.grad[1][self.cell_coords[0][1][0],
                                                self.cell_coords[0][1][1]])
         pressure_cst = pressure_init + rho * norm_vel_init**2 / 2
+        print(pressure_cst)
 
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
@@ -326,5 +324,6 @@ class Matrices:
             norm_vel = np.sqrt(self.grad[0][row, column]**2
                                + self.grad[1][row, column])
             pressure[row, column] = pressure_cst - rho * norm_vel**2 / 2
+            # print(pressure[row, column])
 
         return pressure
