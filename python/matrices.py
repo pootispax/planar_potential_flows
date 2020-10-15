@@ -17,6 +17,8 @@ class Matrices:
         # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
         self.pressure = self.pressure_field()
 
+    # -------------------------------------------------------------------------
+    # Calls the different functions to build the matrix G
     def build_g(self):
 
         G = np.zeros((Nx * h, Ny * h))
@@ -317,11 +319,17 @@ class Matrices:
         pressure_vec_y = np.zeros((Nx * h, Ny * h))
         pressure_vec = []
 
-        norm_vel_init = np.sqrt(self.grad[0][self.cell_coords[0][1][0],
+        norm_vel_init = np.sqrt(self.grad[1][self.cell_coords[0][1][0],
                                              self.cell_coords[0][1][1]]**2
-                                + self.grad[1][self.cell_coords[0][1][0],
+                                + self.grad[0][self.cell_coords[0][1][0],
                                                self.cell_coords[0][1][1]]**2)
         pressure_cst = pressure_init + rho * norm_vel_init**2 / 2
+        pressure_cst_x = pressure_init + rho\
+            * self.grad[1][self.cell_coords[0][1][0],
+                           self.cell_coords[0][1][1]]**2 / 2
+        pressure_cst_y = pressure_init + rho\
+            * self.grad[0][self.cell_coords[0][1][0],
+                           self.cell_coords[0][1][1]]**2 / 2
 
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
@@ -333,8 +341,8 @@ class Matrices:
                                    + self.grad[1][row, column]**2)
                 pressure[row, column] = pressure_cst - rho * norm_vel**2 / 2
 
-                pressure_vec_x[row, column] = pressure_cst - rho * vx**2 / 2
-                pressure_vec_y[row, column] = pressure_cst - rho * vy**2 / 2
+                pressure_vec_x[row, column] = pressure_cst_x - rho * vx**2 / 2
+                pressure_vec_y[row, column] = pressure_cst_y - rho * vy**2 / 2
 
         pressure_vec.append(pressure_vec_x)
         pressure_vec.append(pressure_vec_y)

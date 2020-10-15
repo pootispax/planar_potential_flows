@@ -24,4 +24,4 @@ np.savetxt('pressure_x.dat', matrices.pressure[1][0], fmt='%1.1f')
 np.savetxt('pressure_y.dat', matrices.pressure[1][1], fmt='%1.1f')
 
 # print(matrices.grad)
-print(matrices.pressure[1])
+# print(matrices.pressure[1])
