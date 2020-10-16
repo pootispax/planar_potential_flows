@@ -12,7 +12,7 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        self.grad = self.build_gradient()  # Own function
+        self.grad = self.build_gradient()
         self.phi_neumann = self.neumann()
         self.pressure = self.pressure_field()
 
