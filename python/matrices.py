@@ -9,8 +9,8 @@ class Matrices:
         self.Nx_quarter = Nx // 4
         self.Ny_quarter = Ny // 4
         self.G = self.build_g()
-        self.M = self.build_m(self.G)
-        self.cell_coords = self.build_cell_coords(self.G)
+        self.M = self.build_m()
+        self.cell_coords = self.build_cell_coords()
         self.phi = self.build_phi()
         self.grad = self.build_gradient()
         self.phi_neumann = self.neumann()
@@ -123,7 +123,7 @@ class Matrices:
 
     # -------------------------------------------------------------------------
     # Builds the matrix M to link each coordinates tp the associated cell
-    def build_m(self, G):
+    def build_m(self):
 
         M = np.zeros((Nx * h, Ny * h))
         count = 1
@@ -140,7 +140,7 @@ class Matrices:
 
     # -------------------------------------------------------------------------
     # Builds the array_cell list to link each cell to its coordinates
-    def build_cell_coords(self, G):
+    def build_cell_coords(self):
 
         cell_coords = []
         count = 1
