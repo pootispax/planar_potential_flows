@@ -33,7 +33,7 @@ class BuildPlots():
                        np.linspace(0, Ny * h - 1, Ny * h),
                        grad[1], grad[0], linewidth=.75, arrowsize=.75)
         # self.plot_contour(ax4, matrices.pressure[0], color)
-        ax4.quiver(matrices.pressure[1][0], matrices.pressure[1][1])
+        ax4.quiver(matrices.pressure[0], matrices.pressure[1])
 
         # Saving the figure
         # figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry,

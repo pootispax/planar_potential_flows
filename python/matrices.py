@@ -15,7 +15,7 @@ class Matrices:
         self.grad = self.normalize()  # Own function
         self.phi_neumann = self.neumann()
         # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
-        self.pressure = self.pressure_field()
+        self.pressure = self.pressure_correct()
 
     # -------------------------------------------------------------------------
     # Calls the different functions to build the matrix G
@@ -350,3 +350,31 @@ class Matrices:
                                               + pressure_vec_y**2)
 
         return pressure, pressure_vec
+
+    def pressure_correct(self):
+
+        pressure_vec_x = np.zeros((Nx * h, Ny * h))
+        pressure_vec_y = np.zeros((Nx * h, Ny * h))
+        pressure_vec = []
+
+        cst_x = pressure_init + rho \
+            * self.grad[1][self.cell_coords[0][1][0],
+                           self.cell_coords[0][1][1]]**2 / 2
+        cst_y = pressure_init + rho \
+            * self.grad[0][self.cell_coords[0][1][0],
+                           self.cell_coords[0][1][1]]**2 / 2
+
+        for i in range(self.M.max()):
+            row = self.cell_coords[i][1][0]
+            column = self.cell_coords[i][1][1]
+            vx = self.grad[1][row, column]
+            vy = self.grad[0][row, column]
+            v = np.sqrt(vx**2 + vy**2)
+
+            pressure_vec_x[row, column] = cst_x - rho * vx**2 / 2
+            pressure_vec_y[row, column] = cst_y - rho * vy**2 / 2
+
+        pressure_vec.append(pressure_vec_x)
+        pressure_vec.append(pressure_vec_y)
+
+        return pressure_vec
