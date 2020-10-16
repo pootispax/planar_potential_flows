@@ -12,12 +12,12 @@ h = 1
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
-geometry = 'shrinkage'
+geometry = 'widening'
 inlet = 10
 outlet = 10
 isopotential_number = 30
 
-# Value for neumann condition
+# Value for limit condition
 neumann = 0
 dirichlet = 0
 

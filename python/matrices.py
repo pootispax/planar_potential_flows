@@ -12,10 +12,9 @@ class Matrices:
         self.M = self.build_m(self.G)
         self.cell_coords = self.build_cell_coords(self.G)
         self.phi = self.build_phi()
-        self.grad = self.normalize()  # Own function
+        self.grad = self.build_gradient()  # Own function
         self.phi_neumann = self.neumann()
-        # self.grad = np.gradient(self.phi, 2) # Using numpy gradient function
-        self.pressure = self.pressure_correct()
+        self.pressure = self.pressure_field()
 
     # -------------------------------------------------------------------------
     # Calls the different functions to build the matrix G
@@ -231,50 +230,14 @@ class Matrices:
     # Build the gradient of phi
     def build_gradient(self):
 
-        grad_x = np.zeros((Nx * h, Ny * h))
-        grad_y = np.zeros((Nx * h, Ny * h))
-        grad = []
-
-        for i in range(self.M.max()):
-            row = self.cell_coords[i][1][0]
-            column = self.cell_coords[i][1][1]
-
-            if self.G[row, column] == 1:
-
-                grad_x[row, column] = (self.M[row, column + 1]
-                                       - self.M[row, column - 1]) / (2 * h)
-                grad_y[row, column] = (self.M[row + 1, column]
-                                       - self.M[row - 1, column]) / (2 * h)
-
-            elif self.G[row, column] == 0:
-                grad_x[row, column] = 0
-                grad_y[row, column] = 0
-
-        grad.append(grad_x)
-        grad.append(grad_y)
-
-        return grad
-
-    # -------------------------------------------------------------------------
-    # Gradient, numpy version
-    def build_gradient_numpy(self):
-
         grad = np.gradient(self.phi)
+        grad_norm = np.sqrt(grad[0]**2 + grad[1]**2)
 
         for j in range(Nx * h):
             for i in range(Nx * h):
                 if self.G[i, j] == 0:
-                    grad[0][i, j] = 0
-                    grad[1][i, j] = 0
-
-        return grad
-
-    # -------------------------------------------------------------------------
-    # Normalization of the vectors
-    def normalize(self):
-
-        grad = np.gradient(self.phi)
-        grad_norm = np.sqrt(grad[0]**2 + grad[1]**2)
+                    grad[0][i, j] = np.nan
+                    grad[1][i, j] = np.nan
 
         return grad / grad_norm
 
@@ -315,66 +278,20 @@ class Matrices:
         # pressure is the norm of the vector at each point
         # pressure_vec is the pressure vector (x and y coordinates)
         pressure = np.zeros((Nx * h, Ny * h))
-        pressure_vec_x = np.zeros((Nx * h, Ny * h))
-        pressure_vec_y = np.zeros((Nx * h, Ny * h))
-        pressure_vec = []
 
         norm_vel_init = np.sqrt(self.grad[1][self.cell_coords[0][1][0],
                                              self.cell_coords[0][1][1]]**2
                                 + self.grad[0][self.cell_coords[0][1][0],
                                                self.cell_coords[0][1][1]]**2)
         pressure_cst = pressure_init + rho * norm_vel_init**2 / 2
-        pressure_cst_x = pressure_init + rho\
-            * self.grad[1][self.cell_coords[0][1][0],
-                           self.cell_coords[0][1][1]]**2 / 2
-        pressure_cst_y = pressure_init + rho\
-            * self.grad[0][self.cell_coords[0][1][0],
-                           self.cell_coords[0][1][1]]**2 / 2
 
         for i in range(self.M.max()):
             row = self.cell_coords[i][1][0]
             column = self.cell_coords[i][1][1]
-            vx = self.grad[0][row, column]
-            vy = self.grad[1][row, column]
+
             if self.G[row, column] != 2 and self.G[row, column] != 3:
                 norm_vel = np.sqrt(self.grad[0][row, column]**2
                                    + self.grad[1][row, column]**2)
                 pressure[row, column] = pressure_cst - rho * norm_vel**2 / 2
 
-                pressure_vec_x[row, column] = pressure_cst_x - rho * vx**2 / 2
-                pressure_vec_y[row, column] = pressure_cst_y - rho * vy**2 / 2
-
-        pressure_vec.append(pressure_vec_x)
-        pressure_vec.append(pressure_vec_y)
-        pressure_vec = pressure_vec / np.sqrt(pressure_vec_x**2
-                                              + pressure_vec_y**2)
-
-        return pressure, pressure_vec
-
-    def pressure_correct(self):
-
-        pressure_vec_x = np.zeros((Nx * h, Ny * h))
-        pressure_vec_y = np.zeros((Nx * h, Ny * h))
-        pressure_vec = []
-
-        cst_x = pressure_init + rho \
-            * self.grad[1][self.cell_coords[0][1][0],
-                           self.cell_coords[0][1][1]]**2 / 2
-        cst_y = pressure_init + rho \
-            * self.grad[0][self.cell_coords[0][1][0],
-                           self.cell_coords[0][1][1]]**2 / 2
-
-        for i in range(self.M.max()):
-            row = self.cell_coords[i][1][0]
-            column = self.cell_coords[i][1][1]
-            vx = self.grad[1][row, column]
-            vy = self.grad[0][row, column]
-            v = np.sqrt(vx**2 + vy**2)
-
-            pressure_vec_x[row, column] = cst_x - rho * vx**2 / 2
-            pressure_vec_y[row, column] = cst_y - rho * vy**2 / 2
-
-        pressure_vec.append(pressure_vec_x)
-        pressure_vec.append(pressure_vec_y)
-
-        return pressure_vec
+        return pressure

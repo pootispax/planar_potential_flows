@@ -24,6 +24,7 @@ class BuildPlots():
 
         for i in ax_list:
             i.xaxis.tick_top()
+            # i.axis('off')
             i.imshow(matrices.G, cmap='coolwarm')
             self.build_walls(i, G)
 
@@ -32,9 +33,7 @@ class BuildPlots():
         ax3.streamplot(np.linspace(0, Nx * h - 1, Nx * h),
                        np.linspace(0, Ny * h - 1, Ny * h),
                        grad[1], grad[0], linewidth=.75, arrowsize=.75)
-        # self.plot_contour(ax4, matrices.pressure[0], color)
-        ax4.quiver(matrices.pressure[0], matrices.pressure[1])
-
+        self.plot_contour(ax4, matrices.pressure, color)
         # Saving the figure
         # figname = "../figures/{}_x={}_y={}_h={}.pdf".format(geometry,
         #                                                     Nx, Ny, h)
