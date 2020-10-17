@@ -15,6 +15,7 @@ class Matrices:
         self.grad = self.build_gradient()
         self.phi_neumann = self.neumann()
         self.pressure = self.pressure_field()
+        self.A = self.build_a()
 
     # -------------------------------------------------------------------------
     # Calls the different functions to build the matrix G
@@ -187,7 +188,22 @@ class Matrices:
                     A[i, self.M[row, column + 1] - 1] = 1
 
             elif self.G[row, column] == 2:
-                A[i, i] = -1
+
+                # Checks the walls around the cell
+                # Cell above
+                if self.G[row - 1, column] != 0 and row - 1 >= 0:
+                    A[i, i] -= 1
+                    A[i, self.M[row - 1, column] - 1] = 1
+
+                # Cell under
+                if self.G[row + 1, column] != 0 and row + 1 <= self.M.max():
+                    A[i, i] -= 1
+                    A[i, self.M[row + 1, column] - 1] = 1
+
+                # Cell on the right
+                if self.G[row, column + 1] != 0 and column + 1 <= self.M.max():
+                    A[i, i] -= 1
+                    A[i, self.M[row, column + 1] - 1] = 1
             elif self.G[row, column] == 3:
                 A[i, i] = 1
 
@@ -202,7 +218,7 @@ class Matrices:
         for i in range(self.M.max()):
             if self.G[self.cell_coords[i][1][0],
                       self.cell_coords[i][1][1]] == 2:
-                b[i, 0] = inlet
+                b[i, 0] = h * inlet
 
             elif self.G[self.cell_coords[i][1][0],
                         self.cell_coords[i][1][1]] == 3:
@@ -270,6 +286,10 @@ class Matrices:
                 phi_neumann[row, column] = 0
 
         return phi_neumann
+
+        # -------------------------------------------------------------------------
+
+        # -------------------------------------------------------------------------
 
     # -------------------------------------------------------------------------
     # Pressure field

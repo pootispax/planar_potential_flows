@@ -12,14 +12,17 @@ h = 1
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
-geometry = 'widening'
+geometry = 'shrinkage'
+
+# Values for limit condition
 inlet = 10
 outlet = 10
+
+# Number of isopotential lines to show
 isopotential_number = 30
 
-# Value for limit condition
-neumann = 0
-dirichlet = 0
-
+# Initial pressure at the inlet
 pressure_init = 1
+
+# Density of the fluid
 rho = 1
