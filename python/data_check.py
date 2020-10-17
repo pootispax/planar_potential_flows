@@ -12,7 +12,7 @@ def data_check():
             raise ValueError
     except ValueError:
         sys.exit('Nx must be a positive integer')
-    
+
     try:
         if type(Ny) != int or Ny < 0 or isinstance(Ny, complex):
             raise ValueError
