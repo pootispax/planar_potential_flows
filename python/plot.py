@@ -11,6 +11,22 @@ np.seterr(divide='ignore', invalid='ignore')
 
 class BuildPlots():
 
+    def temp(self, G):
+        matrices = m.Matrices()
+        fig = plt.figure()
+
+        ax1 = fig.add_subplot(1, 1, 1)
+        ax1.imshow(matrices.G, cmap='coolwarm', interpolation='bilinear')
+
+        X = np.linspace(0, Nx * h, Nx * h + 1)
+        Y = np.linspace(0, Ny * h, Ny * h + 1)
+        XX, YY = np.meshgrid(X, Y)
+        # ax1.plot(XX - .5, YY - .5, color='black')
+        # ax1.plot(YY - .5, XX - .5, color='black')
+
+        figname = "../figures/{}_x={}_y={}.pdf".format(geometry, Nx, Ny)
+        plt.savefig(figname)
+
     def plot(self, G, phi, grad, color):
 
         matrices = m.Matrices()
@@ -44,8 +60,8 @@ class BuildPlots():
     # Builds and plots the borders between walls and fluid cells
     def build_walls(self, ax, G):
 
-        X = np.linspace(0, Nx * h - 1, Nx * h)
-        Y = np.linspace(0, Ny * h - 1, Ny * h)
+        X = np.linspace(0, Nx * h, Nx * h + 1)
+        Y = np.linspace(0, Ny * h, Ny * h + 1)
         XX, YY = np.meshgrid(X, Y)
 
         for j in range(0, Ny * h - 1):

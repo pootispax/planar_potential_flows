@@ -12,4 +12,5 @@ dc.data_check()
 # Builds the different objects needed
 matrices = m.Matrices()
 buildplots = p.BuildPlots()
-buildplots.plot(matrices.G, matrices.phi_neumann, matrices.grad, 'green')
+buildplots.temp(matrices.G)
+# buildplots.plot(matrices.G, matrices.phi_neumann, matrices.grad, 'green')

@@ -32,6 +32,12 @@ class Matrices:
         elif geometry == 'shrinkage':
             return self.build_g_shrinkage(G).astype(int)
 
+        elif geometry == 'elbow':
+            return self.build_g_elbow(G).astype(int)
+
+        elif geometry == 'obstacle':
+            return self.build_g_obstacle(G).astype(int)
+
     # -------------------------------------------------------------------------
     # Build a matrix according to the straight geometry
     def build_g_straight(self, G):
@@ -93,8 +99,10 @@ class Matrices:
     def build_g_shrinkage(self, G):
 
         offset = 0
-
+        count = 0
         for j in range(0, Ny * h):
+            print(count)
+            count += 1
             if j < h:
                 for i in range(h + 1, (Nx - 1) * h - 1):
                     G[i, j] = 2
@@ -119,6 +127,58 @@ class Matrices:
                         G[i, j] = 1
                     if (j + 1) % h == 0:
                         offset += h
+
+        return G
+
+    # -------------------------------------------------------------------------
+    # Build a matrix according to the elbow geometry
+    def build_g_elbow(self, G):
+
+        for j in range(0, Ny * h):
+            if j < h:
+                for i in range(self.Nx_quarter * h + 1,
+                               3 * self.Nx_quarter * h - 1):
+                    G[i, j] = 2
+
+            elif j <= (Nx // 2 + 1) * h:
+                for i in range(self.Nx_quarter * h + 1,
+                               3 * self.Nx_quarter * h - 1):
+                    G[i, j] = 1
+            
+        for i in range(0, Nx * h):
+            if i >= (Nx - 1) * h:
+                for j in range((Ny // 2 - 2) * h, (Ny // 2 + 2) * h):
+                    G[i, j] = 3
+            elif i >= (Nx // 2) * h:
+                for j in range((Ny // 2 - 2) * h, (Ny // 2 + 2) * h):
+                    G[i, j] = 1
+
+        return G
+
+    # -------------------------------------------------------------------------
+    # Build a matrix according to the obstacle geometry
+    def build_g_obstacle(self, G):
+
+        for j in range(0, Ny * h):
+            if j < h:
+                for i in range(self.Nx_quarter * h - 1,
+                               3 * self.Nx_quarter * h + 1):
+                    G[i, j] = 2
+
+            elif j >= (Nx - 1) * h:
+                for i in range(self.Nx_quarter * h - 1,
+                               3 * self.Nx_quarter * h + 1):
+                    G[i, j] = 3
+
+            else:
+                for i in range(self.Nx_quarter * h - 1,
+                               3 * self.Nx_quarter * h + 1):
+                    G[i, j] = 1
+
+        for j in range(self.Ny_quarter + 1, 2 * self.Ny_quarter + 1):
+            for i in range(self.Nx_quarter * h + 1,
+                           3 * self.Ny_quarter * h - 1):
+                G[i, j] = 0
 
         return G
 
@@ -227,7 +287,7 @@ class Matrices:
         return b.astype(int)
 
     # -------------------------------------------------------------------------
-    # Build the matrix M
+    # Build the matrix phi
     def build_phi(self):
 
         A = self.build_a()

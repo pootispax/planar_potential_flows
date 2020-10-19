@@ -3,8 +3,8 @@
 
 # x and y must be above 7 and divisible by 4
 # The matrix must be square
-Nx = 24
-Ny = 24
+Nx = 48
+Ny = 48
 h = 1
 
 # Set the geometry of the problem
@@ -12,6 +12,8 @@ h = 1
 #                       'straight'
 #                       'widening'
 #                       'shrinkage'
+#                       'elbow'
+#                       'obstacle'
 geometry = 'shrinkage'
 
 # Values for limit condition
