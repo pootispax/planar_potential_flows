@@ -111,15 +111,15 @@ class Matrices:
     # -------------------------------------------------------------------------
     # Builds the array b
     def build_b(self):
-        b = np.zeros((self.M.max() + 1, 1), dtype=np.int)
+        b = np.zeros((self.M.max() + 1, 1), dtype=np.float32)
 
         for i in range(self.M.max() + 1):
 
             if self.G[self.cell_coords[i][0], self.cell_coords[i][1]] == 2:
-                b[i] = -1
+                b[i] = -vx * h
 
             elif self.G[self.cell_coords[i][0], self.cell_coords[i][1]] == 3:
-                b[i] = 2
+                b[i] = phi_ref
 
             else:
                 b[i] = 0
@@ -194,19 +194,22 @@ class Matrices:
 
         rho = 1
         pressure_init = 1
-        pressure = np.zeros(self.G.shape, dtype=np.float32)
+        pressure = np.empty(self.G.shape, dtype=np.float32)
+        pressure.fill(np.nan)
 
         pressure_cst = pressure_init + rho\
             * self.grad_own[4][self.cell_coords[0, 0],
                                self.cell_coords[0, 1]]**2 / 2
-
-        for i in range(self.M.max()):
+        print(pressure_cst)
+        for i in range(self.cell_coords.shape[0]):
             r = self.cell_coords[i][0]
             c = self.cell_coords[i][1]
 
-            if self.G[r, c] != 2 and self.G[r, c] != 3:
-                norm_vel = np.sqrt(self.grad_own[1][r, c]**2
-                                   + self.grad_own[0][r, c]**2)
-                pressure[r, c] = pressure_cst - rho * norm_vel**2 / 2
+            if self.G[r, c] == 2:
+                pressure[r, c] = pressure_init
+
+            else:
+                pressure[r, c] = pressure_cst - rho\
+                    * self.grad_own[4][r, c]**2 / 2
 
         return pressure
