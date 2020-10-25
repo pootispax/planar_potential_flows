@@ -13,7 +13,7 @@ phi_ref = 1
 #                                       'straight' (by default)
 #                                       'widening'
 #                                       'shrinkage'
-geometry = 'straight'
+geometry = 'widening'
 
 # Set the value of the angle in the case of a shrinkage/widening geometry
 # The angle must be in the interval [1, 25]

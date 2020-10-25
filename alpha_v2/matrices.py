@@ -164,24 +164,30 @@ class Matrices:
             i, j = int(self.cell_coords[r, 0]), int(self.cell_coords[r, 1])
 
             # Checks for the left and right cells
-            if i == 0 or np.isnan(phi[i - 1, j]):
-                grad_x[i, j] = (phi[i + 1, j] - phi[i, j]) / (2 * h)
+            if i == 0:
+                pass
 
-            elif i == Nx - 1 or np.isnan(phi[i + 1, j]):
-                grad_x[i, j] = (phi[i, j] - phi[i - 1, j]) / (2 * h)
+            elif i == Ny - 1:
+                grad_x[i, j] = grad_y[i - 1, j]
+
+            if np.isnan(phi[i - 1, j]):
+                grad_y[i, j] = (phi[i + 1, j] - phi[i, j]) / (2 * h)
+
+            elif i == Ny - 1 or np.isnan(phi[i + 1, j]):
+                grad_y[i, j] = (phi[i, j] - phi[i - 1, j]) / (2 * h)
 
             else:
-                grad_x[i, j] = (phi[i + 1, j] - phi[i - 1, j]) / (2 * h)
+                grad_y[i, j] = (phi[i + 1, j] - phi[i - 1, j]) / (2 * h)
 
             # Checks for the up and down cells
             if j == 0 or np.isnan(phi[i, j - 1]):
-                grad_y[i, j] = (phi[i, j + 1] - phi[i, j]) / (2 * h)
+                grad_x[i, j] = (phi[i, j + 1] - phi[i, j]) / (2 * h)
 
-            elif j == Ny - 1 or np.isnan(phi[i, j + 1]):
-                grad_y[i, j] = (phi[i, j] - phi[i, j - 1]) / (2 * h)
+            elif j == Nx - 1 or np.isnan(phi[i, j + 1]):
+                grad_x[i, j] = (phi[i, j] - phi[i, j - 1]) / (2 * h)
 
             else:
-                grad_y[i, j] = (phi[i, j + 1] - phi[i, j - 1]) / (2 * h)
+                grad_x[i, j] = (phi[i, j + 1] - phi[i, j - 1]) / (2 * h)
 
         grad_norm = np.sqrt(grad_x**2 + grad_y**2)
 
@@ -197,10 +203,12 @@ class Matrices:
         pressure = np.empty(self.G.shape, dtype=np.float32)
         pressure.fill(np.nan)
 
-        pressure_cst = pressure_init + rho\
-            * self.grad_own[4][self.cell_coords[0, 0],
-                               self.cell_coords[0, 1]]**2 / 2
-        print(pressure_cst)
+        # pressure_cst = pressure_init + rho\
+        #     * self.grad_own[4][self.cell_coords[0, 0],
+        #                        self.cell_coords[0, 1]]**2 / 2
+
+        pressure_cst = pressure_init + rho * vx**2 / 2
+
         for i in range(self.cell_coords.shape[0]):
             r = self.cell_coords[i][0]
             c = self.cell_coords[i][1]

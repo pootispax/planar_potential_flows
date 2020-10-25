@@ -29,10 +29,10 @@ class Plot:
         Y = np.linspace(0, Ny - 1, Ny)
         XX, YY = np.meshgrid(X, Y)
 
-        ax2.quiver(XX - .25, YY, -matrices.grad_own[3], matrices.grad_own[2])
+        ax2.quiver(XX - .25, YY, -matrices.grad_own[2], matrices.grad_own[3])
 
         ax3.streamplot(np.linspace(0, Nx - 1, Nx), np.linspace(0, Ny - 1, Ny),
-                       -matrices.grad_own[1], -matrices.grad_own[0],
+                       -matrices.grad_own[0], -matrices.grad_own[1],
                        linewidth=.75, arrowsize=.75)
 
         ax1.axis('off')
