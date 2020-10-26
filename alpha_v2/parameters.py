@@ -2,12 +2,12 @@
 
 # Set the size of the area
 Nx = 20
-Ny = 40
+Ny = 20
 
 # Set the inlet and outlet (Neumann and Dirichlet boundary conditions)
 h = 1
 vx = 1
-phi_ref = 100
+phi_ref = 1
 
 # Set the choosen geometry, possible values are :
 #                                       'straight' (by default)
@@ -17,7 +17,7 @@ geometry = 'widening'
 
 # Set the value of the angle in the case of a shrinkage/widening geometry
 # The angle must be in the interval [1, 25]
-angle = 10
+angle = 20
 
 inlet = 21
 outlet = 12

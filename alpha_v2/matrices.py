@@ -168,7 +168,7 @@ class Matrices:
                 pass
 
             elif i == Ny - 1:
-                grad_x[i, j] = grad_y[i - 1, j]
+                grad_y[i, j] = grad_y[i - 1, j]
 
             if np.isnan(phi[i - 1, j]):
                 grad_y[i, j] = (phi[i + 1, j] - phi[i, j]) / (2 * h)
@@ -180,7 +180,11 @@ class Matrices:
                 grad_y[i, j] = (phi[i + 1, j] - phi[i - 1, j]) / (2 * h)
 
             # Checks for the up and down cells
-            if j == 0 or np.isnan(phi[i, j - 1]):
+            if j == 0:
+                grad_x[i, j] = -vx
+                grad_y[i, j] = 0
+
+            elif np.isnan(phi[i, j - 1]):
                 grad_x[i, j] = (phi[i, j + 1] - phi[i, j]) / (2 * h)
 
             elif j == Nx - 1 or np.isnan(phi[i, j + 1]):
@@ -207,7 +211,7 @@ class Matrices:
         #     * self.grad_own[4][self.cell_coords[0, 0],
         #                        self.cell_coords[0, 1]]**2 / 2
 
-        pressure_cst = pressure_init + rho * vx**2 / 2
+        pressure_cst = pressure_init - rho * vx**2 / 2
 
         for r in range(self.cell_coords.shape[0]):
             i, j = int(self.cell_coords[r, 0]), int(self.cell_coords[r, 1])
@@ -216,7 +220,7 @@ class Matrices:
                 pressure[i, j] = pressure_init
 
             else:
-                pressure[i, j] = pressure_cst - rho\
+                pressure[i, j] = pressure_cst + rho\
                     * self.grad_own[4][i, j]**2 / 2
 
         return pressure

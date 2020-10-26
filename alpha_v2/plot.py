@@ -40,8 +40,8 @@ class Plot:
         ax3.axis('off')
         ax4.axis('off')
 
-        # ax4.contour(matrices.pressure, levels=10,
-        #             colors='green', linewidths=.75)
+        ax4.contour(matrices.pressure, levels=10,
+                    colors='olivedrab', linewidths=.75)
         im = ax4.imshow(matrices.pressure, cmap='jet')
 
         ax1.set_title('Velocity potential field', fontsize=10)
