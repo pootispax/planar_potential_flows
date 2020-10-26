@@ -23,7 +23,7 @@ class Plot:
 
         ax1.contour(matrices.phi, levels=Nx,
                     colors='green', linewidths=.75)
-        ax1.imshow(matrices.phi, cmap='jet')
+        # ax1.imshow(matrices.phi, cmap='jet')
 
         X = np.linspace(0, Nx - 1, Nx)
         Y = np.linspace(0, Ny - 1, Ny)
@@ -39,13 +39,15 @@ class Plot:
         ax2.axis('off')
         ax3.axis('off')
         ax4.axis('off')
-        ax4.contour(matrices.pressure, levels=10,
-                    colors='green', linewidths=.75)
+
+        # ax4.contour(matrices.pressure, levels=10,
+        #             colors='green', linewidths=.75)
         im = ax4.imshow(matrices.pressure, cmap='jet')
+
         ax1.set_title('Velocity potential field', fontsize=10)
         ax2.set_title('Velocity field', fontsize=10)
         ax3.set_title('Streamlines', fontsize=10)
-        ax4.set_title('Pressure field + isobares', fontsize=10)
+        ax4.set_title('Pressure field + isobaric lines', fontsize=10)
 
         fig.colorbar(im, ax=ax4)
         plt.savefig('temp.pdf')

@@ -60,19 +60,19 @@ class Matrices:
 
         for c in range(Ny):
             for r in range(Nx):
-                if self.G[r, c] != 0:
-                    M[r, c] = count
+                if self.G[c, r] != 0:
+                    M[c, r] = count
                     count += 1
                 else:
-                    M[r, c] = -1
+                    M[c, r] = -1
 
         cell_coords = np.zeros((M.max() + 1, 2), dtype=np.uint)
         count = 0
 
         for c in range(Ny):
             for r in range(Nx):
-                if M[r, c] != -1:
-                    cell_coords[count] = [r, c]
+                if M[c, r] != -1:
+                    cell_coords[count] = [c, r]
                     count += 1
 
         return M, cell_coords
@@ -209,15 +209,14 @@ class Matrices:
 
         pressure_cst = pressure_init + rho * vx**2 / 2
 
-        for i in range(self.cell_coords.shape[0]):
-            r = self.cell_coords[i][0]
-            c = self.cell_coords[i][1]
+        for r in range(self.cell_coords.shape[0]):
+            i, j = int(self.cell_coords[r, 0]), int(self.cell_coords[r, 1])
 
-            if self.G[r, c] == 2:
-                pressure[r, c] = pressure_init
+            if self.G[i, j] == 2:
+                pressure[i, j] = pressure_init
 
             else:
-                pressure[r, c] = pressure_cst - rho\
-                    * self.grad_own[4][r, c]**2 / 2
+                pressure[i, j] = pressure_cst - rho\
+                    * self.grad_own[4][i, j]**2 / 2
 
         return pressure
