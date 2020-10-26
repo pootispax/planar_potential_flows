@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2020.9.8)  26 OCT 2020 15:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Arch Linux) (preloaded format=pdflatex 2020.9.8)  26 OCT 2020 17:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1002,41 +1002,50 @@ LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/b/n' aliased to
 (Font)              `T1/LibertinusSerif-TLF/bold/n' on input line 6.
 LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/bold/n' will be
 (Font)              scaled to size 14.4pt on input line 6.
- (/home/cyril/Documents/FAC/master-1/semester-7/numerical-project/master.toc)
-\tf@toc=\write6
- (/home/cyril/Documents/FAC/master-1/semester-7/numerical-project/lec_01.tex
+ (/home/cyril/Documents/FAC/master-1/semester-7/numerical-project/master.toc
 LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/b/n' aliased to
-(Font)              `T1/LibertinusSerif-TLF/bold/n' on input line 1.
+(Font)              `T1/LibertinusSerif-TLF/bold/n' on input line 2.
 LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/bold/n' will be
-(Font)              scaled to size 12.0pt on input line 1.
-LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/m/n' aliased to
-(Font)              `T1/LibertinusSerif-TLF/regular/n' on input line 1.
-LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 1.
-LaTeX Font Info:    Trying to load font information for T1+LibertinusSans-TLF on input line 1.
- (/usr/share/texmf-dist/tex/latex/libertinus-type1/T1LibertinusSans-TLF.fd
-File: T1LibertinusSans-TLF.fd 2019/12/17 (autoinst) Font definitions for T1/LibertinusSans-TLF.
+(Font)              scaled to size 10.0pt on input line 2.
 )
-LaTeX Font Info:    Font shape `T1/LibertinusSans-TLF/m/n' aliased to
-(Font)              `T1/LibertinusSans-TLF/regular/n' on input line 1.
-LaTeX Font Info:    Font shape `T1/LibertinusSans-TLF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 1.
+\tf@toc=\write6
+ (/home/cyril/Documents/FAC/master-1/semester-7/numerical-project/base.tex
+LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/b/n' aliased to
+(Font)              `T1/LibertinusSerif-TLF/bold/n' on input line 2.
+LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/bold/n' will be
+(Font)              scaled to size 12.0pt on input line 2.
+LaTeX Font Info:    Trying to load font information for TS1+LibertinusSerif-TLF on input line 10.
+ (/usr/share/texmf-dist/tex/latex/libertinus-type1/TS1LibertinusSerif-TLF.fd
+File: TS1LibertinusSerif-TLF.fd 2019/12/17 (autoinst) Font definitions for TS1/LibertinusSerif-TLF.
+)
+LaTeX Font Info:    Font shape `TS1/LibertinusSerif-TLF/m/n' aliased to
+(Font)              `TS1/LibertinusSerif-TLF/regular/n' on input line 10.
+LaTeX Font Info:    Font shape `TS1/LibertinusSerif-TLF/regular/n' will be
+(Font)              scaled to size 10.0pt on input line 10.
+LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/m/n' aliased to
+(Font)              `T1/LibertinusSerif-TLF/regular/n' on input line 22.
+LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/regular/n' will be
+(Font)              scaled to size 7.0pt on input line 22.
+LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/m/n' aliased to
+(Font)              `T1/LibertinusSerif-TLF/regular/n' on input line 22.
+LaTeX Font Info:    Font shape `T1/LibertinusSerif-TLF/regular/n' will be
+(Font)              scaled to size 5.0pt on input line 22.
 ) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (/home/cyril/Documents/FAC/master-1/semester-7/numerical-project/master.aux) ) 
 Here is how much of TeX's memory you used:
- 25724 strings out of 480478
- 519316 string characters out of 5905960
- 755765 words of memory out of 5000000
- 41165 multiletter control sequences out of 15000+600000
- 590456 words of font info for 107 fonts, out of 8000000 for 9000
+ 25697 strings out of 480478
+ 518439 string characters out of 5905960
+ 759765 words of memory out of 5000000
+ 41137 multiletter control sequences out of 15000+600000
+ 595883 words of font info for 110 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 71i,6n,85p,881b,213s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf-dist/fonts/enc/dvips/libertinus-type1/lbts_mfadfl.enc}{/usr/share/texmf-dist/fonts/enc/dvips/libertinus-type1/lbts_sfissr.enc}{/usr/share/texmf-dist/fonts/enc/dvips/libertinus-type1/lbts_75t36g.enc}</usr/share/texmf-dist/fonts/type1/public/libertinus-type1/LibertinusSans-Regular.pfb></usr/share/texmf-dist/fonts/type1/public/libertinus-type1/LibertinusSerif-Bold.pfb></usr/share/texmf-dist/fonts/type1/public/libertinus-type1/LibertinusSerif-Regular.pfb>
-Output written on /home/cyril/Documents/FAC/master-1/semester-7/numerical-project/master.pdf (1 page, 38054 bytes).
+ 71i,6n,85p,881b,384s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf-dist/fonts/enc/dvips/libertinus-type1/lbts_oeoa22.enc}{/usr/share/texmf-dist/fonts/enc/dvips/libertinus-type1/lbts_sfissr.enc}{/usr/share/texmf-dist/fonts/enc/dvips/libertinus-type1/lbts_75t36g.enc}</usr/share/texmf-dist/fonts/type1/public/libertinus-type1/LibertinusSerif-Bold.pfb></usr/share/texmf-dist/fonts/type1/public/libertinus-type1/LibertinusSerif-Regular.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb>
+Output written on /home/cyril/Documents/FAC/master-1/semester-7/numerical-project/master.pdf (1 page, 170592 bytes).
 PDF statistics:
- 50 PDF objects out of 1000 (max. 8388607)
- 27 compressed objects within 1 object stream
+ 56 PDF objects out of 1000 (max. 8388607)
+ 32 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  109 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,0 +1,29 @@
+\section{Functional requirement of the program}
+\subsection{The project}
+The goal of this project is to simulate the movement of a fluid through
+different geometries. The program create a box of choosen size, builds a
+geometry inside it and simulates the movement of a given fluid.
+\subsection{The files}
+In order to increase readability, the project is made of several files.
+I made the choice to work with Object Oriented Programming.
+\begin{itemize}
+    \item main.py: This file calls for the needed functions/class
+    \item matrices.py: This file contains the class ``Matrices'', it builds the
+          geometry, the different matrices to plot and stores them
+    \item plot.py: This file plots the matrices built in ``matrices.py''
+    \item parameters.py: This file contains all the variables that can be 
+          changed by the user
+    \item data\_check.py: This file checks the variables and makes sure that
+          the program will run
+\end{itemize}
+\subsection{The data}
+This project uses several piece of data set by the user to work.
+\begin{itemize}
+    \item $Nx \text{ and } Ny$ are the size of the domain
+    \item $h$ represents the size of a cell
+    \item $geometry$ corresponds to the choosen geometry
+    \item $angle$ corresponds to the angle of the widening/shrinkage geometry
+    \item $v_x$ is the Neuman condition
+    \item $\phi_{ref}$ is the Dirichlet condition
+\end{itemize}
+
