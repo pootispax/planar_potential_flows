@@ -1,7 +1,7 @@
 \section{Functional requirement of the program}
 \subsection{The project}
 The goal of this project is to simulate the movement of a fluid through
-different geometries. The program create a box of choosen size, builds a
+different geometries. The program creates a box of a choosen size, builds a
 geometry inside it and simulates the movement of a given fluid.
 
 \subsection{The files}
@@ -40,8 +40,25 @@ radians for the computation.
 
 \subsection{The outputs}
 As of the alpha version, the program outputs 4 pdf files, one for each plot.
-The filenames are set with the following rule:\\
+The files are saved in a subfolder named ``figures'' and the filenames are set
+with the following rule:\\
 \begin{center}
-      \mintinline{python}{data\_geometry\_Nx\_Ny.pdf}
+      \mintinline{python}{<data>_<geometry>_Nx=<Nx>_Ny=<Ny>.pdf}
 \end{center}
+\mintinline{python}{data} stands for the plotted data (potential, velocity,
+streamlines, pressure).
+\subsection{Concerning the running time}
+Due to the function \mintinline{python}{numpy.linalg.solve()} being slow for
+big matrices, the bigger the size of the domain, the higher the running time.\\
+For a domain size of $\num{3600}$ cells ($\num{60} \times \num{60}$), it takes
+around $\num{20}$ seconds to run, for a domain size of $\num{14400}$ cells
+($\num{120} \times \num{120}$), it increases to $\num{23}$ minuts. 
+\smallbreak
+I searched for a faster method to solve the linear system in vain, thus I
+recommend to stay on relatively low values for $N_x$ and $N_y$, the graphs are
+easily readable for a value of $\num{60}$ each.\\
 
+\section{Internal structure of the program}
+\subsection{Description of the physical model}
+In order to build the model, the program uses a squared structured lattice
+model (matrix). The values are computed at each point of the matrix.

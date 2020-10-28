@@ -35,9 +35,6 @@ class Matrices:
     # Builds the matrix G
     def build_geometry(self, G, angle):
 
-        if abs(angle) > np.arctan((.5 * Ny - 1) / Nx):
-            raise ValueError("Valeur d'angle invalide")
-
         alpha = np.tan(np.abs(angle))
 
         for i in range(Nx):  # Parse the columns of G

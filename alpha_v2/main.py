@@ -2,11 +2,13 @@
 
 # Main program
 
+import psutil
 import numpy as np
 import matrices as m
 import plot as p
 import data_check as dc
 
+dc.data_check()
 
 matrices = m.Matrices()
 plot = p.Plot()
