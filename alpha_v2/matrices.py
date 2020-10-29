@@ -11,10 +11,43 @@ class Matrices:
         self.M, self.cell_coords = self.build_index_matrices()
         self.b = self.build_b()
         self.A = self.build_a()
-        self.phi = self.build_phi()
-        self.grad = self.build_gradient()
-        self.grad_own = self.build_gradient_own()
-        self.pressure = self.build_pressure_field()
+
+    # -------------------------------------------------------------------------
+    def make_data(self):
+
+        print("Building matrix phi\nSince numpy.linalg.solve is a slow "
+              "function, this can take some time...")
+        self.build_phi()
+        print("Done\nBuilding gradient...")
+        self.build_gradient()
+        print("Done\nBuilding pressure...")
+        self.build_pressure()
+        print("Done\nAll the data has been computed")
+
+    # -------------------------------------------------------------------------
+    #  Loads the saved data for later use in the main program
+    def load_data(self):
+
+        data = {'G': np.loadtxt('dat/G_{}_{}_{}.dat'
+                                .format(geometry, Nx, Ny),
+                                dtype=np.int8),
+                'phi': np.loadtxt('dat/phi_{}_{}_{}.dat'
+                                  .format(geometry, Nx, Ny),
+                                  dtype=np.float32),
+                'grad_x': np.loadtxt('dat/grad_x_{}_{}_{}.dat'
+                                     .format(geometry, Nx, Ny),
+                                     dtype=np.float32),
+                'grad_y': np.loadtxt('dat/grad_y_{}_{}_{}.dat'
+                                     .format(geometry, Nx, Ny),
+                                     dtype=np.float32),
+                'grad_norm': np.loadtxt('dat/grad_norm_{}_{}_{}.dat'
+                                        .format(geometry, Nx, Ny),
+                                        dtype=np.float32),
+                'pressure': np.loadtxt('dat/pressure_{}_{}_{}.dat'
+                                       .format(geometry, Nx, Ny),
+                                       dtype=np.float32)}
+
+        return data
 
     # -------------------------------------------------------------------------
     # Builds the matrix G
@@ -47,7 +80,13 @@ class Matrices:
         G[:, 0] *= 2  # Inlet
         G[:, -1] *= 3  # Outlet
 
-        np.savetxt('dat/G.dat', G)
+        if recompute:
+            np.savetxt('dat/G_{}_{}_{}.dat'
+                       .format(geometry, Nx, Ny), G)
+
+        else:
+            pass
+
         return G
 
     # Builds the matrix M and the array cell_coords
@@ -135,25 +174,15 @@ class Matrices:
         for i in range(len(x)):
             phi[self.cell_coords[i][0], self.cell_coords[i][1]] = x[i]
 
-        np.savetxt('dat/phi.dat', phi)
-        return phi
+        np.savetxt('dat/phi_{}_{}_{}.dat'
+                   .format(geometry, Nx, Ny), phi)
 
     # -------------------------------------------------------------------------
     # Builds the gradient matrix
     def build_gradient(self):
-        phi = np.copy(self.phi)
 
-        grad = np.gradient(phi)
-
-        grad_norm = np.sqrt(grad[0]**2 + grad[1]**2)
-
-        return grad, grad / grad_norm
-
-    # -------------------------------------------------------------------------
-    # Builds my gradient matrix
-    def build_gradient_own(self):
-
-        phi = np.copy(self.phi)
+        phi = np.loadtxt('dat/phi_{}_{}_{}.dat'
+                         .format(geometry, Nx, Ny), dtype=np.float32)
 
         grad_x = np.empty((self.G.shape), dtype=np.float32)
         grad_x.fill(np.nan)
@@ -195,24 +224,24 @@ class Matrices:
 
         grad_norm = np.sqrt(grad_x**2 + grad_y**2)
 
-        np.savetxt('dat/grad_x.dat', grad_x)
-        np.savetxt('dat/grad_y.dat', grad_y)
-        np.savetxt('dat/grad_norm.dat', grad_norm)
-        return grad_x, grad_y,\
-            grad_x / grad_norm, grad_y / grad_norm, grad_norm
+        np.savetxt('dat/grad_x_{}_{}_{}.dat'
+                   .format(geometry, Nx, Ny), grad_x)
+        np.savetxt('dat/grad_y_{}_{}_{}.dat'
+                   .format(geometry, Nx, Ny), grad_y)
+        np.savetxt('dat/grad_norm_{}_{}_{}.dat'
+                   .format(geometry, Nx, Ny), grad_norm)
 
     # -------------------------------------------------------------------------
     # Builds the pressure field
-    def build_pressure_field(self):
+    def build_pressure(self):
+
+        grad_norm = np.loadtxt('dat/grad_norm_{}_{}_{}.dat'
+                               .format(geometry, Nx, Ny), dtype=np.float32)
 
         rho = 1
         pressure_init = 1
         pressure = np.empty(self.G.shape, dtype=np.float32)
         pressure.fill(np.nan)
-
-        # pressure_cst = pressure_init + rho\
-        #     * self.grad_own[4][self.cell_coords[0, 0],
-        #                        self.cell_coords[0, 1]]**2 / 2
 
         pressure_cst = pressure_init - rho * vx**2 / 2
 
@@ -224,7 +253,7 @@ class Matrices:
 
             else:
                 pressure[i, j] = pressure_cst + rho\
-                    * self.grad_own[4][i, j]**2 / 2
+                    * grad_norm[i, j]**2 / 2
 
-        np.savetxt('dat/pressure.dat', pressure)
-        return pressure
+        np.savetxt('dat/pressure_{}_{}_{}.dat'
+                   .format(geometry, Nx, Ny), pressure)

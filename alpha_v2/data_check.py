@@ -1,3 +1,4 @@
+import os.path as os
 import numpy as np
 from parameters import *
 
@@ -24,3 +25,21 @@ def data_check():
 
     if abs(np.radians(angle)) > np.arctan((.5 * Ny - 1) / Nx):
         raise ValueError("Invalid angle value")
+
+
+def existing_data():
+
+    if not os.exists('dat/G_{}_{}_{}.dat'
+                     .format(geometry, Nx, Ny))\
+        or not os.exists('dat/phi_{}_{}_{}.dat'
+                         .format(geometry, Nx, Ny))\
+        or not os.exists('dat/grad_x_{}_{}_{}.dat'
+                         .format(geometry, Nx, Ny))\
+        or not os.exists('dat/grad_y_{}_{}_{}.dat'
+                         .format(geometry, Nx, Ny))\
+        or not os.exists('dat/grad_norm_{}_{}_{}.dat'
+                         .format(geometry, Nx, Ny))\
+            or not os.exists('dat/pressure_{}_{}_{}.dat'
+                             .format(geometry, Nx, Ny)):
+
+        return True

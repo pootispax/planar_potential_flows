@@ -14,19 +14,27 @@ class Plot:
 
         if display == "potential":
             self.plot_potential(ax, "potential", data)
+            print('Potential field plottedand saved as {}_{}_Nx={}_Ny={}.pdf'
+                  .format(display, geometry, Nx, Ny))
 
         if display == "velocity":
             self.plot_velocity(ax, "velocity", data)
+            print('Velocity field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
+                  .format(display, geometry, Nx, Ny))
 
         if display == "streamlines":
             self.plot_streamlines(ax, "streamlines", data)
+            print('Streamlines plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
+                  .format(display, geometry, Nx, Ny))
 
         if display == "pressure":
             self.plot_pressure(ax, "pressure", data)
             im = ax.imshow(data['pressure'], cmap='jet')
             fig.colorbar(im, ax=ax)
+            print('Pressure plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
+                  .format(display, geometry, Nx, Ny))
 
-        plt.savefig("figures/{}_{}_Nx={}_Ny={}.pdf"\
+        plt.savefig("figures/{}_{}_Nx={}_Ny={}.pdf"
                     .format(display, geometry, Nx, Ny))
 
     def plot_potential(self, ax, display, data):

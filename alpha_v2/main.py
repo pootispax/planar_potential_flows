@@ -2,22 +2,23 @@
 
 # Main program
 import numpy as np
-import matrices as m
-import plot as p
-import data_check as dc
+from parameters import Nx, Ny, geometry, recompute
+import matrices
+import plot
+import data_check
 
-dc.data_check()
+data_check.data_check()
+matrices = matrices.Matrices()
 
-matrices = m.Matrices()
+if recompute or data_check.existing_data():
+    print('Computing new data ...')
+    matrices.make_data()
+else:
+    print('Running the program using existing data')
 
-data = {'G': np.loadtxt('dat/G.dat', dtype=np.int8),
-        'phi': np.loadtxt('dat/phi.dat', dtype=np.float32),
-        'grad_x': np.loadtxt('dat/grad_x.dat', dtype=np.float32),
-        'grad_y': np.loadtxt('dat/grad_y.dat', dtype=np.float32),
-        'grad_norm': np.loadtxt('dat/grad_norm.dat', dtype=np.float32),
-        'pressure': np.loadtxt('dat/pressure.dat', dtype=np.float32)}
+data = matrices.load_data()
 
-plot = p.Plot()
+plot = plot.Plot()
 
 plot.plot_graphs("potential", data)
 plot.plot_graphs("velocity", data)
