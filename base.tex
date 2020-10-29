@@ -4,7 +4,7 @@ The goal of this project is to simulate the movement of a fluid through
 different geometries. The program creates a box of a choosen size, builds a
 geometry inside it and simulates the movement of a given fluid.
 
-\subsection{The files}
+\subsection{Files}
 In order to increase readability, the project is made of several files.
 I made the choice to work with Object Oriented Programming.
 \begin{itemize}
@@ -18,7 +18,7 @@ I made the choice to work with Object Oriented Programming.
           the program will run
 \end{itemize}
 
-\subsection{The data}
+\subsection{Data}
 This project uses several piece of data set by the user to work.
 \begin{itemize}
     \item $N_x \text{ and } N_y$ are the size of the domain
@@ -38,7 +38,7 @@ output a ValueError. The restriction is as follows:
 The angle parameter should be set in degree, the program will convert it to
 radians for the computation.
 
-\subsection{The outputs}
+\subsection{Outputs}
 As of the alpha version, the program outputs 4 pdf files, one for each plot.
 The files are saved in a subfolder named ``figures'' and the filenames are set
 with the following rule:\\
@@ -59,6 +59,13 @@ recommend to stay on relatively low values for $N_x$ and $N_y$, the graphs are
 easily readable for a value of $\num{60}$ each.\\
 
 \section{Internal structure of the program}
-\subsection{Description of the physical model}
+\subsection{Physical model}
 In order to build the model, the program uses a squared structured lattice
 model (matrix). The values are computed at each point of the matrix.
+
+\subsection{Scientific computation algorithms}
+
+
+\subsection{Constitutive elements}
+\subsubsection{Main program}
+

@@ -47,6 +47,7 @@ class Matrices:
         G[:, 0] *= 2  # Inlet
         G[:, -1] *= 3  # Outlet
 
+        np.savetxt('dat/G.dat', G)
         return G
 
     # Builds the matrix M and the array cell_coords
@@ -133,6 +134,8 @@ class Matrices:
 
         for i in range(len(x)):
             phi[self.cell_coords[i][0], self.cell_coords[i][1]] = x[i]
+
+        np.savetxt('dat/phi.dat', phi)
         return phi
 
     # -------------------------------------------------------------------------
@@ -192,6 +195,9 @@ class Matrices:
 
         grad_norm = np.sqrt(grad_x**2 + grad_y**2)
 
+        np.savetxt('dat/grad_x.dat', grad_x)
+        np.savetxt('dat/grad_y.dat', grad_y)
+        np.savetxt('dat/grad_norm.dat', grad_norm)
         return grad_x, grad_y,\
             grad_x / grad_norm, grad_y / grad_norm, grad_norm
 
@@ -220,4 +226,5 @@ class Matrices:
                 pressure[i, j] = pressure_cst + rho\
                     * self.grad_own[4][i, j]**2 / 2
 
+        np.savetxt('dat/pressure.dat', pressure)
         return pressure
