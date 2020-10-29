@@ -1,8 +1,8 @@
 # This file sets the different parameters of the program
 
 # Set the size of the area
-Nx = 60
-Ny = 60
+Nx = 100
+Ny = 100
 
 # Set the inlet and outlet (Neumann and Dirichlet boundary conditions)
 h = 1

@@ -15,7 +15,7 @@ class Matrices:
     # -------------------------------------------------------------------------
     def make_data(self):
 
-        print("Building matrix phi\nSince numpy.linalg.solve is a slow "
+        print("Building matrix phi\nSince numpy.linalg.solve() is a slow "
               "function, this can take some time...")
         self.build_phi()
         print("Done\nBuilding gradient...")

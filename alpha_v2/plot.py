@@ -14,7 +14,7 @@ class Plot:
 
         if display == "potential":
             self.plot_potential(ax, "potential", data)
-            print('Potential field plottedand saved as {}_{}_Nx={}_Ny={}.pdf'
+            print('Potential field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
                   .format(display, geometry, Nx, Ny))
 
         if display == "velocity":

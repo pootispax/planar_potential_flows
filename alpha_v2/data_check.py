@@ -1,6 +1,8 @@
 import os.path as os
+import sys
 import numpy as np
 from parameters import *
+import matrices
 
 
 def data_check():
@@ -43,3 +45,20 @@ def existing_data():
                              .format(geometry, Nx, Ny)):
 
         return True
+
+
+def domain_check():
+
+    matrix = matrices.Matrices()
+    if matrix.M.max() > 5000:
+        print("You started the program with a rather big domain (more than"
+              " 5000 fluid cells).\nThe computation can take some time,"
+              " are you sure want to continue (Yes/No) ?")
+        answer = input(("\n> "))
+
+        if answer == "Yes" or answer == "yes":
+            pass
+        elif answer == "No" or answer == "no":
+            sys.exit("Operation cancelled")
+        else:
+            sys.exit("Invalid input, operation cancelled")

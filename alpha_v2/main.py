@@ -11,7 +11,8 @@ data_check.data_check()
 matrices = matrices.Matrices()
 
 if recompute or data_check.existing_data():
-    print('Computing new data ...')
+    data_check.domain_check()
+    print('Computing new data...')
     matrices.make_data()
 else:
     print('Running the program using existing data')
