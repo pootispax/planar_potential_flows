@@ -13,22 +13,22 @@ class Plot:
         ax.axis('off')
 
         if display == "potential":
-            self.plot_potential(ax, "potential", data)
+            self.plot_potential(ax, data)
             print('Potential field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
                   .format(display, geometry, Nx, Ny))
 
         if display == "velocity":
-            self.plot_velocity(ax, "velocity", data)
+            self.plot_velocity(ax, data)
             print('Velocity field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
                   .format(display, geometry, Nx, Ny))
 
         if display == "streamlines":
-            self.plot_streamlines(ax, "streamlines", data)
+            self.plot_streamlines(ax, data)
             print('Streamlines plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
                   .format(display, geometry, Nx, Ny))
 
         if display == "pressure":
-            self.plot_pressure(ax, "pressure", data)
+            self.plot_pressure(ax, data)
             im = ax.imshow(data['pressure'], cmap='jet')
             fig.colorbar(im, ax=ax)
             print('Pressure plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
@@ -37,7 +37,7 @@ class Plot:
         plt.savefig("figures/{}_{}_Nx={}_Ny={}.pdf"
                     .format(display, geometry, Nx, Ny))
 
-    def plot_potential(self, ax, display, data):
+    def plot_potential(self, ax, data):
 
         ax.set_title('Velocity potential field', fontsize=10)
         ax.contour(data['phi'], levels=Nx,
@@ -45,7 +45,7 @@ class Plot:
 
         return ax
 
-    def plot_velocity(self, ax, display, data):
+    def plot_velocity(self, ax, data):
 
         ax.set_title('Velocity field', fontsize=10)
 
@@ -59,7 +59,7 @@ class Plot:
 
         return ax
 
-    def plot_streamlines(self, ax, display, data):
+    def plot_streamlines(self, ax, data):
 
         ax.set_title('Streamlines', fontsize=10)
         ax.streamplot(np.linspace(0, Nx - 1, Nx), np.linspace(0, Ny - 1, Ny),
@@ -68,7 +68,7 @@ class Plot:
 
         return ax
 
-    def plot_pressure(self, ax, display, data):
+    def plot_pressure(self, ax, data):
 
         ax.set_title('Pressure field and isobaric lines', fontsize=10)
 

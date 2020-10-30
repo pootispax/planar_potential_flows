@@ -1,3 +1,4 @@
+\newpage
 \section{Functional requirement of the program}
 \subsection{The project}
 The goal of this project is to simulate the movement of a fluid through
@@ -9,24 +10,29 @@ In order to increase readability, the project is made of several files.
 I made the choice to work with Object Oriented Programming.
 \begin{itemize}
       \item main.py: This file calls for the needed functions/class
-      \item matrices.py: This file contains the class ``Matrices'', it builds the
-          geometry, the different matrices to plot and stores them
-       \item plot.py: This file plots the matrices built in ``matrices.py''
-       \item parameters.py: This file contains all the variables that can be 
+      \item matrices.py: This file contains the class ``Matrices'', it builds
+            the geometry, the different matrices to plot and stores them
+      \item plot.py: This file plots the matrices built in ``matrices.py''
+      \item parameters.py: This file contains all the variables that can be 
           changed by the user
-       \item data\_check.py: This file checks the variables and makes sure that
+      \item data\_check.py: This file checks the variables and makes sure that
           the program will run
 \end{itemize}
 
 \subsection{Data}
 This project uses several piece of data set by the user to work.
 \begin{itemize}
-      \item $N_x \text{ and } N_y$ are the size of the domain
-      \item $h$ represents the size of a cell
-      \item $geometry$ corresponds to the choosen geometry
-      \item $angle$ corresponds to the angle of the widening/shrinkage geometry
-      \item $v_x$ is the Neuman condition
-      \item $\phi_{ref}$ is the Dirichlet condition
+      \item \py{Nx:} \textcolor{dtype}{\py{uint}} and
+            \py{Ny:} \textcolor{dtype}{\py{uint}}, size of the domain
+      \item \py{h:} \textcolor{dtype}{\py{uint}}, size of a cell
+      \item \py{geometry: str}, choosen geometry
+      \item \py{angle:} \textcolor{dtype}{uint}, angle of the
+            widening/shrinkage geometry
+      \item \py{vx: float}, initial fluid speed (Neuman's condition)
+      \item \py{phi_ref: float}, reference velocity potential (Dirichlet's
+            condition)
+      \item \py{rho: float}, relative density of the fluid
+      \item \py{pressure_init: float}, initial pressure of the fluid
 \end{itemize}
 Be careful in the case of a widening/shrinkage geometry!
 In order for the program to generate a domain from one end to another, there is
@@ -82,9 +88,9 @@ It then calls the subroutine \py{make_data()} to compute \py{phi},
 \textbf{dat} files.\\
 Else, it will use the existing dat files to generate the plots.
 \smallbreak{}
-Then it calls the function \py{load_data()} to read the \textbf{dat} files and stores
-them in a dictionary and it initiate the file \py{plot.py} which will be used
-to plot the different values.
+Then it calls the function \py{load_data()} to read the \textbf{dat} files and
+stores them in a dictionary and it initiate the file \py{plot.py} which will be
+used to plot the different values.
 \smallbreak{}
 The last lines call the subroutine \py{plot_graphs} with different arguments
 to plot and save all the wanted graphs.
@@ -221,4 +227,33 @@ Finally, it saves the 3 matrices in \textbf{dat} files.
 \smallbreak{}
 The function \py{build_pressure()} takes no input, it uses the imported data
 from \py{parameters.py}.\\
+The function starts by loading the \textbf{dat} files containing the values of
+\py{grad_norm}.\\
+It then creates an empty matrix \py{pressure} and fills it with \py{numpy.nan}.
+Then, it computes the Bernoulli's constant $\mathcal{H}$ using the initial
+values.\\
+It then parses the array \py{cell_coords}, sets the inlet cells of the
+\py{pressure} matrix to \py{pressure_init}, computes and sets the values for
+each cell.\\
+Finally, it saves the matrix in a \textbf{dat} file.
 
+\subsubsection{\py{plot.py}}
+The class is used to plot every piece of data.
+\smallbreak{}
+The function \py{plot_graphs()} takes 2 input arguments.
+\begin{itemize}
+      \item \py{display: str}
+      \item \py{data: dict}
+\end{itemize}
+This subroutine creates the figure, shows the matrix \py{G} (without
+interpolation) and disables the axes as they are not needed in that kind of
+plot. Then, depending on the \py{display} value, it will call other 
+functions to plot the graphs and save them as \textbf{pdf} files.
+\smallbreak{}
+Each one of the 4 next functions take 1 input argument.
+\begin{itemize}
+      \item \py{data: dict}
+\end{itemize}
+They return the plotted graph.\\
+The 4 functions work the same way, they set the name of the graph and plot the
+desired data.

@@ -4,10 +4,16 @@
 Nx = 60
 Ny = 60
 
-# Set the inlet and outlet (Neumann and Dirichlet boundary conditions)
+# Set the size of a cell
 h = 1
+
+# Set the inlet and outlet (Neumann and Dirichlet boundary conditions)
 vx = 1
 phi_ref = 1
+
+# Set the relative density and the initial pressure of the fluid
+rho = 1
+pressure_init = 1
 
 # Set the choosen geometry, possible values are :
 #                                       'straight' (by default)

@@ -237,8 +237,6 @@ class Matrices:
         grad_norm = np.loadtxt('dat/grad_norm_{}_{}_{}.dat'
                                .format(geometry, Nx, Ny), dtype=np.float32)
 
-        rho = 1
-        pressure_init = 1
         pressure = np.empty(self.G.shape, dtype=np.float32)
         pressure.fill(np.nan)
 
