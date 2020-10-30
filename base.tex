@@ -8,25 +8,25 @@ geometry inside it and simulates the movement of a given fluid.
 In order to increase readability, the project is made of several files.
 I made the choice to work with Object Oriented Programming.
 \begin{itemize}
-    \item main.py: This file calls for the needed functions/class
-    \item matrices.py: This file contains the class ``Matrices'', it builds the
+      \item main.py: This file calls for the needed functions/class
+      \item matrices.py: This file contains the class ``Matrices'', it builds the
           geometry, the different matrices to plot and stores them
-    \item plot.py: This file plots the matrices built in ``matrices.py''
-    \item parameters.py: This file contains all the variables that can be 
+       \item plot.py: This file plots the matrices built in ``matrices.py''
+       \item parameters.py: This file contains all the variables that can be 
           changed by the user
-    \item data\_check.py: This file checks the variables and makes sure that
+       \item data\_check.py: This file checks the variables and makes sure that
           the program will run
 \end{itemize}
 
 \subsection{Data}
 This project uses several piece of data set by the user to work.
 \begin{itemize}
-    \item $N_x \text{ and } N_y$ are the size of the domain
-    \item $h$ represents the size of a cell
-    \item $geometry$ corresponds to the choosen geometry
-    \item $angle$ corresponds to the angle of the widening/shrinkage geometry
-    \item $v_x$ is the Neuman condition
-    \item $\phi_{ref}$ is the Dirichlet condition
+      \item $N_x \text{ and } N_y$ are the size of the domain
+      \item $h$ represents the size of a cell
+      \item $geometry$ corresponds to the choosen geometry
+      \item $angle$ corresponds to the angle of the widening/shrinkage geometry
+      \item $v_x$ is the Neuman condition
+      \item $\phi_{ref}$ is the Dirichlet condition
 \end{itemize}
 Be careful in the case of a widening/shrinkage geometry!
 In order for the program to generate a domain from one end to another, there is
@@ -124,23 +124,101 @@ values in a dictionary.
 \smallbreak{}
 The function \py{build_g()} takes 4 input arguments.
 \begin{itemize}
-    \item \py{Nx: int}
-    \item \py{Ny: int}
-    \item \py{geometry: str}
-    \item \py{angle: int} of size 8 bits, in radians
+      \item \py{Nx: int}
+      \item \py{Ny: int}
+      \item \py{geometry: str}
+      \item \py{angle: int} of size 8 bits, in radians
 \end{itemize}
-It acts as a selector. Given a geometry, if will call the function
-\py{build_geometry()} with different input values. There is no real point in
-this function in the alpha version since the straight, widening and shrinkage
-geometries are generated from the same function, with only the angle changing.
-However, it will prove useful in the beta and gold version.
+It acts as a selector. Given a geometry, it will create a matrix \py{G} filled
+with zeros and call the function \py{build_geometry()} with different input
+values. There is no real point in this function in the alpha version since the
+straight, widening and shrinkage geometries are generated from the same
+function, with only the angle changing. However, it will prove useful in the
+beta and gold version.
 \smallbreak{}
 The function \py{build_geometry()} takes 2 input arguments.
 \begin{itemize}
-    \item \py{G:} \textcolor{dtype}{\py{np.array}}
-    \item \py{angle: int} of size 8 bits, in radians
+      \item \py{G:} \textcolor{dtype}{\py{np.array}}
+      \item \py{angle: int} of size 8 bits, in radians
 \end{itemize}
+The function returns the matrix \py{G}.\\
 The function starts by computing \py{alpha} as the tangent of the angle.\\
 It then uses it in a \py{for} loop to compute an offset which will be used to
 build the geometry.\\
-In case of a 
+In case of a shrinkage geometry, the angle inputed is negative, the function
+will flip horizontally the matrix. It then sets the inlet and outlet of the
+domain.\\
+Since the program will always compute \py{G} no matter what and to avoid some
+problem, it will save the matrix only if \py{recompte == True}.
+\smallbreak{}
+The function \py{build_index_matrices()} takes 2 input arguments.
+\begin{itemize}
+      \item \py{Nx: int}
+      \item \py{Ny: int} 
+\end{itemize}
+The function returns the matrix \py{M} and the array \py{cell_coords}.\\
+It starts by creating the matrix \py{M} the shape of \py{G}, filled with zeros
+and initiate a counter \py{count}. It then parses \py{M} and for each fluid
+cell (\py{G[c, r] != 0}), it sets the value of \py{M[r, c]} to the value of the
+counter and increment the counter by 1. All the other values are set to -1.\\
+Then it create an array \py{cell_coords} of size \py{(M.max() + 1, 2)} and
+sets the value of the counter back to zero. Then it parses the matrix \py{M}
+and for each cell which value is not -1, it will store the coordinates of that
+cell in the index \py{count} of the array \py{cell_coords} and increment the
+counter.
+\smallbreak{}
+The function \py{build_a()} takes no input, it uses the imported data from
+\py{parameters.py}.\\
+The function returns the matrix \py{A}.\\
+It starts by creating an array \py{A} of size
+\py{(cell_coords.shape[0], cell_coords.shape[0])}, filled with zeros. It then
+parses the array \py{cell_coords} and for each inlet and fluid cell (the oulet
+is not counted there), it counts the neighbors, stores their coordinates,
+set the value of the diagonal depending on the neighbors and sets each
+neighbour associated cell to 1. The diagonal cells corresponding to the outlet
+are all set to 1.
+\smallbreak{}
+The function \py{build_b()} takes no input, it uses the imported data from
+\py{parameters.py}.\\
+It returns the array \py{b}.\\
+It starts by creating an array \py{b} of size
+\py{(cell_coords.shape[0], 1)}, filled with zeros.\\
+It then parses the array. For each cell corresponding to the inlet, it sets the
+value to \py{-vx * h} and for each value corresponding to the outlet, it sets
+the value to \py{phi_ref}. The rest of the array is not modified.
+\smallbreak{}
+The function \py{build_phi()} takes no input, it uses the imported data from
+\py{parameters.py}.\\
+This function is the slowest one since it compute the solution of $Ax = b$. For
+that it uses the function \py{linalg.solve()} from \py{numpy}. Then it creates
+an empty matrix \py{phi} and fills it with \py{numpy.nan}. It then parses
+\py{x} and sets the value of each phi cell corresponding to the \py{x} value.
+The other cells are not modified.\\
+Finally, it saves the values in a \textbf{dat} file.
+\smallbreak{}
+The function \py{build_gradient()} takes no input, it uses the imported data
+from \py{parameters.py}.\\
+This function is rather big, but it is only a variation of the \py{gradient}
+function from \py{numpy}. The function \py{numpy.gradient} does not work
+the way I want with the \py{numpy.nan} values so I made my own.\\
+It starts by loading the \textbf{dat} file containing the values of \py{phi}
+and creates 2 empty matrices \py{grad_x} and \py{grad_y} the same shape as
+\py{G} and fills them with \py{numpy.nan}. It the parse the \py{cell_coords}
+array and sets the values of \py{grad_x} and \py{grad_y} following the centered
+difference with step $2h$ mentioned in the scope statement. I then found that
+the function \py{numpy.gradient} uses the same method. However, since the
+borders of the matrix \py{phi} is filled with \py{numpy.nan} values, the
+gradient is not computed at the outer edge of the domain.\\
+To compute there values, I applied the impermeable wall condition specified in
+the section \textbf{5.1} of the scope statement. We consider the 
+\py{numpy.nan} cell with coordinates \py{[i - 1, j]} as a fictious cell with
+the value of the cell \py{[i, j]}. This rule applies to the cells to the left
+and to the right for \py{grad_x} and to the top and to the right for
+\py{grad_y}.\\
+It the computes the norm of the gradient (used later to plot the normalized
+gradient).\\
+Finally, it saves the 3 matrices in \textbf{dat} files.
+\smallbreak{}
+The function \py{build_pressure()} takes no input, it uses the imported data
+from \py{parameters.py}.\\
+

@@ -1,5 +1,4 @@
 import numpy as np
-import scipy.linalg as sp
 from parameters import *
 
 
@@ -8,7 +7,7 @@ class Matrices:
     def __init__(self):
 
         self.G = self.build_g(Nx, Ny, geometry, angle)
-        self.M, self.cell_coords = self.build_index_matrices()
+        self.M, self.cell_coords = self.build_index_matrices(Nx, Ny)
         self.b = self.build_b()
         self.A = self.build_a()
 
@@ -90,7 +89,7 @@ class Matrices:
         return G
 
     # Builds the matrix M and the array cell_coords
-    def build_index_matrices(self):
+    def build_index_matrices(self, Nx: int, Ny: int):
 
         M = np.zeros(self.G.shape, dtype=np.int)
         count = 0
@@ -148,9 +147,9 @@ class Matrices:
     # -------------------------------------------------------------------------
     # Builds the array b
     def build_b(self):
-        b = np.zeros((self.M.max() + 1, 1), dtype=np.float32)
+        b = np.zeros((self.cell_coords.shape[0], 1), dtype=np.float32)
 
-        for i in range(self.M.max() + 1):
+        for i in range(self.cell_coords.shape[0]):
 
             if self.G[self.cell_coords[i][0], self.cell_coords[i][1]] == 2:
                 b[i] = -vx * h
@@ -159,7 +158,7 @@ class Matrices:
                 b[i] = phi_ref
 
             else:
-                b[i] = 0
+                pass
 
         return b
 
