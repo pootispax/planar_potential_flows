@@ -28,7 +28,7 @@ This project uses several piece of data set by the user to work.
     \item $v_x$ is the Neuman condition
     \item $\phi_{ref}$ is the Dirichlet condition
 \end{itemize}
-Be careful in the case of a widening/shrinkage geometry !
+Be careful in the case of a widening/shrinkage geometry!
 In order for the program to generate a domain from one end to another, there is
 a restriction on the angle, if the restriction is not met, the program will
 output a ValueError. The restriction is as follows:
@@ -40,20 +40,20 @@ radians for the computation.
 
 \subsection{Outputs}
 As of the alpha version, the program outputs 4 pdf files, one for each plot.
-The files are saved in a subfolder named ``figures'' and the filenames are set
-with the following rule:\\
+The files are saved in a subfolder named \textbf{figures/} and the filenames
+are set with the following rule:\\
 \begin{center}
       \mintinline{python}{<data>_<geometry>_Nx=<Nx>_Ny=<Ny>.pdf}
 \end{center}
 \mintinline{python}{data} stands for the plotted data (potential, velocity,
 streamlines, pressure).
 \subsection{Concerning the running time}
-Due to the function \mintinline{python}{numpy.linalg.solve()} being slow for
+Due to the function \py{numpy.linalg.solve()} being slow for
 big matrices, the bigger the size of the domain, the higher the running time.\\
 For a domain size of $\num{3600}$ cells ($\num{60} \times \num{60}$), it takes
 around $\num{20}$ seconds to run, for a domain size of $\num{14400}$ cells
 ($\num{120} \times \num{120}$), it increases to $\num{23}$ minuts. 
-\smallbreak
+\smallbreak{}
 I searched for a faster method to solve the linear system in vain, thus I
 recommend to stay on relatively low values for $N_x$ and $N_y$, the graphs are
 easily readable for a value of $\num{60}$ each.\\
@@ -67,5 +67,80 @@ model (matrix). The values are computed at each point of the matrix.
 
 
 \subsection{Constitutive elements}
-\subsubsection{Main program}
+\subsubsection{\py{main.py}}
+This file is executable (without parameters input in the command).\\
+After the imports, it will first call the file \py{check_data.py} to check the
+type of the input data.\\
+Then it will call the file \py{matrices.py} to initiate
+the values of \py{G}, \py{M}, \py{cell_coords}, \py{A} and \py{b}.
+\smallbreak{}
+It then checks for the \py{recompute} value, if \py{True} or if there are no
+existing \textbf{dat} files for the current parameters, it will call
+the function \py{domain_check()} to display a warning if the domain is large.
+It then calls the subroutine \py{make_data()} to compute \py{phi},
+\py{grad_x}, \py{grad_y}, \py{grad_norm} and \py{pressure} and saves them in
+\textbf{dat} files.\\
+Else, it will use the existing dat files to generate the plots.
+\smallbreak{}
+Then it calls the function \py{load_data()} to read the \textbf{dat} files and stores
+them in a dictionary and it initiate the file \py{plot.py} which will be used
+to plot the different values.
+\smallbreak{}
+The last lines call the subroutine \py{plot_graphs} with different arguments
+to plot and save all the wanted graphs.
 
+\subsubsection{\py{data_check.py}}
+This file has several subroutines and functions to rule the execution of the
+program.
+\smallbreak{}
+The subroutine \py{data_check()} reads the value of each parameter and checks
+that the type and the value are correct and will not cause a crash of the
+program. If the value/type is incorrect, it will raise an error and stop the
+program.
+\smallbreak{}
+The function \py{existing_data()} will check for specific files in the
+\textbf{dat/} subfolder. If at least one files is missing, it returns \py{True}
+and the program will recompute all the data. Else it does nothing.
+\smallbreak{}
+The subroutine \py{domain_check()} is just a warning. It read the max value of
+the matrix \py{M} plus one which is the number of fluid cells to compute.
+If this number is higher than 5000, it will display a message warning the user
+that the program can take some time to run. Then it asks if the user wants to
+keep going. \py{"Yes"} will continue, \py{"No"} will stop the program and
+anything other than that will stop the program aswell.
+
+\subsubsection{\py{matrices.py}}
+This class is where everything is computed, from start to end.
+\smallbreak{}
+\py{__init__} stores the value of \py{G}, \py{M}, \py{cell_coords}, \py{b} and
+\py{A} which will be used several times in the class.
+\smallbreak{}
+The subroutine \py{make_data{}} will call the functions that compute \py{phi},
+\py{grax_x}, \py{grad_y}, \py{grad_norm} and \py{pressure}. Each function
+will write the data in a \textbf{dat} file.
+\smallbreak{}
+The function \py{load_data()} reads the \textbf{dat} files and return the
+values in a dictionary.
+\smallbreak{}
+The function \py{build_g()} takes 4 input arguments.
+\begin{itemize}
+    \item \py{Nx: int}
+    \item \py{Ny: int}
+    \item \py{geometry: str}
+    \item \py{angle: int} of size 8 bits, in radians
+\end{itemize}
+It acts as a selector. Given a geometry, if will call the function
+\py{build_geometry()} with different input values. There is no real point in
+this function in the alpha version since the straight, widening and shrinkage
+geometries are generated from the same function, with only the angle changing.
+However, it will prove useful in the beta and gold version.
+\smallbreak{}
+The function \py{build_geometry()} takes 2 input arguments.
+\begin{itemize}
+    \item \py{G:} \textcolor{dtype}{\py{np.array}}
+    \item \py{angle: int} of size 8 bits, in radians
+\end{itemize}
+The function starts by computing \py{alpha} as the tangent of the angle.\\
+It then uses it in a \py{for} loop to compute an offset which will be used to
+build the geometry.\\
+In case of a 

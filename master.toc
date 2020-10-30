@@ -6,4 +6,9 @@
 \contentsline {subsection}{\numberline {1.4}Outputs}{2}%
 \contentsline {subsection}{\numberline {1.5}Concerning the running time}{2}%
 \contentsline {section}{\numberline {2}Internal structure of the program}{2}%
-\contentsline {subsection}{\numberline {2.1}Description of the physical model}{2}%
+\contentsline {subsection}{\numberline {2.1}Physical model}{2}%
+\contentsline {subsection}{\numberline {2.2}Scientific computation algorithms}{2}%
+\contentsline {subsection}{\numberline {2.3}Constitutive elements}{2}%
+\contentsline {subsubsection}{\numberline {2.3.1}\mintinline {python}{main.py}}{2}%
+\contentsline {subsubsection}{\numberline {2.3.2}\mintinline {python}{data_check.py}}{3}%
+\contentsline {subsubsection}{\numberline {2.3.3}\mintinline {python}{matrices.py}}{3}%

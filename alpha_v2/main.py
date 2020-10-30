@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 # Main program
-import numpy as np
-from parameters import Nx, Ny, geometry, recompute
+from parameters import recompute
 import matrices
 import plot
 import data_check
@@ -25,3 +24,4 @@ plot.plot_graphs("potential", data)
 plot.plot_graphs("velocity", data)
 plot.plot_graphs("streamlines", data)
 plot.plot_graphs("pressure", data)
+print("All the graphs are in the figures subfolder")
