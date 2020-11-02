@@ -61,12 +61,19 @@ around $\num{20}$ seconds to run, for a domain size of $\num{14400}$ cells
 \smallbreak{}
 I searched for a faster method to solve the linear system in vain, thus I
 recommend to stay on relatively low values for $N_x$ and $N_y$, the graphs are
-easily readable for a value of $\num{60}$ each.\\
+easily readable for a value of $\num{60}$ each.
+\smallbreak{}
+By default, python only uses one CPU core when executing a program, the
+solution to that problem is parallel programming, however I am not enough
+experienced in that field to develop an optimized program.
 
 \part{Internal structure of the program}
 \section{Physical model}
-In order to build the model, the program uses a squared structured lattice
+In order to build the model, the program uses a squared structured meshe
 model (matrix). The values are computed at each point of the matrix.
+
+\subsection{Velocity potential field}
+
 
 \section{Scientific computation algorithms}
 
@@ -98,19 +105,20 @@ to plot and save all the wanted graphs.
 This file has several subroutines and functions to rule the execution of the
 program.
 
-\subsubsection{\py{data_check()}}
-The subroutine \py{data_check()} reads the value of each parameter and checks
-that the type and the value are correct and will not cause a crash of the
-program. If the value/type is incorrect, it will raise an error and stop the
-program.
+\subsubsection{\textcolor{func}{\py{data_check()}}}
+The subroutine \textcolor{func}{\py{data_check()}} reads the value of each
+parameter and checks that the type and the value are correct and will not cause
+a crash of the program. If the value/type is incorrect, it will raise an error
+and stop the program.
 
-\subsubsection{\py{existing_data()}}
-The function \py{existing_data()} will check for specific files in the
-\textbf{dat/} subfolder. If at least one files is missing, it returns \py{True}
-and the program will recompute all the data. Else it does nothing.
+\subsubsection{\textcolor{func}{\py{existing_data()}}}
+The function \textcolor{func}{\py{existing_data()}} will check for specific
+files in the \textbf{dat/} subfolder. If at least one files is missing, it
+returns \py{True} and the program will recompute all the data. Else it does
+nothing.
 
-\subsubsection{\py{domain_check()}}
-The subroutine \py{domain_check()} is just a warning. It read the max value of
+\subsubsection{\textcolor{func}{\py{domain_check()}}}
+The subroutine \textcolor{func}{\py{domain_check()}} is just a warning. It read the max value of
 the matrix \py{M} plus one which is the number of fluid cells to compute.
 If this number is higher than 5000, it will display a message warning the user
 that the program can take some time to run. Then it asks if the user wants to
@@ -120,21 +128,21 @@ anything other than that will stop the program aswell.
 \subsection{\py{matrices.py}}
 This class is where everything is computed, from start to end.
 
-\subsubsection{\py{__init__()}}
-\py{__init__()} stores the value of \py{G}, \py{M}, \py{cell_coords}, \py{b} and
+\subsubsection{\textcolor{func}{\py{__init__()}}}
+\textcolor{func}{\py{__init__()}} stores the value of \py{G}, \py{M}, \py{cell_coords}, \py{b} and
 \py{A} which will be used several times in the class.
 
-\subsubsection{\py{make_data()}}
-The subroutine \py{make_data{}} will call the functions that compute \py{phi},
+\subsubsection{\textcolor{func}{\py{make_data()}}}
+The subroutine \textcolor{func}{\py{make_data{}}} will call the functions that compute \py{phi},
 \py{grax_x}, \py{grad_y}, \py{grad_norm} and \py{pressure}. Each function
 will write the data in a \textbf{dat} file.
 
-\subsubsection{\py{load_data()}}
-The function \py{load_data()} reads the \textbf{dat} files and return the
+\subsubsection{\textcolor{func}{\py{load_data()}}}
+The function \textcolor{func}{\py{load_data()}} reads the \textbf{dat} files and return the
 values in a dictionary.
 
-\subsubsection{\py{build_g()}}
-The function \py{build_g()} takes 4 input arguments.
+\subsubsection{\textcolor{func}{\py{build_g()}}}
+The function \textcolor{func}{\py{build_g()}} takes 4 input arguments.
 \begin{itemize}
       \item \py{Nx: int}
       \item \py{Ny: int}
@@ -142,14 +150,14 @@ The function \py{build_g()} takes 4 input arguments.
       \item \py{angle: int} of size 8 bits, in radians
 \end{itemize}
 It acts as a selector. Given a geometry, it will create a matrix \py{G} filled
-with zeros and call the function \py{build_geometry()} with different input
+with zeros and call the function \textcolor{func}{\py{build_geometry()}} with different input
 values. There is no real point in this function in the alpha version since the
 straight, widening and shrinkage geometries are generated from the same
 function, with only the angle changing. However, it will prove useful in the
 beta and gold version.
 
-\subsubsection{\py{build_geometry()}}
-The function \py{build_geometry()} takes 2 input arguments.
+\subsubsection{\textcolor{func}{\py{build_geometry()}}}
+The function \textcolor{func}{\py{build_geometry()}} takes 2 input arguments.
 \begin{itemize}
       \item \py{G:} \textcolor{dtype}{\py{np.array}}
       \item \py{angle: int} of size 8 bits, in radians
@@ -164,8 +172,8 @@ domain.\\
 Since the program will always compute \py{G} no matter what and to avoid some
 problem, it will save the matrix only if \py{recompte == True}.
 
-\subsubsection{\py{build_index_matrices()}}
-The function \py{build_index_matrices()} takes 2 input arguments.
+\subsubsection{\textcolor{func}{\py{build_index_matrices()}}}
+The function \textcolor{func}{\py{build_index_matrices()}} takes 2 input arguments.
 \begin{itemize}
       \item \py{Nx: int}
       \item \py{Ny: int} 
@@ -181,8 +189,8 @@ and for each cell which value is not -1, it will store the coordinates of that
 cell in the index \py{count} of the array \py{cell_coords} and increment the
 counter.
 
-\subsubsection{\py{build_a()}}
-The function \py{build_a()} takes no input, it uses the imported data from
+\subsubsection{\textcolor{func}{\py{build_a()}}}
+The function \textcolor{func}{\py{build_a()}} takes no input, it uses the imported data from
 \py{parameters.py}.\\
 The function returns the matrix \py{A}.\\
 It starts by creating an array \py{A} of size
@@ -193,8 +201,8 @@ set the value of the diagonal depending on the neighbors and sets each
 neighbour associated cell to 1. The diagonal cells corresponding to the outlet
 are all set to 1.
 
-\subsubsection{\py{build_b()}}
-The function \py{build_b()} takes no input, it uses the imported data from
+\subsubsection{\textcolor{func}{\py{build_b()}}}
+The function \textcolor{func}{\py{build_b()}} takes no input, it uses the imported data from
 \py{parameters.py}.\\
 It returns the array \py{b}.\\
 It starts by creating an array \py{b} of size
@@ -203,8 +211,8 @@ It then parses the array. For each cell corresponding to the inlet, it sets the
 value to \py{-vx * h} and for each value corresponding to the outlet, it sets
 the value to \py{phi_ref}. The rest of the array is not modified.
 
-\subsubsection{\py{build_phi()}}
-The function \py{build_phi()} takes no input, it uses the imported data from
+\subsubsection{\textcolor{func}{\py{build_phi()}}}
+The function \textcolor{func}{\py{build_phi()}} takes no input, it uses the imported data from
 \py{parameters.py}.\\
 This function is the slowest one since it compute the solution of $Ax = b$. For
 that it uses the function \py{linalg.solve()} from \py{numpy}. Then it creates
@@ -213,8 +221,8 @@ an empty matrix \py{phi} and fills it with \py{numpy.nan}. It then parses
 The other cells are not modified.\\
 Finally, it saves the values in a \textbf{dat} file.
 
-\subsubsection{\py{build_gradient()}}
-The function \py{build_gradient()} takes no input, it uses the imported data
+\subsubsection{\textcolor{func}{\py{build_gradient()}}}
+The function \textcolor{func}{\py{build_gradient()}} takes no input, it uses the imported data
 from \py{parameters.py}.\\
 This function is rather big, but it is only a variation of the \py{gradient}
 function from \py{numpy}. The function \py{numpy.gradient} does not work
@@ -237,7 +245,7 @@ It the computes the norm of the gradient (used later to plot the normalized
 gradient).\\
 Finally, it saves the 3 matrices in \textbf{dat} files.
 
-\subsubsection{\py{build_pressure()}}
+\subsubsection{\textcolor{func}{\py{build_pressure()}}}
 The function \py{build_pressure()} takes no input, it uses the imported data
 from \py{parameters.py}.\\
 The function starts by loading the \textbf{dat} files containing the values of
@@ -253,7 +261,7 @@ Finally, it saves the matrix in a \textbf{dat} file.
 \subsection{\py{plot.py}}
 The class is used to plot every piece of data.
 
-\subsubsection{\py{plot_graphs()}}
+\subsubsection{\textcolor{func}{\py{plot_graphs()}}}
 The function \py{plot_graphs()} takes 2 input arguments.
 \begin{itemize}
       \item \py{display: str}
@@ -272,3 +280,9 @@ Each one of the 4 next functions take 1 input argument.
 They return the plotted graph.\\
 The 4 functions work the same way, they set the name of the graph and plot the
 desired data.
+\cite{potential-flow}
+\newpage
+\begin{multicols}{2}
+    [\center{\printbibheading}]
+    \printbibliography[heading=none]
+\end{multicols}
