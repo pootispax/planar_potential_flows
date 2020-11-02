@@ -1,6 +1,6 @@
 PWD /home/cyril/Documents/FAC/master-1/semester-7/numerical-project
 INPUT /var/lib/texmf/web2c/luahbtex/lualatex.fmt
-INPUT /home/cyril/Documents/FAC/master-1/semester-7/numerical-project/master.tex
+INPUT ./master.tex
 OUTPUT master.log
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/lualatexquotejobname.lua
 INPUT /usr/share/texmf-dist/tex/latex/base/ltluatex.lua
