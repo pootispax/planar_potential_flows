@@ -1,3 +1,14 @@
 /figures/
 /alpha/
 /beta/
+master.aux
+master.bbl
+master.bcf
+master.blg
+master.fdb_latexmk
+master.fls
+master.log
+master.out
+master.run.xml
+master.tex.latexmain
+master.tox

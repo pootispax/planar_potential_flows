@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Arch Linux)  (format=lualatex 2020.9.8)  2 NOV 2020 22:33
+This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Arch Linux)  (format=lualatex 2020.9.8)  3 NOV 2020 10:43
  system commands enabled.
 **master.tex
 (./master.tex
@@ -590,12 +590,12 @@ braces):
 >  {french/localnumeral}  =>  {polyglossia@C@localnumeral}
 >  {french/Localnumeral}  =>  {polyglossia@C@localnumeral}.
 Module polyglossia Info: Language data for french
+(polyglossia)            loader	loadhyph-fr.tex
 (polyglossia)            lefthyphenmin	2
-(polyglossia)            righthyphenmin	2
-(polyglossia)            synonyms	patois,francais
 (polyglossia)            patterns	hyph-fr.pat.txt
 (polyglossia)            hyphenation	
-(polyglossia)            loader	loadhyph-fr.tex on input line 12
+(polyglossia)            synonyms	patois,francais
+(polyglossia)            righthyphenmin	2 on input line 12
 Module polyglossia Info: Language french was not yet loaded; created with id 2 o
 n input line 12
 Lua-only attribute polyglossia_punct = 4
@@ -2872,8 +2872,8 @@ Here is how much of LuaTeX's memory you used:
  873 words of node memory still in use:
    7 hlist, 2 vlist, 2 rule, 3 glue, 5 kern, 1 penalty, 1 glyph, 12 attribute, 1
 19 glue_spec, 12 attribute_list, 1 write, 1 pdf_action nodes
-   avail lists: 1:6,2:1149,3:183,4:95,5:196,6:68,7:4528,8:47,9:333,10:10,11:206,
-12:1
+   avail lists: 1:6,2:1149,3:183,4:95,5:196,6:68,7:4528,8:47,9:333,10:7,11:206,1
+2:1
  52767 multiletter control sequences out of 65536+600000
  139 fonts using 37736383 bytes
  68i,11n,112p,928b,1965s stack positions out of 5000i,500n,10000p,200000b,100000s
@@ -2884,7 +2884,7 @@ nLibertine_R.otf></usr/share/texmf-dist/fonts/opentype/public/lm-math/latinmoder
 n-math.otf></usr/share/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf>
 </usr/share/fonts/ttf-linux-libertine/LinLibertine_RB.otf></usr/share/fonts/ttf-
 linux-libertine/LinLibertine_R.otf>
-Output written on master.pdf (7 pages, 69104 bytes).
+Output written on master.pdf (7 pages, 69089 bytes).
 
 PDF statistics: 262 PDF objects out of 1000 (max. 8388607)
  226 compressed objects within 3 object streams

@@ -75,13 +75,12 @@ model (matrix). The values are computed at each point of the matrix.
 \subsection{Velocity potential field}
 The velocity potential field is computed by solving a system of linear
 equations. The result is computed using the matrix method, by solving the
-equation $Ax = b$, we can find the potential flow value in each cell.\\
+equation $Ax = b$ we can find the potential flow value in each cell.\\
 The matrix $A$, of size $N_\text{fluid} \times N_\text{fluid}$ stores 2
-information per cell, the number of neighboring cells and the coordinates of
-each and every one of them. The number of neighbougring cells is stored in the
-diagonal of the matrix. Let $c$ be the number of a cell containing fluid and
-$n_c$ the number of neighbors for the cell $n$, the diagonal elements are
-defined as follow:
+information per cell, the number of neighboring cells and the number of each
+one of them. The number of neighbougring cells is stored in the diagonal of the
+ matrix. Let $c$ be the number of a cell containing fluid and $n_c$ the number
+ of neighbors for the cell $n$, the diagonal elements are defined as follows:
 \[
       A_{n, n} = -n_c
 \]
@@ -89,7 +88,8 @@ For each neighboring cell, some elements of the matrix are as follows:
 \[
       A_{n, nb} = 1
 \]
-with $nb$ the number of a neighboring cell.
+with $nb$ the number of a neighboring cell.\\
+
 \section{Scientific computation algorithms}
 
 
