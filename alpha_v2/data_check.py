@@ -19,7 +19,7 @@ def data_check():
     if vx <= 0 or np.iscomplex(vx):
         raise ValueError('vx must be a positive float')
 
-    if phi_ref <= 0 or np.iscomplex(phi_ref):
+    if phi_ref < 0 or np.iscomplex(phi_ref):
         raise ValueError('phi_ref must be a positive float')
 
     if not isinstance(geometry, str):

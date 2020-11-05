@@ -14,6 +14,8 @@ class Plot:
 
         if display == "potential":
             self.plot_potential(ax, data)
+            im = ax.imshow(data['phi'], cmap='jet')
+            fig.colorbar(im, ax=ax)
             print('Potential field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
                   .format(display, geometry, Nx, Ny))
 
@@ -40,6 +42,8 @@ class Plot:
     def plot_potential(self, ax, data):
 
         ax.set_title('Velocity potential field', fontsize=10)
+        ax.imshow(data['phi'], cmap='jet')
+
         ax.contour(data['phi'], levels=Nx,
                    colors='green', linewidths=.75)
 
@@ -48,7 +52,6 @@ class Plot:
     def plot_velocity(self, ax, data):
 
         ax.set_title('Velocity field', fontsize=10)
-
         X = np.linspace(0, Nx - 1, Nx)
         Y = np.linspace(0, Ny - 1, Ny)
         XX, YY = np.meshgrid(X, Y)

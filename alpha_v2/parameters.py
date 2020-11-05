@@ -1,15 +1,15 @@
 # This file sets the different parameters of the program
 
 # Set the size of the area
-Nx = 90
-Ny = 90
+Nx = 60
+Ny = 60
 
 # Set the size of a cell
 h = 1
 
 # Set the Neumann and Dirichlet boundary conditions
-vx = 4
-phi_ref = 1
+vx = 1
+phi_ref = 0
 
 # Set the relative density and the initial pressure of the fluid
 rho = 1
