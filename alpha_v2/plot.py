@@ -54,8 +54,8 @@ class Plot:
         XX, YY = np.meshgrid(X, Y)
 
         ax.quiver(XX - .25, YY,
-                  -data['grad_y']/data['grad_norm'],
-                  data['grad_x']/data['grad_norm'])
+                  -data['grad_x']/data['grad_norm'],
+                  data['grad_y']/data['grad_norm'])
 
         return ax
 

@@ -7,22 +7,21 @@ Ny = 60
 # Set the size of a cell
 h = 1
 
-# Set the inlet and outlet (Neumann and Dirichlet boundary conditions)
-vx = 1
+# Set the Neumann and Dirichlet boundary conditions
+vx = 4
 phi_ref = 1
 
 # Set the relative density and the initial pressure of the fluid
-rho = 1
+rho = 10
 pressure_init = 1
 
 # Set the choosen geometry, possible values are :
 #                                       'straight' (by default)
 #                                       'widening'
 #                                       'shrinkage'
-geometry = 'widening'
+geometry = 'shrinkage'
 
 # Set the value of the angle in the case of a shrinkage/widening geometry
-# The angle must be in the interval [1, 25]
 angle = 20
 
 # If False, the program will check for existing data files, if they exist, it
