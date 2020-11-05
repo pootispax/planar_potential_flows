@@ -298,7 +298,7 @@ desired data.
 
 \part{Quality approach}
 
-
+\newpage
 \part{Outcome examples}
 \section{Input data}
 The program needs some data to run. For the example, I found that a box of size
@@ -306,7 +306,15 @@ $\num{60} \times \num{60}$ is good enough. Obviously we can use a bigger box,
 but the computing time increases exponentially as we increase the box size.
 A smaller box can also produce acceptable results. I also choosed to use cells
 of size 1 ($h = 1$).\\
-Concerning the fluid
+Concerning the fluid, I did some research but did not found anything
+interesting to use for the input data. Here are the data I choosed :
+\begin{itemize}
+      \item \py{rho} = 1
+      \item \py{vx} = 1
+      \item \py{phi_ref} = 1
+      \item \py{pressure_init} = $\SI{5}{\bar}$, typical pressure in a watering
+            pipe
+\end{itemize}
 
 \newpage
 \cite{potential-flow}

@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from parameters import *
 
@@ -14,14 +15,24 @@ class Matrices:
     # -------------------------------------------------------------------------
     def make_data(self):
 
-        print("Building matrix phi\nSince numpy.linalg.solve() is a slow "
+        t_init = time.time()
+        print("\nBuilding matrix phi\nSince numpy.linalg.solve() is a slow "
               "function, this can take some time...")
+
         self.build_phi()
-        print("Done\nBuilding gradient...")
+        t_phi = time.time()
+        print("Done in {:.3f} seconds.\n\nBuilding gradient..."
+              .format(t_phi - t_init))
+
         self.build_gradient()
-        print("Done\nBuilding pressure...")
+        t_grad = time.time()
+        print("Done in {:.3f} seconds.\n\nBuilding pressure..."
+              .format(t_grad - t_phi))
+
         self.build_pressure()
-        print("Done\nAll the data has been computed")
+        t_pressure = time.time()
+        print("Done in {:.3f} seconds.\n\nAll the data has been computed\n"
+              .format(t_pressure - t_grad))
 
     # -------------------------------------------------------------------------
     #  Loads the saved data for later use in the main program

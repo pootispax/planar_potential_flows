@@ -1,8 +1,8 @@
 # This file sets the different parameters of the program
 
 # Set the size of the area
-Nx = 60
-Ny = 60
+Nx = 90
+Ny = 90
 
 # Set the size of a cell
 h = 1
@@ -12,8 +12,8 @@ vx = 4
 phi_ref = 1
 
 # Set the relative density and the initial pressure of the fluid
-rho = 10
-pressure_init = 1
+rho = 1
+pressure_init = 5
 
 # Set the choosen geometry, possible values are :
 #                                       'straight' (by default)
