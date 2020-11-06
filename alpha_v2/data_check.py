@@ -54,7 +54,7 @@ def domain_check():
         print("You started the program with a rather big domain (more than"
               " 5000 fluid cells).\nThe computation can take some time,"
               " are you sure want to continue (Yes/No) ?")
-        answer = input(("\n> "))
+        answer = input("\n> ")
 
         if answer == "Yes" or answer == "yes":
             pass
