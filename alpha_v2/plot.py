@@ -1,6 +1,7 @@
 import numpy as np
+import scipy.interpolate as sp
 import matplotlib.pyplot as plt
-from parameters import Nx, Ny, geometry
+from parameters import Nx, Ny, geometry, h
 
 
 class Plot:
@@ -41,7 +42,7 @@ class Plot:
 
     def plot_potential(self, ax, data):
 
-        ax.set_title('Velocity potential field', fontsize=10)
+        # ax.set_title('Velocity potential field', fontsize=10)
         ax.imshow(data['phi'], cmap='jet')
 
         ax.contour(data['phi'], levels=Nx,
@@ -51,20 +52,41 @@ class Plot:
 
     def plot_velocity(self, ax, data):
 
-        ax.set_title('Velocity field', fontsize=10)
+        # ax.set_title('Velocity field', fontsize=10)
         X = np.linspace(0, Nx - 1, Nx)
         Y = np.linspace(0, Ny - 1, Ny)
-        XX, YY = np.meshgrid(X, Y)
 
-        ax.quiver(XX - .25, YY,
-                  -data['grad_x']/data['grad_norm'],
-                  data['grad_y']/data['grad_norm'])
+        grad_x = np.nan_to_num(-data['grad_x']/data['grad_norm'], 0)
+        grad_y = np.nan_to_num(data['grad_y']/data['grad_norm'], 0)
+
+        interp_x = sp.RectBivariateSpline(Y, X, grad_x)
+        interp_y = sp.RectBivariateSpline(Y, X, grad_y)
+
+        Xnew = np.linspace(0, Nx - 1, Nx // h)
+        Ynew = np.linspace(0, Ny - 1, Ny // h)
+        grad_x_new = interp_x(Xnew, Ynew)
+        grad_y_new = interp_y(Xnew, Ynew)
+
+        for j in range(Ny // h):
+            for i in range(Nx // h):
+                if grad_x_new[i, j] == 0:
+                    grad_x_new[i, j] = np.nan
+
+                if grad_y_new[i, j] == 0:
+                    grad_y_new[i, j] = np.nan
+        
+        XX, YY = np.meshgrid(Xnew, Ynew)
+        ax.quiver(XX, YY, grad_x_new, grad_y_new)
+
+        # ax.quiver(XX - .25, YY,
+        #           -data['grad_x']/data['grad_norm'],
+        #           data['grad_y']/data['grad_norm'])
 
         return ax
 
     def plot_streamlines(self, ax, data):
 
-        ax.set_title('Streamlines', fontsize=10)
+        # ax.set_title('Streamlines', fontsize=10)
         ax.streamplot(np.linspace(0, Nx - 1, Nx), np.linspace(0, Ny - 1, Ny),
                       -data['grad_x'], -data['grad_y'],
                       linewidth=.75, arrowsize=.75)
@@ -73,8 +95,8 @@ class Plot:
 
     def plot_pressure(self, ax, data):
 
-        ax.set_title('Pressure field and isobaric lines', fontsize=10)
+        # ax.set_title('Pressure field and isobaric lines', fontsize=10)
 
         ax.contour(data['pressure'], levels=10,
-                   colors='olivedrab', linewidths=.75)
+                   colors='red', linewidths=.75)
         return ax

@@ -1,5 +1,6 @@
 import time
 import numpy as np
+import data_check
 from parameters import *
 
 
@@ -90,7 +91,7 @@ class Matrices:
         G[:, 0] *= 2  # Inlet
         G[:, -1] *= 3  # Outlet
 
-        if recompute:
+        if data_check.existing_data():
             np.savetxt('dat/G_{}_{}_{}.dat'
                        .format(geometry, Nx, Ny), G)
 

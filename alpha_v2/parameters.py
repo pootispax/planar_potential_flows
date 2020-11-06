@@ -5,7 +5,7 @@ Nx = 60
 Ny = 60
 
 # Set the size of a cell
-h = 1
+h = 3
 
 # Set the Neumann and Dirichlet boundary conditions
 vx = 1
@@ -22,8 +22,8 @@ pressure_init = 5
 geometry = 'shrinkage'
 
 # Set the value of the angle in the case of a shrinkage/widening geometry
-angle = 20
+angle = 10
 
 # If False, the program will check for existing data files, if they exist, it
 # will not recompute the data
-recompute = True
+recompute = False

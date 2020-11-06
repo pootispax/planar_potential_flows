@@ -16,7 +16,7 @@ if recompute or data_check.existing_data():
     print('\nComputing new data...')
     matrices.make_data()
 else:
-    print('Running the program using existing data')
+    print('Running the program using existing data\n')
 
 data = matrices.load_data()
 
