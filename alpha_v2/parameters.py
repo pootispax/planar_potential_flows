@@ -12,7 +12,7 @@ vx = 1
 phi_ref = 0
 
 # Set the relative density and the initial pressure of the fluid
-rho = 1
+rho = 50
 pressure_init = 5
 
 # Set the choosen geometry, possible values are :
@@ -22,8 +22,8 @@ pressure_init = 5
 geometry = 'shrinkage'
 
 # Set the value of the angle in the case of a shrinkage/widening geometry
-angle = 10
+angle = 20
 
 # If False, the program will check for existing data files, if they exist, it
 # will not recompute the data
-recompute = False
+recompute = True

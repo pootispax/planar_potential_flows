@@ -217,8 +217,8 @@ neighbor associated cell to 1. The diagonal cells corresponding to the outlet
 are all set to 1.
 
 \subsubsection{\textcolor{func}{\py{build_b()}}}
-The function \textcolor{func}{\py{build_b()}} takes no input, it uses the imported data from
-\py{parameters.py}.\\
+The function \textcolor{func}{\py{build_b()}} takes no input, it uses the
+imported data from \py{parameters.py}.\\
 It returns the array \py{b}.\\
 It starts by creating an array \py{b} of size
 \py{(cell_coords.shape[0], 1)}, filled with zeros.\\
@@ -227,8 +227,8 @@ value to \py{-vx * h} and for each value corresponding to the outlet, it sets
 the value to \py{phi_ref}. The rest of the array is not modified.
 
 \subsubsection{\textcolor{func}{\py{build_phi()}}}
-The function \textcolor{func}{\py{build_phi()}} takes no input, it uses the imported data from
-\py{parameters.py}.\\
+The function \textcolor{func}{\py{build_phi()}} takes no input, it uses the
+imported data from \py{parameters.py}.\\
 This function is the slowest one since it compute the solution of $Ax = b$. For
 that it uses the function \py{linalg.solve()} from \py{numpy}. Then it creates
 an empty matrix \py{phi} and fills it with \py{numpy.nan}. It then parses
@@ -320,28 +320,56 @@ Concerning the fluid, here are the data I choosed :
 \begin{figure}[htbp]
       \centering
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[scale=.5]{alpha_v2/figures/potential_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{alpha_v2/figures/potential_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Velocity potential field}\label{fig:vel_pot_field}
       \end{subfigure}
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[scale=.5]{alpha_v2/figures/velocity_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{alpha_v2/figures/velocity_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Velocity field}\label{fig:velocity_field}
       \end{subfigure}
 
       \centering
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[scale=.5]{alpha_v2/figures/streamlines_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{alpha_v2/figures/streamlines_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Streamlines}\label{fig:streamlines}
       \end{subfigure}
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[scale=.5]{alpha_v2/figures/pressure_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{alpha_v2/figures/pressure_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Pressure field}\label{fig:pressure_field}
       \end{subfigure}
       \caption{Results for \py{Nx} = \py{Ny} = \num{60} in a shrinkage geometry}
 \end{figure}
-
+\newpage
 \section{Interpretation}
-As seen in \autoref{fig:velocity_field}, bla bla bla and bla
+\subsection{Expectations}
+The expected behavior for this kind of geometry (bottleneck) is that the fluid
+(water in this case) will bump into the boundaries of the domain and converge
+toward the center as it crosses the domain. Regarding the pressure of the
+fluid, since the number of fluid particles is constant throughout the
+simulation, we should observe a rise of pressure as the domain narrows.
+
+\subsection{Observations}
+Firstly, looking at \autoref{fig:velocity_field} and \autoref{fig:streamlines},
+the water crosses the domain correctly and converges toward the center of the
+domain. Despite some accuracy problems (the velocity in the edges seems off),
+I can say that the simulation meets the expected behavior. It is mandatory to
+normalize these vectors, else the output graph is not readable. However, the
+bigger the domain, the bigger the number of vectors. As the size of the domain 
+is $\num{60} \times \num{60}$, there are quite a lot of vectors to show. With
+the default display, there are too much arrows on the graph and they are too
+small to analyze anything, I added a small algorithm using interpolation to
+reduce the number of arrows while keeping the data as accurate as possible.
+Since the problem does not appear without the interpolation, I think it comes
+from there. I will try to correct it in the beta. In the alpha version, the
+streamlines are computed using the velocity, there should not be any problem
+with them, they show the path of the fluid and it seems to be the right one.
+
+\smallbreak{}
+On the \autoref{fig:pressure_field}, it is clear that the pressure increases as
+the fluid travels the domain. It is once again the expected behavior.
+
+
+
 \newpage
 \cite{potential-flow}
 \newpage

@@ -22,6 +22,8 @@ class Plot:
 
         if display == "velocity":
             self.plot_velocity(ax, data)
+            im = ax.imshow(data['grad_norm'], cmap='jet')
+            fig.colorbar(im, ax=ax)
             print('Velocity field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
                   .format(display, geometry, Nx, Ny))
 
@@ -74,7 +76,7 @@ class Plot:
 
                 if grad_y_new[i, j] == 0:
                     grad_y_new[i, j] = np.nan
-        
+
         XX, YY = np.meshgrid(Xnew, Ynew)
         ax.quiver(XX, YY, grad_x_new, grad_y_new)
 
