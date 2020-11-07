@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.interpolate as sp
 import matplotlib.pyplot as plt
-from parameters import Nx, Ny, geometry, h
+from parameters import nx, ny, geometry, h
 
 
 class Plot:
@@ -18,29 +18,29 @@ class Plot:
             im = ax.imshow(data['phi'], cmap='jet')
             fig.colorbar(im, ax=ax)
             print('Potential field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
-                  .format(display, geometry, Nx, Ny))
+                  .format(display, geometry, nx, ny))
 
         if display == "velocity":
             self.plot_velocity(ax, data)
             im = ax.imshow(data['grad_norm'], cmap='jet')
             fig.colorbar(im, ax=ax)
             print('Velocity field plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
-                  .format(display, geometry, Nx, Ny))
+                  .format(display, geometry, nx, ny))
 
         if display == "streamlines":
             self.plot_streamlines(ax, data)
             print('Streamlines plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
-                  .format(display, geometry, Nx, Ny))
+                  .format(display, geometry, nx, ny))
 
         if display == "pressure":
             self.plot_pressure(ax, data)
             im = ax.imshow(data['pressure'], cmap='jet')
             fig.colorbar(im, ax=ax)
             print('Pressure plotted and saved as {}_{}_Nx={}_Ny={}.pdf'
-                  .format(display, geometry, Nx, Ny))
+                  .format(display, geometry, nx, ny))
 
         plt.savefig("figures/{}_{}_Nx={}_Ny={}.pdf"
-                    .format(display, geometry, Nx, Ny))
+                    .format(display, geometry, nx, ny))
 
     @staticmethod
     def plot_potential(ax, data):
@@ -48,7 +48,7 @@ class Plot:
         # ax.set_title('Velocity potential field', fontsize=10)
         ax.imshow(data['phi'], cmap='jet')
 
-        ax.contour(data['phi'], levels=Nx,
+        ax.contour(data['phi'], levels=nx,
                    colors='green', linewidths=.75)
 
         return ax
@@ -56,21 +56,21 @@ class Plot:
     @staticmethod
     def plot_velocity(ax, data):
 
-        x = np.linspace(0, Nx - 1, Nx)
-        y = np.linspace(0, Ny - 1, Ny)
+        x = np.linspace(0, nx - 1, nx)
+        y = np.linspace(0, ny - 1, ny)
         grad_x = np.nan_to_num(-data['grad_x']/data['grad_norm'], nan=0)
         grad_y = np.nan_to_num(data['grad_y']/data['grad_norm'], nan=0)
 
         interp_x = sp.RectBivariateSpline(y, x, grad_x)
         interp_y = sp.RectBivariateSpline(y, x, grad_y)
 
-        xnew = np.linspace(0, Nx - 1, Nx // h)
-        ynew = np.linspace(0, Ny - 1, Ny // h)
+        xnew = np.linspace(0, nx - 1, nx // h)
+        ynew = np.linspace(0, ny - 1, ny // h)
         grad_x_new = interp_x(xnew, ynew)
         grad_y_new = interp_y(xnew, ynew)
 
-        for j in range(Ny // h):
-            for i in range(Nx // h):
+        for j in range(ny // h):
+            for i in range(nx // h):
                 if grad_x_new[i, j] == 0:
                     grad_x_new[i, j] = np.nan
 
@@ -86,7 +86,7 @@ class Plot:
     def plot_streamlines(ax, data):
 
         # ax.set_title('Streamlines', fontsize=10)
-        ax.streamplot(np.linspace(0, Nx - 1, Nx), np.linspace(0, Ny - 1, Ny),
+        ax.streamplot(np.linspace(0, nx - 1, nx), np.linspace(0, ny - 1, ny),
                       -data['grad_x'], -data['grad_y'],
                       linewidth=.75, arrowsize=.75)
 

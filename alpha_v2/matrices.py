@@ -8,8 +8,8 @@ class Matrices:
 
     def __init__(self):
 
-        self.G = self.build_g(Nx, Ny, geometry, angle)
-        self.M, self.cell_coords = self.build_index_matrices(Nx, Ny)
+        self.G = self.build_g(nx, ny, geometry, angle)
+        self.M, self.cell_coords = self.build_index_matrices(nx, ny)
         self.b = self.build_b()
         self.A = self.build_a()
 
@@ -37,98 +37,100 @@ class Matrices:
 
     # -------------------------------------------------------------------------
     #  Loads the saved data for later use in the main program
-    def load_data(self):
+    @staticmethod
+    def load_data():
 
         data = {'G': np.loadtxt('dat/G_{}_{}_{}.dat'
-                                .format(geometry, Nx, Ny),
+                                .format(geometry, nx, ny),
                                 dtype=np.int8),
                 'phi': np.loadtxt('dat/phi_{}_{}_{}.dat'
-                                  .format(geometry, Nx, Ny),
+                                  .format(geometry, nx, ny),
                                   dtype=np.float32),
                 'grad_x': np.loadtxt('dat/grad_x_{}_{}_{}.dat'
-                                     .format(geometry, Nx, Ny),
+                                     .format(geometry, nx, ny),
                                      dtype=np.float32),
                 'grad_y': np.loadtxt('dat/grad_y_{}_{}_{}.dat'
-                                     .format(geometry, Nx, Ny),
+                                     .format(geometry, nx, ny),
                                      dtype=np.float32),
                 'grad_norm': np.loadtxt('dat/grad_norm_{}_{}_{}.dat'
-                                        .format(geometry, Nx, Ny),
+                                        .format(geometry, nx, ny),
                                         dtype=np.float32),
                 'pressure': np.loadtxt('dat/pressure_{}_{}_{}.dat'
-                                       .format(geometry, Nx, Ny),
+                                       .format(geometry, nx, ny),
                                        dtype=np.float32)}
 
         return data
 
     # -------------------------------------------------------------------------
     # Builds the matrix G
-    def build_g(self, Nx: int, Ny: int, geometry: str, angle: np.int8):
+    def build_g(self, nx: int, ny: int, geometry: str, angle: np.int8):
 
-        G = np.zeros((Ny, Nx), dtype=np.int8)
+        g = np.zeros((ny, nx), dtype=np.int8)
 
         if geometry == 'straight':
-            return self.build_geometry(G, 0)
+            return self.build_geometry(g, 0)
 
         elif geometry == 'widening':
-            return self.build_geometry(G, np.radians(angle))
+            return self.build_geometry(g, np.radians(angle))
 
         elif geometry == 'shrinkage':
-            return self.build_geometry(G, np.radians(-angle))
+            return self.build_geometry(g, np.radians(-angle))
 
     # -------------------------------------------------------------------------
     # Builds the matrix G
-    def build_geometry(self, G, angle):
+    @staticmethod
+    def build_geometry(g, angle):
 
         alpha = np.tan(np.abs(angle))
 
-        for i in range(Nx):  # Parse the columns of G
+        for i in range(nx):  # Parse the columns of G
             offset = int(i * alpha)
-            G[1 + offset: -1 - offset, i] = 1
+            g[1 + offset: -1 - offset, i] = 1
 
         # Flip the geometry if angle negative
         if angle > 0:
-            G = np.fliplr(G)
-        G[:, 0] *= 2  # Inlet
-        G[:, -1] *= 3  # Outlet
+            g = np.fliplr(g)
+        g[:, 0] *= 2  # Inlet
+        g[:, -1] *= 3  # Outlet
 
         if data_check.existing_data():
             np.savetxt('dat/G_{}_{}_{}.dat'
-                       .format(geometry, Nx, Ny), G)
+                       .format(geometry, nx, ny), g)
 
         else:
             pass
 
-        return G
+        return g
 
     # Builds the matrix M and the array cell_coords
-    def build_index_matrices(self, Nx: int, Ny: int):
+    def build_index_matrices(self, nx: int, ny: int):
 
-        M = np.zeros(self.G.shape, dtype=np.int)
+        m = np.zeros(self.G.shape, dtype=np.int)
         count = 0
 
-        for c in range(Ny):
-            for r in range(Nx):
+        for c in range(ny):
+            for r in range(nx):
                 if self.G[c, r] != 0:
-                    M[c, r] = count
+                    m[c, r] = count
                     count += 1
                 else:
-                    M[c, r] = -1
+                    m[c, r] = -1
 
-        cell_coords = np.zeros((M.max() + 1, 2), dtype=np.uint)
+        cell_coords = np.zeros((m.max(initial=1) + 1, 2), dtype=np.uint)
         count = 0
 
-        for c in range(Ny):
-            for r in range(Nx):
-                if M[c, r] != -1:
+        for c in range(ny):
+            for r in range(nx):
+                if m[c, r] != -1:
                     cell_coords[count] = [c, r]
                     count += 1
 
-        return M, cell_coords
+        return m, cell_coords
 
     # -------------------------------------------------------------------------
     # Builds the matrix A
     def build_a(self):
-        A = np.zeros((self.cell_coords.shape[0],
+        a = np.zeros((self.cell_coords.shape[0],
                       self.cell_coords.shape[0]), dtype=np.int8)
 
         for r in range(self.cell_coords.shape[0]):
@@ -149,12 +151,12 @@ class Matrices:
 
                 for n in neighbors:
                     if self.G[n]:
-                        A[r, r] -= 1
-                        A[r, self.M[n]] = 1
+                        a[r, r] -= 1
+                        a[r, self.M[n]] = 1
             else:
-                A[r, r] = 1
+                a[r, r] = 1
 
-        return A
+        return a
 
     # -------------------------------------------------------------------------
     # Builds the array b
@@ -179,25 +181,25 @@ class Matrices:
     def build_phi(self):
 
         x = np.linalg.solve(self.A, self.b)
-        phi = np.empty((self.G.shape), dtype=np.float32)
+        phi = np.empty(self.G.shape, dtype=np.float32)
         phi.fill(np.nan)
 
         for i in range(len(x)):
             phi[self.cell_coords[i][0], self.cell_coords[i][1]] = x[i]
 
         np.savetxt('dat/phi_{}_{}_{}.dat'
-                   .format(geometry, Nx, Ny), phi)
+                   .format(geometry, nx, ny), phi)
 
     # -------------------------------------------------------------------------
     # Builds the gradient matrix
     def build_gradient(self):
 
         phi = np.loadtxt('dat/phi_{}_{}_{}.dat'
-                         .format(geometry, Nx, Ny), dtype=np.float32)
+                         .format(geometry, nx, ny), dtype=np.float32)
 
-        grad_x = np.empty((self.G.shape), dtype=np.float32)
+        grad_x = np.empty(self.G.shape, dtype=np.float32)
         grad_x.fill(np.nan)
-        grad_y = np.empty((self.G.shape), dtype=np.float32)
+        grad_y = np.empty(self.G.shape, dtype=np.float32)
         grad_y.fill(np.nan)
 
         for r in range(self.cell_coords.shape[0]):
@@ -207,13 +209,13 @@ class Matrices:
             if i == 0:
                 pass
 
-            elif i == Ny - 1:
+            elif i == ny - 1:
                 grad_y[i, j] = grad_y[i - 1, j]
 
             if np.isnan(phi[i - 1, j]):
                 grad_y[i, j] = (phi[i + 1, j] - phi[i, j]) / (2 * h)
 
-            elif i == Ny - 1 or np.isnan(phi[i + 1, j]):
+            elif i == ny - 1 or np.isnan(phi[i + 1, j]):
                 grad_y[i, j] = (phi[i, j] - phi[i - 1, j]) / (2 * h)
 
             else:
@@ -227,27 +229,27 @@ class Matrices:
             elif np.isnan(phi[i, j - 1]):
                 grad_x[i, j] = (phi[i, j + 1] - phi[i, j]) / (2 * h)
 
-            elif j == Nx - 1 or np.isnan(phi[i, j + 1]):
+            elif j == nx - 1 or np.isnan(phi[i, j + 1]):
                 grad_x[i, j] = (phi[i, j] - phi[i, j - 1]) / (2 * h)
 
             else:
                 grad_x[i, j] = (phi[i, j + 1] - phi[i, j - 1]) / (2 * h)
 
-        grad_norm = np.sqrt(grad_x**2 + grad_y**2)
+        grad_norm = np.sqrt(grad_x**2 + grad_y**2).astype(np.float32)
 
         np.savetxt('dat/grad_x_{}_{}_{}.dat'
-                   .format(geometry, Nx, Ny), grad_x)
+                   .format(geometry, nx, ny), grad_x)
         np.savetxt('dat/grad_y_{}_{}_{}.dat'
-                   .format(geometry, Nx, Ny), grad_y)
+                   .format(geometry, nx, ny), grad_y)
         np.savetxt('dat/grad_norm_{}_{}_{}.dat'
-                   .format(geometry, Nx, Ny), grad_norm)
+                   .format(geometry, nx, ny), grad_norm)
 
     # -------------------------------------------------------------------------
     # Builds the pressure field
     def build_pressure(self):
 
         grad_norm = np.loadtxt('dat/grad_norm_{}_{}_{}.dat'
-                               .format(geometry, Nx, Ny), dtype=np.float32)
+                               .format(geometry, nx, ny), dtype=np.float32)
 
         pressure = np.empty(self.G.shape, dtype=np.float32)
         pressure.fill(np.nan)
@@ -265,4 +267,4 @@ class Matrices:
                     * grad_norm[i, j]**2 / 2
 
         np.savetxt('dat/pressure_{}_{}_{}.dat'
-                   .format(geometry, Nx, Ny), pressure)
+                   .format(geometry, nx, ny), pressure)

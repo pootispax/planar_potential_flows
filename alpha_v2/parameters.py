@@ -1,8 +1,8 @@
 # This file sets the different parameters of the program
 
 # Set the size of the area
-Nx = 60
-Ny = 60
+nx = 60
+ny = 60
 
 # Set the size of a cell
 h = 3
