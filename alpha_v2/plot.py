@@ -45,7 +45,6 @@ class Plot:
     @staticmethod
     def plot_potential(ax, data):
 
-        # ax.set_title('Velocity potential field', fontsize=10)
         ax.imshow(data['phi'], cmap='jet')
 
         ax.contour(data['phi'], levels=nx,
@@ -85,7 +84,6 @@ class Plot:
     @staticmethod
     def plot_streamlines(ax, data):
 
-        # ax.set_title('Streamlines', fontsize=10)
         ax.streamplot(np.linspace(0, nx - 1, nx), np.linspace(0, ny - 1, ny),
                       -data['grad_x'], -data['grad_y'],
                       linewidth=.75, arrowsize=.75)
@@ -94,8 +92,6 @@ class Plot:
 
     @staticmethod
     def plot_pressure(ax, data):
-
-        # ax.set_title('Pressure field and isobaric lines', fontsize=10)
 
         ax.contour(data['pressure'], levels=10,
                    colors='red', linewidths=.75)
