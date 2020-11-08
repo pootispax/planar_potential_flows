@@ -77,21 +77,58 @@ The velocity potential field is computed by solving a system of linear
 equations. The result is computed using the matrix method, by solving the
 equation $Ax = b$ we can find the potential flow value in each cell.\\
 The matrix $A$, of size $N_\text{fluid} \times N_\text{fluid}$ stores 2
-information per cell, the number of neighboring cells and the number of each
-one of them. The number of neighbougring cells is stored in the diagonal of the
+information per cell, the number of neighboring cells and the label of each
+one of them. The number of neighboring cells is stored in the diagonal of the
  matrix. Let $c$ be the number of a cell containing fluid and $n_c$ the number
  of neighbors for the cell $n$, the diagonal elements are defined as follows:
 \[
       A_{n, n} = -n_c
 \]
-For each neighboring cell, some elements of the matrix are as follows:
+Let $i$ be the set of fluid cells neighboring $n$, we then have:
 \[
-      A_{n, nb} = 1
+      A_{n, i} = 1
 \]
-with $nb$ the number of a neighboring cell.\\
+There are at most 4 neighbors for each fluid cell.\\
 
-\section{Scientific computation algorithms}
+\subsection{Velocity field}
+Knowing the potential in all cells of the domain, the velocity can be computed
+by calculating the gradient of the potential.\\
+The method used is the finite difference:
+\[
+      \begin{array}{c}
+            v_x(i, j) = - \dfrac{\phi_{i+1, j} - \phi_{i-1, j}}{2h}\\
+            v_y(i, j) = - \dfrac{\phi_{i, j+1} - \phi_{i, j-1}}{2h}
+      \end{array}
+\]
+However, this method only works if the cell $(i, j)$ is surrounded by fluid
+cells. For the cells at the edge of the domain, the method used is slightly
+different. As mentionned in the scope statement\cite{scope-statement}, if the
+cell $(i+1, j)$ is not a fluid cell, we consider it as a fictitious cell with
+the value of the cell $(i, j)$. The same rule applies for each of the
+neighboring cells that are not fluid cells.
 
+\subsection{Streamlines}
+In the alpha version, the streamlines are computed using matplotlib.\\
+In the beta version, the method of Euler is used.\\
+In the gold version, the planned method is Runge-Kutta 4, however I had not the
+time to complete the gold version.
+
+\subsection{Pressure field}
+In order to compute the pressure, we need to know several things. Firtly, the
+velocity field must be know at each cell of the domain. Then we need the
+initial pressure of the domain. Moreover, there are certain conditions to meet
+regarding the system:
+\begin{itemize}[noitemsep]
+      \item the fluid is ideal\\
+      \item the fluid is incompressible\\
+      \item the fluid is irrotationnal
+\end{itemize}
+Knowing all that, we can use \textsc{Bernoulli}'s Theorem:
+\[
+      \mathcal{H} = P + \dfrac{1}{2} \rho v^2 \quad \text{\cite{bernoulli}}
+\]
+$\mathcal{H}$ stays the same on each point of the domain. Using this constant,
+we can then compute the pressure at each point of the domain.
 
 \section{Constitutive elements}
 \subsection{\py{main.py}}
@@ -298,7 +335,8 @@ desired data.
 
 \newpage
 \part{Quality approach}
-
+In order to reduce the memory usage of the program, I tried to limit as much
+as possible the size allocated to each variable by changing the datatype.
 \newpage
 \part{Outcome examples}
 \section{Input data}
@@ -370,9 +408,6 @@ On the \autoref{fig:pressure_field}, it is clear that the pressure increases as
 the fluid travels the domain. It is once again the expected behavior.
 
 
-
-\newpage
-\cite{potential-flow}
 \newpage
 \begin{multicols}{2}
     [\center{\printbibheading}]
