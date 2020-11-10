@@ -45,7 +45,8 @@ radians for the computation.
 \section{Outputs}
 As of the alpha version, the program outputs 4 pdf files, one for each plot.
 The files are saved in a subfolder named \textbf{figures/} and the filenames
-are set with the following rule:\\
+are set with the following rule:
+
 \begin{center}
       \mintinline{python}{<data>_<geometry>_Nx=<Nx>_Ny=<Ny>.pdf}
 \end{center}
@@ -53,15 +54,16 @@ are set with the following rule:\\
 streamlines, pressure).
 \section{Concerning the running time}
 Due to the function \py{numpy.linalg.solve()} being slow for
-big matrices, the bigger the size of the domain, the higher the running time.\\
+big matrices, the bigger the size of the domain, the higher the running time.
+
 For a domain size of $\num{3600}$ cells ($\num{60} \times \num{60}$), it takes
 around $\num{20}$ seconds to run, for a domain size of $\num{14400}$ cells
 ($\num{120} \times \num{120}$), it increases to $\num{23}$ minuts. 
-\smallbreak{}
+
 I searched for a faster method to solve the linear system in vain, thus I
 recommend to stay on relatively low values for $N_x$ and $N_y$, the graphs are
 easily readable for a value of $\num{60}$ each.
-\smallbreak{}
+
 By default, python only uses one CPU core when executing a program, the
 solution to that problem is parallel programming, however I am not enough
 experienced in that field to develop an optimized program.
@@ -75,7 +77,8 @@ model (matrix). The values are computed at each point of the matrix.
 \subsection{Velocity potential field}
 The velocity potential field is computed by solving a system of linear
 equations. The result is computed using the matrix method, by solving the
-equation $Ax = b$ we can find the potential flow value in each cell.\\
+equation $Ax = b$ we can find the potential flow value in each cell.
+
 The matrix $A$, of size $N_\text{fluid} \times N_\text{fluid}$ stores 2
 information per cell, the number of neighboring cells and the label of each
 one of them. The number of neighboring cells is stored in the diagonal of the
@@ -88,11 +91,11 @@ Let $i$ be the set of fluid cells neighboring $n$, we then have:
 \[
       A_{n, i} = 1
 \]
-There are at most 4 neighbors for each fluid cell.\\
+There are at most 4 neighbors for each fluid cell.
 
 \subsection{Velocity field}
 Knowing the potential in all cells of the domain, the velocity can be computed
-by calculating the gradient of the potential.\\
+by calculating the gradient of the potential.
 The method used is the finite difference:
 \[
       \begin{array}{c}
@@ -108,8 +111,10 @@ the value of the cell $(i, j)$. The same rule applies for each of the
 neighboring cells that are not fluid cells.
 
 \subsection{Streamlines}
-In the alpha version, the streamlines are computed using matplotlib.\\
-In the beta version, the method of Euler is used.\\
+In the alpha version, the streamlines are computed using matplotlib.
+
+In the beta version, the method of Euler is used.
+
 In the gold version, the planned method is Runge-Kutta 4, however I had not the
 time to complete the gold version.
 
@@ -118,9 +123,10 @@ In order to compute the pressure, we need to know several things. Firtly, the
 velocity field must be know at each cell of the domain. Then we need the
 initial pressure of the domain. Moreover, there are certain conditions to meet
 regarding the system:
+
 \begin{itemize}[noitemsep]
-      \item the fluid is ideal\\
-      \item the fluid is incompressible\\
+      \item the fluid is ideal
+      \item the fluid is incompressible
       \item the fluid is irrotationnal
 \end{itemize}
 Knowing all that, we can use \textsc{Bernoulli}'s Theorem:
@@ -132,24 +138,27 @@ we can then compute the pressure at each point of the domain.
 
 \section{Constitutive elements}
 \subsection{\py{main.py}}
-This file is executable (without parameters input in the command).\\
+This file is executable (without parameters input in the command).
+
 After the imports, it will first call the file \py{check_data.py} to check the
-type of the input data.\\
+type of the input data.
+
 Then it will call the file \py{matrices.py} to initiate
 the values of \py{G}, \py{M}, \py{cell_coords}, \py{A} and \py{b}.
-\smallbreak{}
+
 It then checks for the \py{recompute} value, if \py{True} or if there are no
 existing \textbf{dat} files for the current parameters, it will call
 the function \py{domain_check()} to display a warning if the domain is large.
 It then calls the subroutine \py{make_data()} to compute \py{phi},
 \py{grad_x}, \py{grad_y}, \py{grad_norm} and \py{pressure} and saves them in
-\textbf{dat} files.\\
+\textbf{dat} files.
+
 Else, it will use the existing dat files to generate the plots.
-\smallbreak{}
+
 Then it calls the function \py{load_data()} to read the \textbf{dat} files and
 stores them in a dictionary and it initiate the file \py{plot.py} which will be
 used to plot the different values.
-\smallbreak{}
+
 The last lines call the subroutine \py{plot_graphs} with different arguments
 to plot and save all the wanted graphs.
 
@@ -214,27 +223,34 @@ The function \textcolor{func}{\py{build_geometry()}} takes 2 input arguments.
       \item \py{G:} \textcolor{dtype}{\py{np.array}}
       \item \py{angle: int} of size 8 bits, in radians
 \end{itemize}
-The function returns the matrix \py{G}.\\
-The function starts by computing \py{alpha} as the tangent of the angle.\\
+The function returns the matrix \py{G}.
+
+The function starts by computing \py{alpha} as the tangent of the angle.
+
 It then uses it in a \py{for} loop to compute an offset which will be used to
-build the geometry.\\
+build the geometry.
+
 In case of a shrinkage geometry, the angle inputed is negative, the function
 will flip horizontally the matrix. It then sets the inlet and outlet of the
-domain.\\
+domain.
+
 Since the program will always compute \py{G} no matter what and to avoid some
 problem, it will save the matrix only if \py{recompte == True}.
 
 \subsubsection{\textcolor{func}{\py{build_index_matrices()}}}
-The function \textcolor{func}{\py{build_index_matrices()}} takes 2 input arguments.
+The function \textcolor{func}{\py{build_index_matrices()}} takes 2 input
+arguments.
 \begin{itemize}
       \item \py{Nx: int}
       \item \py{Ny: int} 
 \end{itemize}
-The function returns the matrix \py{M} and the array \py{cell_coords}.\\
+The function returns the matrix \py{M} and the array \py{cell_coords}.
+
 It starts by creating the matrix \py{M} the shape of \py{G}, filled with zeros
 and initiate a counter \py{count}. It then parses \py{M} and for each fluid
 cell (\py{G[c, r] != 0}), it sets the value of \py{M[r, c]} to the value of the
-counter and increment the counter by 1. All the other values are set to -1.\\
+counter and increment the counter by 1. All the other values are set to -1.
+
 Then it create an array \py{cell_coords} of size \py{(M.max() + 1, 2)} and
 sets the value of the counter back to zero. Then it parses the matrix \py{M}
 and for each cell which value is not -1, it will store the coordinates of that
@@ -243,8 +259,10 @@ counter.
 
 \subsubsection{\textcolor{func}{\py{build_a()}}}
 The function \textcolor{func}{\py{build_a()}} takes no input, it uses the imported data from
-\py{parameters.py}.\\
-The function returns the matrix \py{A}.\\
+\py{parameters.py}.
+
+The function returns the matrix \py{A}.
+
 It starts by creating an array \py{A} of size
 $(N_{\text{fluid}}, N_{\text{fluid}})$, filled with zeros. It then
 parses the array \py{cell_coords} and for each inlet and fluid cell (the oulet
@@ -255,30 +273,37 @@ are all set to 1.
 
 \subsubsection{\textcolor{func}{\py{build_b()}}}
 The function \textcolor{func}{\py{build_b()}} takes no input, it uses the
-imported data from \py{parameters.py}.\\
-It returns the array \py{b}.\\
+imported data from \py{parameters.py}.
+
+It returns the array \py{b}.
+
 It starts by creating an array \py{b} of size
-\py{(cell_coords.shape[0], 1)}, filled with zeros.\\
+\py{(cell_coords.shape[0], 1)}, filled with zeros.
+
 It then parses the array. For each cell corresponding to the inlet, it sets the
 value to \py{-vx * h} and for each value corresponding to the outlet, it sets
 the value to \py{phi_ref}. The rest of the array is not modified.
 
 \subsubsection{\textcolor{func}{\py{build_phi()}}}
 The function \textcolor{func}{\py{build_phi()}} takes no input, it uses the
-imported data from \py{parameters.py}.\\
+imported data from \py{parameters.py}.
+
 This function is the slowest one since it compute the solution of $Ax = b$. For
 that it uses the function \py{linalg.solve()} from \py{numpy}. Then it creates
 an empty matrix \py{phi} and fills it with \py{numpy.nan}. It then parses
 \py{x} and sets the value of each phi cell corresponding to the \py{x} value.
-The other cells are not modified.\\
+The other cells are not modified.
+
 Finally, it saves the values in a \textbf{dat} file.
 
 \subsubsection{\textcolor{func}{\py{build_gradient()}}}
 The function \textcolor{func}{\py{build_gradient()}} takes no input, it uses the imported data
-from \py{parameters.py}.\\
+from \py{parameters.py}.
+
 This function is rather big, but it is only a variation of the \py{gradient}
 function from \py{numpy}. The function \py{numpy.gradient} does not work
-the way I want with the \py{numpy.nan} values so I made my own.\\
+the way I want with the \py{numpy.nan} values so I made my own.
+
 It starts by loading the \textbf{dat} file containing the values of \py{phi}
 and creates 2 empty matrices \py{grad_x} and \py{grad_y} the same shape as
 \py{G} and fills them with \py{numpy.nan}. It the parse the \py{cell_coords}
@@ -286,28 +311,35 @@ array and sets the values of \py{grad_x} and \py{grad_y} following the centered
 difference with step $2h$ mentioned in the scope statement. I then found that
 the function \py{numpy.gradient} uses the same method. However, since the
 borders of the matrix \py{phi} is filled with \py{numpy.nan} values, the
-gradient is not computed at the outer edge of the domain.\\
+gradient is not computed at the outer edge of the domain.
+
 To compute there values, I applied the impermeable wall condition specified in
 the section \textbf{5.1} of the scope statement. We consider the 
 \py{numpy.nan} cell with coordinates \py{[i - 1, j]} as a fictious cell with
 the value of the cell \py{[i, j]}. This rule applies to the cells to the left
 and to the right for \py{grad_x} and to the top and to the right for
-\py{grad_y}.\\
+\py{grad_y}.
+
 It the computes the norm of the gradient (used later to plot the normalized
-gradient).\\
+gradient).
+
 Finally, it saves the 3 matrices in \textbf{dat} files.
 
 \subsubsection{\textcolor{func}{\py{build_pressure()}}}
 The function \py{build_pressure()} takes no input, it uses the imported data
-from \py{parameters.py}.\\
+from \py{parameters.py}.
+
 The function starts by loading the \textbf{dat} files containing the values of
-\py{grad_norm}.\\
+\py{grad_norm}.
+
 It then creates an empty matrix \py{pressure} and fills it with \py{numpy.nan}.
 Then, it computes the Bernoulli's constant $\mathcal{H}$ using the initial
-values.\\
+values.
+
 It then parses the array \py{cell_coords}, sets the inlet cells of the
 \py{pressure} matrix to \py{pressure_init}, computes and sets the values for
-each cell.\\
+each cell.
+
 Finally, it saves the matrix in a \textbf{dat} file.
 
 \subsection{\py{plot.py}}
@@ -329,14 +361,26 @@ Each one of the 4 next functions take 1 input argument.
 \begin{itemize}
       \item \py{data: dict}
 \end{itemize}
-They return the plotted graph.\\
+They return the plotted graph.
+
 The 4 functions work the same way, they set the name of the graph and plot the
 desired data.
 
 \newpage
-\part{Quality approach}
+\part{Optimization}
 In order to reduce the memory usage of the program, I tried to limit as much
-as possible the size allocated to each variable by changing the datatype.
+as possible the size allocated to each array by setting the datatype at
+declaration.
+
+At runtime, the memory usage stays relatively low since the program does not
+have to store anything big. However, if you set a domain ludicrously big,
+the program will crash telling you there is not enough memory to store the data
+since the matrix A increases exponentially with the size of the domain.\\
+Concerning the CPU, I tried running the program on a really big domain to see
+how it reacts. The CPU usage rises to the maximum on one core (since python
+natively uses only one core) until the end of the \py{linalg.solve}
+computation. Aside from this function, the CPU usage stays low at runtime.
+
 \newpage
 \part{Outcome examples}
 \section{Input data}
@@ -344,7 +388,8 @@ The program needs some data to run. For the example, I found that a box of size
 $\num{60} \times \num{60}$ is good enough. Obviously we can use a bigger box,
 but the computing time increases exponentially as we increase the box size.
 A smaller box can also produce acceptable results. I also choosed to use cells
-of size 1 ($h = 1$). The geometry used is the \py{shrinkage} geometry.\\
+of size 1 ($h = 1$). The geometry used is the \py{shrinkage} geometry.
+
 Concerning the fluid, here are the data I choosed :
 \begin{itemize}
       \item \py{rho} = 1, relative density of water
@@ -359,25 +404,26 @@ Concerning the fluid, here are the data I choosed :
 \begin{figure}[htbp]
       \centering
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{alpha_v2/figures/potential_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{figures/potential_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Velocity potential field}\label{fig:vel_pot_field}
       \end{subfigure}
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{alpha_v2/figures/velocity_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{figures/velocity_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Velocity field}\label{fig:velocity_field}
       \end{subfigure}
 
       \centering
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{alpha_v2/figures/streamlines_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{figures/streamlines_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Streamlines}\label{fig:streamlines}
       \end{subfigure}
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{alpha_v2/figures/pressure_shrinkage_Nx=60_Ny=60.pdf}
+            \includegraphics[width=.99\linewidth]{figures/pressure_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Pressure field}\label{fig:pressure_field}
       \end{subfigure}
       \caption{Results for \py{Nx} = \py{Ny} = \num{60} in a shrinkage geometry}
 \end{figure}
+
 \newpage
 \section{Interpretation}
 \subsection{Expectations}
@@ -403,11 +449,34 @@ from there. I will try to correct it in the beta.In the alpha version, the
 streamlines are computed using the velocity, there should not be any problem
 with them, they show the path of the fluid and it seems to be the right one.
 
-\smallbreak{}
 On the \autoref{fig:pressure_field}, it is clear that the pressure increases as
 the fluid travels the domain. It is once again the expected behavior.
 
+\subsection{Pressure verifications}
+I ran some tests regarding the pressure field when changing the relative
+density of the fluid and the results are satisfying.
 
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{figures/pressure_shrinkage_Nx=60_Ny=60_rhobrome.pdf}
+            \caption{Bromine at \SI{0}{\celsius}, $\rho_{\text{Br}} = 3.087$}\label{fig:pressure_brome}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{figures/pressure_shrinkage_Nx=60_Ny=60_rhohyd.pdf}
+            \caption{Liquid hydrogen at \SI{-252}{\celsius}, $\rho_{H} = 0.07$}\label{fig:pressure_hydrogen}
+      \end{subfigure}
+      \caption{Comparison of the pressure field for bromine and liquid hydrogen}
+      \label{fig:pressure_com}
+\end{figure}
+
+According to the \textsc{Bernoulli}'s Theorem, when you have
+2 different fluids in the same conditions, the heavier the fluid, the higher
+the pressure. In this example, the bromine is heavier than the liquid hydrogen,
+and the graphs are showing that property really well. With the same initial
+pressure and the same conditions, the pressure of the bromine rises higher than
+the one of the liquid hydrogen. The isobaric lines are also slightly
+different.
 \newpage
 \begin{multicols}{2}
     [\center{\printbibheading}]

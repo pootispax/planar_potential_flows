@@ -12,7 +12,7 @@ vx = 1
 phi_ref = 0
 
 # Set the relative density and the initial pressure of the fluid
-rho = 50
+rho = 70 / 1000
 pressure_init = 5
 
 # Set the choosen geometry, possible values are :
