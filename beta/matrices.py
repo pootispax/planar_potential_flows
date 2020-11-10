@@ -79,6 +79,9 @@ class Matrices:
         elif geometry == 'elbow':
             return self.build_elbow(g)
 
+        elif geometry == 'obstacle':
+            return self.build_obstacle(g)
+
     # -------------------------------------------------------------------------
     # Builds the matrix G
     @staticmethod
@@ -106,6 +109,7 @@ class Matrices:
         return g
 
     # -------------------------------------------------------------------------
+    # Build the matrix G
     @staticmethod
     def build_elbow(g):
 
@@ -120,6 +124,40 @@ class Matrices:
         g[0:1, x1:x2] = 3
         g[y1:y2, 1:xmax] = 1
         g[1:ymax, x1:x2] = 1
+
+        if data_check.existing_data():
+            np.savetxt('dat/G_{}_{}_{}.dat'
+                       .format(geometry, nx, ny), g, fmt='%.1f')
+
+        return g
+
+    # -------------------------------------------------------------------------
+    # Builds the matrix G
+    @staticmethod
+    def build_obstacle(g):
+
+        y1 = int(np.shape(g)[0] / 10)
+        y2 = int(9 * np.shape(g)[0] / 10)
+        x_center = int(np.shape(g)[1] / 2)
+        y_center = int(np.shape(g)[0] / 2)
+
+        if x_center > y_center:
+            r = int(np.shape(g)[0] / 5)
+        else:
+            r = int(np.shape(g)[1] / 5)
+
+        g[y1:y2, 0:1] = 2
+        g[y1:y2, nx - 1:nx] = 3
+        g[y1:y2, 1:nx - 1] = 1
+
+        for j in range(ny - 1):
+            for i in range(nx - 1):
+                a = np.abs(i - x_center)
+                b = np.abs(j - y_center)
+                c = np.sqrt(a**2 + b**2)
+
+                if c < r:
+                    g[j, i] = 0
 
         if data_check.existing_data():
             np.savetxt('dat/G_{}_{}_{}.dat'

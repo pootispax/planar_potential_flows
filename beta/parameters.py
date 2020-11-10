@@ -2,7 +2,7 @@
 
 # Set the size of the area
 nx = 60
-ny = 60
+ny = 30
 
 # Set the size of a cell
 h = 3
@@ -19,7 +19,7 @@ pressure_init = 5
 #                                       'straight' (by default)
 #                                       'widening'
 #                                       'shrinkage'
-geometry = 'elbow'
+geometry = 'obstacle'
 
 # Set the value of the angle in the case of a shrinkage/widening geometry
 angle = 20

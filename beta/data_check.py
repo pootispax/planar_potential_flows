@@ -25,7 +25,8 @@ def data_check():
     if not isinstance(geometry, str):
         raise TypeError('geometry must be a string')
 
-    if abs(np.radians(angle)) > np.arctan((.5 * ny - 1) / nx):
+    if abs(np.radians(angle)) > np.arctan((.5 * ny - 1) / nx)\
+            and (geometry == 'shrinkage' or geometry == 'widening'):
         raise ValueError("Invalid angle value")
 
 
