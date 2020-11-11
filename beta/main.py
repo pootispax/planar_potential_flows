@@ -3,7 +3,7 @@
 # Main program
 import time
 import numpy as np
-from parameters import recompute
+from parameters import recompute, geometry
 import matrices
 import plot
 import data_check
@@ -27,7 +27,7 @@ plot.plot_graphs("potential", data)
 plot.plot_graphs("velocity", data)
 plot.plot_graphs("streamlines", data)
 plot.plot_graphs("pressure", data)
-
+plot.section(data, geometry)
 t_end = time.time()
 print("\nProgram executed in {:.3f} seconds."
       "\nAll the graphs are in the figures/ subfolder"

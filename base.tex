@@ -136,7 +136,7 @@ Knowing all that, we can use \textsc{Bernoulli}'s Theorem:
 $\mathcal{H}$ stays the same on each point of the domain. Using this constant,
 we can then compute the pressure at each point of the domain.
 
-\section{Constitutive elements}
+\section{Constitutive elements - alpha version}
 \subsection{\py{main.py}}
 This file is executable (without parameters input in the command).
 
@@ -366,6 +366,72 @@ They return the plotted graph.
 The 4 functions work the same way, they set the name of the graph and plot the
 desired data.
 
+\section{Consitutive elements - beta version}
+In this section, I will detail the changes between the alpha and the beta
+version.
+
+\subsection{\py{matrices.py}}
+\subsubsection{\py{build_elbow()}}
+The function \textcolor{func}{\py{build_elbow()}} takes 1 input argument.
+\begin{itemize}
+      \item \py{G:} \textcolor{dtype}{\py{np.array}}
+\end{itemize}
+The function returns the matrix \py{G}.
+
+In terms of geometry, an elbow is simply composed of 2 rectangles, it is easily
+drawed using slices. The functions computes the middle value of \py{nx} and
+\py{ny}, it takes an area around each value equal to $1/5$ of \py{nx} and
+\py{ny} respectively. It then draws 2 rectangles using slices from these
+values.
+
+\subsubsection{\py{build_obstacle()}}
+The function \textcolor{func}{\py{build_elbow()}} takes 1 input argument.
+\begin{itemize}
+      \item \py{G:} \textcolor{dtype}{\py{np.array}}
+\end{itemize}
+The function returns the matrix \py{G}.
+
+The choosen obstacle is a disc. The function starts by drawing a rectangle of
+width $4/5$ of \py{ny} and length \py{nx}. The radius of the disc is $1/5$ of
+the smallest side of the rectangle. It then checks for each cell of the domain
+and computes their distances to the center of the rectangle. If the distance is
+smaller than the radius, the cell is assigned the value 0, else the loop passes
+to the next cell.
+
+\subsection{\py{plot.py}}
+\subsubsection{\py{interp_nan()}}
+The function \textcolor{func}{\py{interp_nan()}} takes 5 input arguments.
+\begin{itemize}
+      \item \py{x:} \textcolor{dtype}{\py{np.array}}
+      \item \py{y:} \textcolor{dtype}{\py{np.array}}
+      \item \py{xnew:} \textcolor{dtype}{\py{np.array}}
+      \item \py{xnew:} \textcolor{dtype}{\py{np.array}}
+      \item \py{grad:} \textcolor{dtype}{\py{np.array}}
+\end{itemize}
+The function returns the matrix \py{grad_a_new}.
+
+This function interpolates the \py{array grad} to a new size.
+
+\py{x} and \py{y} are \py{linspaces} the size of the domain with the initial
+step. \py{xnew} and \py{ynew} are \py{linspaces} the size of the domain with
+the new step.
+
+It calls the function \py{RectBivariateSpline} from \py{scipy} to interpolate
+the array. However, this function does not behave the way we want when the
+array contains \py{np.nan} values. I found a workaround\cite{interp} by saving
+the \py{np.nan} values using the same function.
+
+Basically, it stores the \py{np.nan} values as 1 in a new zeros array to keep
+track of their positions. Then it changes the \py{np.nan} to zeros in the
+initial array and interpolates it. It then proceeds to interpolates the array
+used to save the \py{np.nan}.
+
+On an array filled with zeros and ones, the scipy function does not modify a
+lot the values, but it still resizes the array correctly. We then checks for
+values above $0.5$ which correspond to the $1$ before the interpolation and
+replace them with \py{np.nan} in the interpolated version of the initial array.
+
+
 \newpage
 \part{Optimization}
 In order to reduce the memory usage of the program, I tried to limit as much
@@ -477,53 +543,6 @@ and the graphs are showing that property really well. With the same initial
 pressure and the same conditions, the pressure of the bromine rises higher than
 the one of the liquid hydrogen. The isobaric lines are also slightly
 different.
-\newpage
-
-\begin{figure}[htbp]
-      \centering
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/potential_obstacle_Nx=30_Ny=60.pdf}
-            \caption{Velocity potential field}
-      \end{subfigure}
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/velocity_obstacle_Nx=30_Ny=60.pdf}
-            \caption{Velocity field}
-      \end{subfigure}
-
-      \centering
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/streamlines_obstacle_Nx=30_Ny=60.pdf}
-            \caption{Streamlines}
-      \end{subfigure}
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/pressure_obstacle_Nx=30_Ny=60.pdf}
-            \caption{Pressure field}
-      \end{subfigure}
-      \caption{Results for \py{Nx} = \py{Ny} = \num{60} in an obstacle geometry}
-\end{figure}
-
-\begin{figure}[htbp]
-      \centering
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/potential_obstacle_Nx=60_Ny=30.pdf}
-            \caption{Velocity potential field}
-      \end{subfigure}
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/velocity_obstacle_Nx=60_Ny=30.pdf}
-            \caption{Velocity field}
-      \end{subfigure}
-
-      \centering
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/streamlines_obstacle_Nx=60_Ny=30.pdf}
-            \caption{Streamlines}
-      \end{subfigure}
-      \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{beta/figures/pressure_obstacle_Nx=60_Ny=30.pdf}
-            \caption{Pressure field}
-      \end{subfigure}
-      \caption{Results for \py{Nx} = \py{Ny} = \num{60} in an obstacle geometry}
-\end{figure}
 
 \newpage
 \begin{multicols}{2}
