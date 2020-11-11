@@ -19,7 +19,7 @@ pressure_init = 5
 #                                       'straight' (by default)
 #                                       'widening'
 #                                       'shrinkage'
-geometry = 'elbow'
+geometry = 'shrinkage'
 
 # Set the value of the angle in the case of a shrinkage/widening geometry
 angle = 20

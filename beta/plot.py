@@ -6,7 +6,7 @@ from parameters import nx, ny, geometry, h
 
 class Plot:
 
-    def plot_graphs(self, display, data, interp=0):
+    def plot_graphs(self, display, data):
 
         fig, ax = plt.subplots()
 
@@ -131,7 +131,6 @@ class Plot:
             self.section_wid_shrin(grad_x, grad_y)
 
         if geometry == 'elbow':
-
             xpart1 = int(nx * 4 / 10)
             ypart1 = int(ny * 4 / 10)
             xpart2 = int(nx * 5 / 10)
@@ -139,8 +138,14 @@ class Plot:
             xpart3 = int(nx * 6 / 10)
             ypart3 = int(ny * 6 / 10)
             self.section_elbow(grad_x, grad_y, xpart1, ypart1, 1)
-            self.section_elbow(grad_x, grad_y, xpart2, ypart3, 2)
+            self.section_elbow(grad_x, grad_y, xpart2, ypart2, 2)
             self.section_elbow(grad_x, grad_y, xpart3, ypart3, 3)
+
+        if geometry == 'obstacle':
+            xpart1 = int(nx * 3 / 10)
+            xpart2 = int(nx * 5 / 10)
+            self.section_obstacle(grad_x, grad_y, xpart1, 1)
+            self.section_obstacle(grad_x, grad_y, xpart2, 2)
 
     @staticmethod
     def section_wid_shrin(grad_x, grad_y):
@@ -148,7 +153,7 @@ class Plot:
         x = np.linspace(0, nx - 1, nx)
         sx = np.zeros(nx)
         sy = np.zeros(nx)
-        for i in range(nx - 1):
+        for i in range(nx):
             sx[i] = -grad_x[int(nx / 2)][i]
             sy[i] = -grad_y[int(nx / 2)][i]
 
@@ -170,11 +175,11 @@ class Plot:
         sy = np.zeros(xpart + ypart)
         x = np.linspace(0, len(sx) - 1, len(sx))
 
-        for i in range(xpart - 1):
+        for i in range(xpart + 1):
             sx[i] = -grad_x[xpart][i]
             sy[i] = grad_y[xpart][i]
 
-        for i in range(ypart - 1):
+        for i in range(ypart + 1):
             sx[i + xpart - 1] = -grad_x[ypart - i][xpart]
             sy[i + xpart - 1] = grad_y[ypart - i][xpart]
 
@@ -184,25 +189,30 @@ class Plot:
         plt.savefig('section_elbow_{}.pdf'.format(n))
 
     @staticmethod
-    def section_obstacle(grad_x, grad_y, xpart, ypart, n):
+    def section_obstacle(grad_x, grad_y, xpart, n):
 
-        x_center = int(nx / 2)
-        y_center = int(ny / 2)
-
-        if x_center > y_center:
-            r = int(nx * 3 / 10)
-        else:
-            r = int(ny * 3 / 10)
-
+        plt.figure()
+        x = np.linspace(0, nx - 1, nx)
         sx = np.zeros(nx)
         sy = np.zeros(nx)
-        for i in range(nx - 1):
-            if not np.isnan(grad_x[xpart][i])\
-                and not np.isnan(grad_y[xpart][i]):
-                    sx[i] = (-grad_x[xpart][i])
-                sy[i] = (-grad_y[xpart][i])
+        for i in range(nx):
+            if np.isnan(grad_x[xpart][i]) or np.isnan(grad_y[xpart][i]):
+                count = 0
+                while np.isnan(grad_x[xpart - count + 1][i]):
+                    count += 1
+                sx[i] = (-grad_x[xpart - count][i])
+                sy[i] = (grad_y[xpart - count][i])
+                # sx[i] = count
+                # sy[i] = count
+            else:
+                sx[i] = (-grad_x[xpart][i])
+                sy[i] = (grad_y[xpart][i])
+                # sx[i] = 0
+                # sy[i] = 0
 
-
+        plt.plot(x, sx)
+        plt.plot(x, sy)
+        plt.savefig('section_obstacle_{}.pdf'.format(n))
 
     @staticmethod
     def euler(r0, t, v):
