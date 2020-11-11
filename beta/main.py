@@ -2,13 +2,13 @@
 
 # Main program
 import time
-import numpy as np
 from parameters import recompute, geometry
 import matrices
 import plot
 import data_check
 
 t_init = time.time()
+data_check.directory_check()
 data_check.data_check()
 matrices = matrices.Matrices()
 

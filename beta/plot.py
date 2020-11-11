@@ -69,10 +69,18 @@ class Plot:
         ax.quiver(xx, yy,
                   grad_x_new / grad_norm_new, grad_y_new / grad_norm_new)
 
-    def plot_streamlines(self, ax, data):
+    @staticmethod
+    def plot_streamlines(ax, data):
 
         x = np.linspace(0, nx - 1, nx)
         y = np.linspace(0, ny - 1, ny)
+
+        ax.streamplot(x, y, -data['grad_x'], -data['grad_y'],
+                      linewidth=.75, arrowsize=.75)
+
+        # The following part does not work, I tried to do the Euler method to
+        # compute the streamlines without success
+
         # step = 100
         # xnew = np.linspace(0, ny - 1, step)
         # ynew = np.linspace(0, nx - 1, step)
@@ -94,7 +102,6 @@ class Plot:
         #     v[i, :] = [vx[i], vy[i]]
         #
         # r = self.euler(r0, t, v)
-        # print(r)
 
     @staticmethod
     def plot_pressure(ax, data):
@@ -125,8 +132,6 @@ class Plot:
         grad_x = data['grad_x'] / data['grad_norm']
         grad_y = data['grad_y'] / data['grad_norm']
 
-        plt.figure()
-
         if geometry == 'shrinkage' or geometry == 'widening':
             self.section_wid_shrin(grad_x, grad_y)
 
@@ -150,6 +155,8 @@ class Plot:
     @staticmethod
     def section_wid_shrin(grad_x, grad_y):
 
+        plt.figure()
+
         x = np.linspace(0, nx - 1, nx)
         sx = np.zeros(nx)
         sy = np.zeros(nx)
@@ -157,14 +164,17 @@ class Plot:
             sx[i] = -grad_x[int(nx / 2)][i]
             sy[i] = -grad_y[int(nx / 2)][i]
 
-        plt.plot(x, sx)
-        plt.plot(x, sy)
+        plt.plot(x, sx, label='x value')
+        plt.plot(x, sy, label='y value')
+        plt.xlabel('x')
+        plt.ylabel('v')
+        plt.legend()
 
         if geometry == 'widening':
-            plt.savefig('section_widening.pdf')
+            plt.savefig('figures/section_widening_{}_{}.pdf'.format(nx, ny))
 
         else:
-            plt.savefig('section_shrinkage.pdf')
+            plt.savefig('figures/section_shrinkage_{}_{}.pdf'.format(nx, ny))
 
     @staticmethod
     def section_elbow(grad_x, grad_y, xpart, ypart, n):
@@ -183,15 +193,19 @@ class Plot:
             sx[i + xpart - 1] = -grad_x[ypart - i][xpart]
             sy[i + xpart - 1] = grad_y[ypart - i][xpart]
 
-        plt.plot(x, sx)
-        plt.plot(x, sy)
+        plt.plot(x, sx, label='x value')
+        plt.plot(x, sy, label='y value')
+        plt.xlabel('x')
+        plt.ylabel('v')
+        plt.legend()
 
-        plt.savefig('section_elbow_{}.pdf'.format(n))
+        plt.savefig('figures/section_elbow_{}_{}_{}.pdf'.format(nx, ny, n))
 
     @staticmethod
     def section_obstacle(grad_x, grad_y, xpart, n):
 
         plt.figure()
+
         x = np.linspace(0, nx - 1, nx)
         sx = np.zeros(nx)
         sy = np.zeros(nx)
@@ -202,25 +216,29 @@ class Plot:
                     count += 1
                 sx[i] = (-grad_x[xpart - count][i])
                 sy[i] = (grad_y[xpart - count][i])
-                # sx[i] = count
-                # sy[i] = count
+
             else:
                 sx[i] = (-grad_x[xpart][i])
                 sy[i] = (grad_y[xpart][i])
-                # sx[i] = 0
-                # sy[i] = 0
 
-        plt.plot(x, sx)
-        plt.plot(x, sy)
-        plt.savefig('section_obstacle_{}.pdf'.format(n))
+        plt.plot(x, sx, label='x value')
+        plt.plot(x, sy, label='y value')
+        plt.xlabel('x')
+        plt.ylabel('v')
+        plt.legend()
 
-    @staticmethod
-    def euler(r0, t, v):
+        plt.savefig('figures/section_obstacle_{}_{}_{}.pdf'.format(nx, ny, n))
 
-        r = np.zeros((len(t), 2), dtype=np.float32)
-        r[0, :] = r0[:]
+    # The following part does not work, I tried to do the Euler method to
+    # compute the streamlines without success
 
-        for n in range(0, len(t) - 1):
-            r[n + 1, :] = r[n, :] + v[n, :] * (t[n + 1] - t[n])
-
-        return r
+    # @staticmethod
+    # def euler(r0, t, v):
+    #
+    #     r = np.zeros((len(t), 2), dtype=np.float32)
+    #     r[0, :] = r0[:]
+    #
+    #     for n in range(0, len(t) - 1):
+    #         r[n + 1, :] = r[n, :] + v[n, :] * (t[n + 1] - t[n])
+    #
+    #     return r

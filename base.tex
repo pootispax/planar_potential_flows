@@ -20,8 +20,8 @@ I made the choice to work with Object Oriented Programming.
 \section{Data}
 This project uses several piece of data set by the user to work.
 \begin{itemize}
-      \item \py{Nx:} \textcolor{dtype}{\py{uint}} and
-            \py{Ny:} \textcolor{dtype}{\py{uint}}, size of the domain
+      \item \py{nx:} \textcolor{dtype}{\py{uint}} and
+            \py{ny:} \textcolor{dtype}{\py{uint}}, size of the domain
       \item \py{h:} \textcolor{dtype}{\py{uint}}, size of a cell
       \item \py{geometry: str}, choosen geometry
       \item \py{angle:} \textcolor{dtype}{uint}, angle of the
@@ -31,6 +31,8 @@ This project uses several piece of data set by the user to work.
             condition)
       \item \py{rho: float}, relative density of the fluid
       \item \py{pressure_init: float}, initial pressure of the fluid
+      \item \py{recompute: bool}, if \py{True}, the program will check for
+      existing dat files, if it finds them, it will not re-run the computations
 \end{itemize}
 Be careful in the case of a widening/shrinkage geometry!
 In order for the program to generate a domain from one end to another, there is
@@ -48,10 +50,19 @@ The files are saved in a subfolder named \textbf{figures/} and the filenames
 are set with the following rule:
 
 \begin{center}
-      \mintinline{python}{<data>_<geometry>_Nx=<Nx>_Ny=<Ny>.pdf}
+      \mintinline{python}{<data>_<geometry>_Nx=<nx>_Ny=<ny>.pdf}
 \end{center}
 \mintinline{python}{data} stands for the plotted data (potential, velocity,
 streamlines, pressure).
+
+As of the beta version, the program outputs more files depending on the choosen
+geometry in the same subfolder as the alpha version. They are named with the
+following rule:
+\begin{center}
+      \mintinline{python}{section_<geometry>_<nx>_<ny>(_<n>).pdf}
+\end{center}
+The \py{_<n>} is there when there are multiple sections plotted for the same
+geometry, it is not present for the widening and shrinkage geometries.
 \section{Concerning the running time}
 Due to the function \py{numpy.linalg.solve()} being slow for
 big matrices, the bigger the size of the domain, the higher the running time.
@@ -431,6 +442,73 @@ lot the values, but it still resizes the array correctly. We then checks for
 values above $0.5$ which correspond to the $1$ before the interpolation and
 replace them with \py{np.nan} in the interpolated version of the initial array.
 
+\subsubsection{\py{section}}
+The function \textcolor{func}{\py{section()}} takes 2 input arguments.
+\begin{itemize}
+      \item \py{data:} \textcolor{dtype}{\py{dict}}
+      \item \py{geometry:} \textcolor{dtype}{\py{str}}
+\end{itemize}
+The function calls different functions depending on the geometry used.
+
+\subsubsection{\py{section_wid_shrin()}}
+The function \textcolor{func}{\py{section_wid_shrin()}} takes 2 input
+arguments.
+\begin{itemize}
+      \item \py{grad_x:} \textcolor{dtype}{np.array}
+      \item \py{grad_y:} \textcolor{dtype}{np.array}
+\end{itemize}
+The function plots the velocity profile of a straight section (from left to
+right) at the center of the domain for the widening and shrinkage geometries.
+
+We start by defining a linspace (the $x$ value of the plot), we then define
+2 zeros arrays, one for the $x$ orientaiton and one for the $y$ orientation.
+The for each element of the arrays, we set the value to the corresponding ones
+in the \py{grad_x} and \py{grad_y} arrays.
+
+We then plot the 2 lists of data with some information and save them.
+
+\subsubsection{\py{section_elbow()}}
+The function \textcolor{func}{\py{section_elbow()}} takes 5 input arguments.
+\begin{itemize}
+      \item \py{grad_x:} \textcolor{dtype}{np.array}
+      \item \py{grad_y:} \textcolor{dtype}{np.array}
+      \item \py{xpart:} \textcolor{dtype}{int}
+      \item \py{ypart:} \textcolor{dtype}{int}
+      \item \py{n:} \textcolor{dtype}{int}
+\end{itemize}
+The function plots the velocity profile of a section section crossing the elbow
+geometry.
+
+We start by defining 2 zeros arrays of size $xpart + ypart$ (see
+\autoref{sec:section} for examples) and a linspace. We then parse the first
+half of the domain and set each element of the arrays to the corresponding ones
+in the \py{grad_x} and \py{grad_y} arrays.
+
+We then parse the second half of the domain, it works the same a the first half
+but the value of the arrays is set with an offset (we don't want to erase the
+values of the first half) and the indices in \py{grad_x} and \py{grad_y} are
+inverted.
+
+We then plot the 2 lists of data with some information and save them.
+
+\subsubsection{\py{section_obstacle()}}
+The function \textcolor{func}{\py{section_obstacle()}} takes ' input arguments.
+\begin{itemize}
+      \item \py{grad_x:} \textcolor{dtype}{np.array}
+      \item \py{grad_y:} \textcolor{dtype}{np.array}
+      \item \py{xpart:} \textcolor{dtype}{int}
+      \item \py{n:} \textcolor{dtype}{int}
+\end{itemize}
+The function plots the velocity profile of a section section crossing the elbow
+geometry.
+
+We start by defining 2 zeros arrays of size $nx$ (see
+\autoref{sec:section} for examples) and a linspace. We then parse the domain
+until we reach a \py{np.nan} value. The program will start a loop and each time
+it encounters a \py{np.nan} cell, it will check the cell above until it finds
+a cell with a \py{float} value.
+
+We then plot the 2 lists of data with some information and save them.
 
 \newpage
 \part{Optimization}
@@ -454,7 +532,16 @@ The program needs some data to run. For the example, I found that a box of size
 $\num{60} \times \num{60}$ is good enough. Obviously we can use a bigger box,
 but the computing time increases exponentially as we increase the box size.
 A smaller box can also produce acceptable results. I also choosed to use cells
-of size 1 ($h = 1$). The geometry used is the \py{shrinkage} geometry.
+of size 3 ($h = 3$) which plots better velocity fields for a domain of this
+size.
+
+On the velocity potential field, the colors show the differences thoughout the
+domain.
+
+On the velocity plots, the colors correspond to the norm of the velocity
+vector.
+
+On the velocity field, the colors correspond to the pressure inside the domain.
 
 Concerning the fluid, here are the data I choosed :
 \begin{itemize}
@@ -466,25 +553,31 @@ Concerning the fluid, here are the data I choosed :
             pipe
 \end{itemize}
 
+The geometry in the output section is the shrinkage geometry, the others are
+in the appendices \autoref{sec:appendix}.
 \section{Output}
 \begin{figure}[htbp]
       \centering
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{figures/potential_shrinkage_Nx=60_Ny=60.pdf}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/potential_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Velocity potential field}\label{fig:vel_pot_field}
       \end{subfigure}
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{figures/velocity_shrinkage_Nx=60_Ny=60.pdf}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/velocity_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Velocity field}\label{fig:velocity_field}
       \end{subfigure}
 
       \centering
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{figures/streamlines_shrinkage_Nx=60_Ny=60.pdf}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/streamlines_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Streamlines}\label{fig:streamlines}
       \end{subfigure}
       \begin{subfigure}{.45\textwidth}
-            \includegraphics[width=.99\linewidth]{figures/pressure_shrinkage_Nx=60_Ny=60.pdf}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/pressure_shrinkage_Nx=60_Ny=60.pdf}
             \caption{Pressure field}\label{fig:pressure_field}
       \end{subfigure}
       \caption{Results for \py{Nx} = \py{Ny} = \num{60} in a shrinkage geometry}
@@ -518,6 +611,32 @@ with them, they show the path of the fluid and it seems to be the right one.
 On the \autoref{fig:pressure_field}, it is clear that the pressure increases as
 the fluid travels the domain. It is once again the expected behavior.
 
+\subsection{Elbow}
+On the elbow geometry, the flow of water is following the angle in the domain.
+
+Looking at the velocity field plot \autoref{fig:velocity_field_el}, the fluid
+is faster near the inner angle and slower near the outer angle. It is a
+satisfying result since around the inner angle, there are more particles,
+increasing the flow and around the outer angle, there are less particles,
+decreasing the flow.
+
+On the pressure field \autoref{fig:pressure_field_el}, the observations of the
+velocity field are reinforced. There is more pressure at the inner angle, where
+there are more particles, explaining the increase in speed. On the other hand,
+the pressure at the outer angle is lower because there are less particles.
+
+\subsection{Obstacle}
+The choosen obstacle for this project is the disc. The flow of water is
+correctly going around the obstacle.
+
+Looking at the velocity field \autoref{fig:velocity_field_ob}, the water is
+slowing down at the lateral edges of the disc and sppeding up at the vertical
+edges of the disc.
+
+On the pressure field \autoref{fig:pressure_field_ob}, we see an increase in
+pressure where there are more particles (ie: when the path narrows down) and
+a decrease in pressure where there are less particles.w
+
 \subsection{Pressure verifications}
 I ran some tests regarding the pressure field when changing the relative
 density of the fluid and the results are satisfying.
@@ -545,7 +664,154 @@ the one of the liquid hydrogen. The isobaric lines are also slightly
 different.
 
 \newpage
+\subsection{Sections}\label{sec:section}
+The velocity profiles show in this section are all plotted with $Nx = Ny = 60$
+and $h$ = 3. The value used to plot the sections are not interpolated, although
+a quick workaround using the \textcolor{func}{\py{interp}} function from
+\py{plot.py} is possible to increase the number of points. All the computation
+are made with normalized vectors, the plots are easier to read that way.
+
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/section_widening_60_60.pdf}
+            \caption{Velocity profile for the widening geometry}   
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/section_shrinkage_60_60.pdf}
+            \caption{Velocity profile for the shrinkage geometry}   
+      \end{subfigure}
+\end{figure}
+
+There are no really interesting velocity profiles for the widening and
+shrinkage geometries since the velocity basically stays the same. It quickly
+changes at the start of the domain and then keeps going with the same vectors.
+
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/section_elbow_60_60_1.pdf}
+            \caption{Section 1, close to the inner angle}   
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/section_elbow_60_60_2.pdf}
+            \caption{Section 2, close to the center}   
+      \end{subfigure}
+
+      \begin{subfigure}{.45\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/section_elbow_60_60_3.pdf}
+            \caption{Section 3, close to the outer angle} 
+      \end{subfigure}
+      \caption{Velocity profile for the elbow geometry}
+\end{figure}
+
+Concerning the elbow geometry, the 3 sections are alike. On the first section
+(around the inner angle), the velocity quickly changes, however on the 2 other
+sections, the changes in velocity are a bit smaller, it corresponds to the
+observation that we made on the velocity plot.
+
+\newpage
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/section_obstacle_60_60_1.pdf}
+            \caption{Section 1, starting on a line parallel to the upper edge
+            of the obstacle}   
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/figures/section_obstacle_60_60_2.pdf}
+            \caption{Section 2, starting on the line in the middle of the
+            domain}   
+      \end{subfigure}
+      \caption{Velocity profile for the obstacle geometry}
+\end{figure}
+
+I find the obstacle geometry to be the most interesting of all. On both
+sections of the velocity plot, we can clearly see the variation on the $x$ and
+$y$ orientations.
+\newpage
 \begin{multicols}{2}
     [\center{\printbibheading}]
     \printbibliography[heading=none]
 \end{multicols}
+\newpage
+\part{Appendices}\label{sec:appendix}
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/potential_widening_Nx=60_Ny=60.pdf}
+            \caption{Velocity potential field}\label{fig:vel_pot_field_wid}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/velocity_widening_Nx=60_Ny=60.pdf}
+            \caption{Velocity field}\label{fig:velocity_field_wid}
+      \end{subfigure}
+
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/streamlines_widening_Nx=60_Ny=60.pdf}
+            \caption{Streamlines}\label{fig:streamlines_wid}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/pressure_widening_Nx=60_Ny=60.pdf}
+            \caption{Pressure field}\label{fig:pressure_field_wid}
+      \end{subfigure}
+      \caption{Results for \py{Nx} = \py{Ny} = \num{60} in a widening geometry}
+\end{figure}
+
+\newpage
+
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/potential_elbow_Nx=60_Ny=60.pdf}
+            \caption{Velocity potential field}\label{fig:vel_pot_field_el}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/velocity_elbow_Nx=60_Ny=60.pdf}
+            \caption{Velocity field}\label{fig:velocity_field_el}
+      \end{subfigure}
+
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/streamlines_elbow_Nx=60_Ny=60.pdf}
+            \caption{Streamlines}\label{fig:streamlines_el}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/pressure_elbow_Nx=60_Ny=60.pdf}
+            \caption{Pressure field}\label{fig:pressure_field_el}
+      \end{subfigure}
+      \caption{Results for \py{Nx} = \py{Ny} = \num{60} in a elbow geometry}
+\end{figure}
+
+\newpage
+
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/potential_obstacle_Nx=60_Ny=60.pdf}
+            \caption{Velocity potential field}\label{fig:vel_pot_field_ob}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/velocity_obstacle_Nx=60_Ny=60.pdf}
+            \caption{Velocity field}\label{fig:velocity_field_ob}
+      \end{subfigure}
+
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/streamlines_obstacle_Nx=60_Ny=60.pdf}
+            \caption{Streamlines}\label{fig:streamlines_ob}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/pressure_obstacle_Nx=60_Ny=60.pdf}
+            \caption{Pressure field}\label{fig:pressure_field_ob}
+      \end{subfigure}
+      \caption{Results for \py{Nx} = \py{Ny} = \num{60} in an obstacle geometry}
+\end{figure}

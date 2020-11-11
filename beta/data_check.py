@@ -1,9 +1,16 @@
-import os.path as os
+import os
 import sys
 import numpy as np
 from parameters import *
 import matrices
 
+def directory_check():
+
+    if not os.path.exists('dat'):
+        os.makedirs('dat')
+
+    if not os.path.exists('figures'):
+        os.makedirs('figures')
 
 def data_check():
 
@@ -32,17 +39,17 @@ def data_check():
 
 def existing_data():
 
-    if not os.exists('dat/G_{}_{}_{}.dat'
+    if not os.path.exists('dat/G_{}_{}_{}.dat'
                      .format(geometry, nx, ny))\
-        or not os.exists('dat/phi_{}_{}_{}.dat'
+        or not os.path.exists('dat/phi_{}_{}_{}.dat'
                          .format(geometry, nx, ny))\
-        or not os.exists('dat/grad_x_{}_{}_{}.dat'
+        or not os.path.exists('dat/grad_x_{}_{}_{}.dat'
                          .format(geometry, nx, ny))\
-        or not os.exists('dat/grad_y_{}_{}_{}.dat'
+        or not os.path.exists('dat/grad_y_{}_{}_{}.dat'
                          .format(geometry, nx, ny))\
-        or not os.exists('dat/grad_norm_{}_{}_{}.dat'
+        or not os.path.exists('dat/grad_norm_{}_{}_{}.dat'
                          .format(geometry, nx, ny))\
-            or not os.exists('dat/pressure_{}_{}_{}.dat'
+            or not os.path.exists('dat/pressure_{}_{}_{}.dat'
                              .format(geometry, nx, ny)):
 
         return True
