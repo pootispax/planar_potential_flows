@@ -2,6 +2,7 @@
 
 # Main program
 import time
+import numpy as np
 from parameters import recompute
 import matrices
 import plot
@@ -23,7 +24,7 @@ data = matrices.load_data()
 plot = plot.Plot()
 
 plot.plot_graphs("potential", data)
-plot.plot_graphs("velocity", data)
+interp = plot.plot_graphs("velocity", data)
 plot.plot_graphs("streamlines", data)
 plot.plot_graphs("pressure", data)
 

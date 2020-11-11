@@ -2,7 +2,7 @@
 
 # Set the size of the area
 nx = 60
-ny = 30
+ny = 60
 
 # Set the size of a cell
 h = 3
@@ -26,4 +26,4 @@ angle = 20
 
 # If False, the program will check for existing data files, if they exist, it
 # will not recompute the data
-recompute = True
+recompute = False
