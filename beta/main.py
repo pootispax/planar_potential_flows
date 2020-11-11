@@ -24,7 +24,7 @@ data = matrices.load_data()
 plot = plot.Plot()
 
 plot.plot_graphs("potential", data)
-interp = plot.plot_graphs("velocity", data)
+plot.plot_graphs("velocity", data)
 plot.plot_graphs("streamlines", data)
 plot.plot_graphs("pressure", data)
 
