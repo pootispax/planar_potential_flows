@@ -76,19 +76,19 @@ recommend to stay on relatively low values for $N_x$ and $N_y$, the graphs are
 easily readable for a value of $\num{60}$ each.
 
 By default, python only uses one CPU core when executing a program, the
-solution to that problem is parallel programming, however I am not enough
-experienced in that field to develop an optimized program.
+solution to that problem is parallel programming, however I am not experienced
+enough in that field to develop an optimized program.
 
 \newpage
 \part{Internal structure of the program}
 \section{Physical model}
-In order to build the model, the program uses a squared structured meshe
+In order to build the model, the program uses a squared structured mesh
 model (matrix). The values are computed at each point of the matrix.
 
 \subsection{Velocity potential field}
 The velocity potential field is computed by solving a system of linear
 equations. The result is computed using the matrix method, by solving the
-equation $Ax = b$ we can find the potential flow value in each cell.
+equation $Ax = b$ we can find the velocity potential flow value in each cell.
 
 The matrix $A$, of size $N_\text{fluid} \times N_\text{fluid}$ stores 2
 information per cell, the number of neighboring cells and the label of each
@@ -124,13 +124,11 @@ neighboring cells that are not fluid cells.
 \subsection{Streamlines}
 In the alpha version, the streamlines are computed using matplotlib.
 
-In the beta version, the method of Euler is used.
-
-In the gold version, the planned method is Runge-Kutta 4, however I had not the
-time to complete the gold version.
+In the beta version, the method of Euler is used. However, I did not manage to
+complete that part of the version.
 
 \subsection{Pressure field}
-In order to compute the pressure, we need to know several things. Firtly, the
+In order to compute the pressure, we need to know several things. Firstly, the
 velocity field must be know at each cell of the domain. Then we need the
 initial pressure of the domain. Moreover, there are certain conditions to meet
 regarding the system:
@@ -145,7 +143,7 @@ Knowing all that, we can use \textsc{Bernoulli}'s Theorem:
       \mathcal{H} = P + \dfrac{1}{2} \rho v^2 \quad \text{\cite{bernoulli}}
 \]
 $\mathcal{H}$ stays the same on each point of the domain. Using this constant,
-we can then compute the pressure at each point of the domain.
+we can compute the pressure at each point of the domain.
 
 \section{Constitutive elements - alpha version}
 \subsection{\py{main.py}}
@@ -161,13 +159,13 @@ It then checks for the \py{recompute} value, if \py{True} or if there are no
 existing \textbf{dat} files for the current parameters, it will call
 the function \py{domain_check()} to display a warning if the domain is large.
 It then calls the subroutine \py{make_data()} to compute \py{phi},
-\py{grad_x}, \py{grad_y}, \py{grad_norm} and \py{pressure} and saves them in
+grad\_x, grad\_y, \py{grad_norm} and \py{pressure} and saves them in
 \textbf{dat} files.
 
 Else, it will use the existing dat files to generate the plots.
 
 Then it calls the function \py{load_data()} to read the \textbf{dat} files and
-stores them in a dictionary and it initiate the file \py{plot.py} which will be
+stores them in a dictionary and it initiates the file \py{plot.py} which will be
 used to plot the different values.
 
 The last lines call the subroutine \py{plot_graphs} with different arguments
@@ -176,6 +174,10 @@ to plot and save all the wanted graphs.
 \subsection{\py{data_check.py}}
 This file has several subroutines and functions to rule the execution of the
 program.
+
+\subsubsection{\textcolor{func}{\py{directory_check()}} (beta version)}
+The subroutine \textcolor{func}{\py{directory_check()}} will check for the
+folders to store the data, if they don't exist, it creates them.
 
 \subsubsection{\textcolor{func}{\py{data_check()}}}
 The subroutine \textcolor{func}{\py{data_check()}} reads the value of each
@@ -206,7 +208,7 @@ This class is where everything is computed, from start to end.
 
 \subsubsection{\textcolor{func}{\py{make_data()}}}
 The subroutine \textcolor{func}{\py{make_data{}}} will call the functions that compute \py{phi},
-\py{grax_x}, \py{grad_y}, \py{grad_norm} and \py{pressure}. Each function
+\py{grax_x}, grad\_y, \py{grad_norm} and \py{pressure}. Each function
 will write the data in a \textbf{dat} file.
 
 \subsubsection{\textcolor{func}{\py{load_data()}}}
@@ -242,11 +244,12 @@ It then uses it in a \py{for} loop to compute an offset which will be used to
 build the geometry.
 
 In case of a shrinkage geometry, the angle inputed is negative, the function
-will flip horizontally the matrix. It then sets the inlet and outlet of the
-domain.
+will flip horizontally the matrix.
+
+It then sets the inlet and outlet of the domain.
 
 Since the program will always compute \py{G} no matter what and to avoid some
-problem, it will save the matrix only if \py{recompte == True}.
+problem, it will save the matrix only if \py{recompute == True}.
 
 \subsubsection{\textcolor{func}{\py{build_index_matrices()}}}
 The function \textcolor{func}{\py{build_index_matrices()}} takes 2 input
@@ -264,9 +267,9 @@ counter and increment the counter by 1. All the other values are set to -1.
 
 Then it create an array \py{cell_coords} of size \py{(M.max() + 1, 2)} and
 sets the value of the counter back to zero. Then it parses the matrix \py{M}
-and for each cell which value is not -1, it will store the coordinates of that
-cell in the index \py{count} of the array \py{cell_coords} and increment the
-counter.
+and for each cell with a value different from -1, it will store the coordinates
+of that cell in the index \py{count} of the array \py{cell_coords} and
+increment the counter.
 
 \subsubsection{\textcolor{func}{\py{build_a()}}}
 The function \textcolor{func}{\py{build_a()}} takes no input, it uses the imported data from
@@ -296,7 +299,7 @@ value to \py{-vx * h} and for each value corresponding to the outlet, it sets
 the value to \py{phi_ref}. The rest of the array is not modified.
 
 \subsubsection{\textcolor{func}{\py{build_phi()}}}
-The function \textcolor{func}{\py{build_phi()}} takes no input, it uses the
+The subroutine \textcolor{func}{\py{build_phi()}} takes no input, it uses the
 imported data from \py{parameters.py}.
 
 This function is the slowest one since it compute the solution of $Ax = b$. For
@@ -308,7 +311,7 @@ The other cells are not modified.
 Finally, it saves the values in a \textbf{dat} file.
 
 \subsubsection{\textcolor{func}{\py{build_gradient()}}}
-The function \textcolor{func}{\py{build_gradient()}} takes no input, it uses the imported data
+The subroutine \textcolor{func}{\py{build_gradient()}} takes no input, it uses the imported data
 from \py{parameters.py}.
 
 This function is rather big, but it is only a variation of the \py{gradient}
@@ -316,32 +319,32 @@ function from \py{numpy}. The function \py{numpy.gradient} does not work
 the way I want with the \py{numpy.nan} values so I made my own.
 
 It starts by loading the \textbf{dat} file containing the values of \py{phi}
-and creates 2 empty matrices \py{grad_x} and \py{grad_y} the same shape as
+and creates 2 empty matrices grad\_x and grad\_y the same shape as
 \py{G} and fills them with \py{numpy.nan}. It the parse the \py{cell_coords}
-array and sets the values of \py{grad_x} and \py{grad_y} following the centered
-difference with step $2h$ mentioned in the scope statement. I then found that
-the function \py{numpy.gradient} uses the same method. However, since the
-borders of the matrix \py{phi} is filled with \py{numpy.nan} values, the
-gradient is not computed at the outer edge of the domain.
+array and sets the values of grad\_x and grad\_y following the centered
+difference with step $2h$ mentioned in the scope statement
+\cite{scope-statement}. I then found that the function \py{numpy.gradient} uses
+the same method. However, since the borders of the matrix \py{phi} is filled
+with \py{numpy.nan} values, the gradient is not computed at the outer edge of
+the domain.
 
 To compute there values, I applied the impermeable wall condition specified in
 the section \textbf{5.1} of the scope statement. We consider the 
-\py{numpy.nan} cell with coordinates \py{[i - 1, j]} as a fictious cell with
+\py{numpy.nan} cell with coordinates \py{[i - 1, j]} as a fictitious cell with
 the value of the cell \py{[i, j]}. This rule applies to the cells to the left
-and to the right for \py{grad_x} and to the top and to the right for
-\py{grad_y}.
+and to the right for grad\_x and to the top and to the right for grad\_y.
 
-It the computes the norm of the gradient (used later to plot the normalized
+It then computes the norm of the gradient (used later to plot the normalized
 gradient).
 
 Finally, it saves the 3 matrices in \textbf{dat} files.
 
 \subsubsection{\textcolor{func}{\py{build_pressure()}}}
-The function \py{build_pressure()} takes no input, it uses the imported data
+The subroutine \py{build_pressure()} takes no input, it uses the imported data
 from \py{parameters.py}.
 
 The function starts by loading the \textbf{dat} files containing the values of
-\py{grad_norm}.
+the norm of the gradient.
 
 It then creates an empty matrix \py{pressure} and fills it with \py{numpy.nan}.
 Then, it computes the Bernoulli's constant $\mathcal{H}$ using the initial
@@ -357,7 +360,7 @@ Finally, it saves the matrix in a \textbf{dat} file.
 The class is used to plot every piece of data.
 
 \subsubsection{\textcolor{func}{\py{plot_graphs()}}}
-The function \py{plot_graphs()} takes 2 input arguments.
+The subroutine \py{plot_graphs()} takes 2 input arguments.
 \begin{itemize}
       \item \py{display: str}
       \item \py{data: dict}
@@ -377,7 +380,7 @@ They return the plotted graph.
 The 4 functions work the same way, they set the name of the graph and plot the
 desired data.
 
-\section{Consitutive elements - beta version}
+\section{Constitutive elements - beta version}
 In this section, I will detail the changes between the alpha and the beta
 version.
 
@@ -443,32 +446,32 @@ values above $0.5$ which correspond to the $1$ before the interpolation and
 replace them with \py{np.nan} in the interpolated version of the initial array.
 
 \subsubsection{\py{section}}
-The function \textcolor{func}{\py{section()}} takes 2 input arguments.
+The subroutine \textcolor{func}{\py{section()}} takes 2 input arguments.
 \begin{itemize}
       \item \py{data:} \textcolor{dtype}{\py{dict}}
       \item \py{geometry:} \textcolor{dtype}{\py{str}}
 \end{itemize}
-The function calls different functions depending on the geometry used.
+The subroutine calls different functions depending on the geometry used.
 
 \subsubsection{\py{section_wid_shrin()}}
-The function \textcolor{func}{\py{section_wid_shrin()}} takes 2 input
+The subroutine \textcolor{func}{\py{section_wid_shrin()}} takes 2 input
 arguments.
 \begin{itemize}
       \item \py{grad_x:} \textcolor{dtype}{np.array}
       \item \py{grad_y:} \textcolor{dtype}{np.array}
 \end{itemize}
-The function plots the velocity profile of a straight section (from left to
+The subroutine plots the velocity profile of a straight section (from left to
 right) at the center of the domain for the widening and shrinkage geometries.
 
 We start by defining a linspace (the $x$ value of the plot), we then define
-2 zeros arrays, one for the $x$ orientaiton and one for the $y$ orientation.
-The for each element of the arrays, we set the value to the corresponding ones
-in the \py{grad_x} and \py{grad_y} arrays.
+2 zeros arrays, one for the $x$ orientation and one for the $y$ orientation.
+Then for each element of the arrays, we set the value to the corresponding ones
+in the grad\_x and grad\_y arrays.
 
 We then plot the 2 lists of data with some information and save them.
 
 \subsubsection{\py{section_elbow()}}
-The function \textcolor{func}{\py{section_elbow()}} takes 5 input arguments.
+The subroutine \textcolor{func}{\py{section_elbow()}} takes 5 input arguments.
 \begin{itemize}
       \item \py{grad_x:} \textcolor{dtype}{np.array}
       \item \py{grad_y:} \textcolor{dtype}{np.array}
@@ -476,31 +479,31 @@ The function \textcolor{func}{\py{section_elbow()}} takes 5 input arguments.
       \item \py{ypart:} \textcolor{dtype}{int}
       \item \py{n:} \textcolor{dtype}{int}
 \end{itemize}
-The function plots the velocity profile of a section section crossing the elbow
+The subroutine plots the velocity profile of a section section crossing the elbow
 geometry.
 
 We start by defining 2 zeros arrays of size $xpart + ypart$ (see
 \autoref{sec:section} for examples) and a linspace. We then parse the first
 half of the domain and set each element of the arrays to the corresponding ones
-in the \py{grad_x} and \py{grad_y} arrays.
+in the grad\_x and grad\_y arrays.
 
 We then parse the second half of the domain, it works the same a the first half
 but the value of the arrays is set with an offset (we don't want to erase the
-values of the first half) and the indices in \py{grad_x} and \py{grad_y} are
+values of the first half) and the indices in grad\_x and grad\_y are
 inverted.
 
 We then plot the 2 lists of data with some information and save them.
 
 \subsubsection{\py{section_obstacle()}}
-The function \textcolor{func}{\py{section_obstacle()}} takes ' input arguments.
+The subroutine \textcolor{func}{\py{section_obstacle()}} takes 4 input arguments.
 \begin{itemize}
       \item \py{grad_x:} \textcolor{dtype}{np.array}
       \item \py{grad_y:} \textcolor{dtype}{np.array}
       \item \py{xpart:} \textcolor{dtype}{int}
       \item \py{n:} \textcolor{dtype}{int}
 \end{itemize}
-The function plots the velocity profile of a section section crossing the elbow
-geometry.
+The subroutine plots the velocity profile of a section section crossing the
+obstacle geometry.
 
 We start by defining 2 zeros arrays of size $nx$ (see
 \autoref{sec:section} for examples) and a linspace. We then parse the domain
@@ -525,6 +528,21 @@ how it reacts. The CPU usage rises to the maximum on one core (since python
 natively uses only one core) until the end of the \py{linalg.solve}
 computation. Aside from this function, the CPU usage stays low at runtime.
 
+\section{Informational diagrams}
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.7\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/classes_all.pdf}
+            \caption{Classes diagram}
+      \end{subfigure}
+
+      \begin{subfigure}{.7\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{beta/packages_all.pdf}
+            \caption{Diagram linking the imports}
+      \end{subfigure}
+\end{figure}
 \newpage
 \part{Outcome examples}
 \section{Input data}
@@ -595,7 +613,7 @@ simulation, we should observe a rise of pressure as the domain narrows.
 \subsection{Observations}
 Firstly, looking at \autoref{fig:velocity_field} and \autoref{fig:streamlines},
 the water crosses the domain correctly and converges toward the center of the
-domain. Despite some accuracy problems (the velocity in the edges seems off),
+domain. Despite some accuracy problems (the velocity on the edges seems off),
 I can say that the simulation meets the expected behavior. It is mandatory to
 normalize these vectors, else the output graph is not readable. However, the
 bigger the domain, the bigger the number of vectors. As the size of the domain 
@@ -603,10 +621,9 @@ is $\num{60} \times \num{60}$, there are quite a lot of vectors to show. With
 the default display, there are too much arrows on the graph and they are too
 small to analyze anything, I added a small algorithm using interpolation to
 reduce the number of arrows while keeping the data as accurate as possible.
-Since the problem does not appear without the interpolation, I think it comes
-from there. I will try to correct it in the beta.In the alpha version, the
-streamlines are computed using the velocity, there should not be any problem
-with them, they show the path of the fluid and it seems to be the right one.
+In the alpha version, the streamlines are computed using the velocity, there
+should not be any problem with them, they show the path of the fluid and it
+seems to be the right one.
 
 On the \autoref{fig:pressure_field}, it is clear that the pressure increases as
 the fluid travels the domain. It is once again the expected behavior.
@@ -630,13 +647,14 @@ The choosen obstacle for this project is the disc. The flow of water is
 correctly going around the obstacle.
 
 Looking at the velocity field \autoref{fig:velocity_field_ob}, the water is
-slowing down at the lateral edges of the disc and sppeding up at the vertical
+slowing down at the lateral edges of the disc and speeding up at the vertical
 edges of the disc.
 
 On the pressure field \autoref{fig:pressure_field_ob}, we see an increase in
 pressure where there are more particles (ie: when the path narrows down) and
-a decrease in pressure where there are less particles.w
+a decrease in pressure where there are less particles.
 
+\newpage
 \subsection{Pressure verifications}
 I ran some tests regarding the pressure field when changing the relative
 density of the fluid and the results are satisfying.
@@ -667,9 +685,10 @@ different.
 \subsection{Sections}\label{sec:section}
 The velocity profiles show in this section are all plotted with $Nx = Ny = 60$
 and $h$ = 3. The value used to plot the sections are not interpolated, although
-a quick workaround using the \textcolor{func}{\py{interp}} function from
-\py{plot.py} is possible to increase the number of points. All the computation
-are made with normalized vectors, the plots are easier to read that way.
+a quick workaround using the \textcolor{func}{\py{interp_nan}} function from
+\py{plot.py} is possible to increase the number of points. All the computations
+are made with normalized vectors, I found the plots are easier to read that
+way.
 
 \begin{figure}[htbp]
       \centering
@@ -735,7 +754,17 @@ observation that we made on the velocity plot.
 
 I find the obstacle geometry to be the most interesting of all. On both
 sections of the velocity plot, we can clearly see the variation on the $x$ and
-$y$ orientations.
+$y$ orientations. despite some spikes that I failed to remove, the plots are
+really accurate and satisfying.
+
+\part{Conclusion}
+The simulation of fluid mechanics is an interesting domain of numerical
+simulations. Overhaul I am satisfied with the simulations, in my opinion, they
+are a relatively accurate reflexion of real cases of fluid mechanics. This
+project was really interesting, however, there are several addition that would
+make the project even more accurate. Adding the fluid friction and the
+viscosity of the fluid would make it more "real". Plus with fluid frictions,
+the straight geometry becomes interesting to study.
 \newpage
 \begin{multicols}{2}
     [\center{\printbibheading}]
@@ -788,7 +817,7 @@ $y$ orientations.
             \includegraphics[width=.99\linewidth]{beta/figures/pressure_elbow_Nx=60_Ny=60.pdf}
             \caption{Pressure field}\label{fig:pressure_field_el}
       \end{subfigure}
-      \caption{Results for \py{Nx} = \py{Ny} = \num{60} in a elbow geometry}
+      \caption{Results for \py{Nx} = \py{Ny} = \num{60} in an elbow geometry}
 \end{figure}
 
 \newpage
@@ -814,4 +843,71 @@ $y$ orientations.
             \caption{Pressure field}\label{fig:pressure_field_ob}
       \end{subfigure}
       \caption{Results for \py{Nx} = \py{Ny} = \num{60} in an obstacle geometry}
+\end{figure}
+
+\newpage
+
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/potential_elbow_Nx=60_Ny=40.pdf}
+            \caption{Velocity potential field}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/velocity_elbow_Nx=60_Ny=40.pdf}
+            \caption{Velocity field}
+      \end{subfigure}
+
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/streamlines_elbow_Nx=60_Ny=40.pdf}
+            \caption{Streamlines}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/pressure_elbow_Nx=60_Ny=40.pdf}
+            \caption{Pressure field}
+      \end{subfigure}
+
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/section_elbow_60_40_1.pdf}
+            \caption{Section 1}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/section_elbow_60_40_2.pdf}
+            \caption{Section 2}
+      \end{subfigure}
+      \caption{Results for \py{Nx} = \num{60} and \py{Ny} = \num{40} in an elbow geometry}
+\end{figure}
+
+\newpage
+
+\begin{figure}[htbp]
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/potential_obstacle_Nx=60_Ny=40.pdf}
+            \caption{Velocity potential field}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/velocity_obstacle_Nx=60_Ny=40.pdf}
+            \caption{Velocity field}
+      \end{subfigure}
+
+      \centering
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/streamlines_obstacle_Nx=60_Ny=40.pdf}
+            \caption{Streamlines}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/pressure_obstacle_Nx=60_Ny=40.pdf}
+            \caption{Pressure field}
+      \end{subfigure}
+
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/section_obstacle_60_40_1.pdf}
+            \caption{Section 1}
+      \end{subfigure}
+      \begin{subfigure}{.45\textwidth}
+            \includegraphics[width=.99\linewidth]{beta/figures/section_obstacle_60_40_2.pdf}
+            \caption{Section 2}
+      \end{subfigure}
+      \caption{Results for \py{Nx} = \num{60} and \py{Ny} = \num{40} in an obstacle geometry}
 \end{figure}

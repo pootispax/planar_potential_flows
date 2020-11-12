@@ -168,6 +168,7 @@ class Plot:
         plt.plot(x, sy, label='y value')
         plt.xlabel('x')
         plt.ylabel('v')
+        plt.grid()
         plt.legend()
 
         if geometry == 'widening':
@@ -197,6 +198,7 @@ class Plot:
         plt.plot(x, sy, label='y value')
         plt.xlabel('x')
         plt.ylabel('v')
+        plt.grid()
         plt.legend()
 
         plt.savefig('figures/section_elbow_{}_{}_{}.pdf'.format(nx, ny, n))
@@ -225,6 +227,7 @@ class Plot:
         plt.plot(x, sy, label='y value')
         plt.xlabel('x')
         plt.ylabel('v')
+        plt.grid()
         plt.legend()
 
         plt.savefig('figures/section_obstacle_{}_{}_{}.pdf'.format(nx, ny, n))

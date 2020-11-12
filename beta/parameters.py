@@ -2,7 +2,7 @@
 
 # Set the size of the area
 nx = 60
-ny = 60
+ny = 40
 
 # Set the size of a cell
 h = 3
